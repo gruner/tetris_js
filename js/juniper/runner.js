@@ -60,4 +60,4 @@ Runner.prototype.dispatchAllTestsComplete = function(elapsedTime) {
     }
 };
 
-module.exports.Runner = Runner;
+module.exports = Runner;

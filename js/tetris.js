@@ -28,4 +28,4 @@ Tetris.prototype.stopLoop = function() {
     window.cancelAnimationFrame(this.frameId);
 };
 
-module.exports.Tetris = Tetris;
+module.exports = Tetris;

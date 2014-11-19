@@ -19,4 +19,4 @@ Block.collides = function(blockA, blockB) {
     return blockA.collides(blockB);
 };
 
-module.exports.Block = Block;
+module.exports = Block;

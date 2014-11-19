@@ -194,4 +194,4 @@ PlayfieldTest.prototype.testPlaceBlocks = function() {
     this.assertEquals(block3, this.fixture.grid[0][2]);
 };
 
-module.exports.PlayfieldTest = PlayfieldTest;
+module.exports = PlayfieldTest;

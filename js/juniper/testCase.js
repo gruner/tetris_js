@@ -78,4 +78,4 @@ TestCase.isTestMethod = function(methodName) {
     return (methodName.substring(0, TEST.length) === TEST);
 };
 
-module.exports.TestCase = TestCase;
+module.exports = TestCase;

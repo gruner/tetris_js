@@ -44,7 +44,7 @@ Canvas.prototype.draw = function() {
 };
 
 Canvas.prototype.drawPlayfield = function() {
-    var width = dimensions.transpose(this.gameEngine.playfield.xCount);
+    var width = dimensions.transpose(this.gameEngine.playfield.xCount),
         height = dimensions.transpose(this.gameEngine.playfield.yCount);
 
     this.ctx.fillStyle = this.gameEngine.theme.playfield.color;
@@ -122,4 +122,4 @@ Canvas.prototype.animateRowComplete = function(data) {
 
 Canvas.prototype.spliceTop = function() {};
 
-module.exports.Canvas = Canvas;
+module.exports = Canvas;

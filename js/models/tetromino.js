@@ -194,4 +194,4 @@ Tetromino.prototype.rotate = function(direction) {
     }
 };
 
-module.exports.Tetromino = Tetromino;
+module.exports = Tetromino;

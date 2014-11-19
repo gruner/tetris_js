@@ -26,4 +26,4 @@ var Sprite = function(color) {
 //     this.y += yOffset;
 // };
 
-module.exports.Sprite = Sprite;
+module.exports = Sprite;

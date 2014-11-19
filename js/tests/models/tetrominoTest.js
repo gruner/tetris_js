@@ -50,4 +50,4 @@ TetrominoTest.prototype.testGetBlockCoordinates = function() {
     this.assertEqual(10, blocks[1]['y']);
 };
 
-module.exports.TetrominoTest = TetrominoTest;
+module.exports = TetrominoTest;

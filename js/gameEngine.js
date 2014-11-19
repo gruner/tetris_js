@@ -213,4 +213,4 @@ GameEngine.prototype.rotateActivePiece = function(direction) {
     }
 };
 
-module.exports.GameEngine = GameEngine;
+module.exports = GameEngine;

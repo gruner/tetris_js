@@ -14,4 +14,4 @@ GameEngineTest.prototype.setup = function() {
 // GameEngineTest.prototype.testFoo = function() {
 // };
 
-module.exports.GameEngineTest = GameEngineTest;
+module.exports = GameEngineTest;

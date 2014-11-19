@@ -1,6 +1,6 @@
 'use strict';
 
-var debug = require('./debug');
+var debug = require('../debug');
 
 var Playfield = function(xCount, yCount) {
     this.xCount = xCount;
@@ -139,4 +139,4 @@ Playfield.prototype.placeBlock = function(block) {
     }
 };
 
-module.exports.Playfield = Playfield;
+module.exports = Playfield;

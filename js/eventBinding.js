@@ -2,7 +2,7 @@
     
 var $ = require('jquery'),
     dispatcher = require('./eventDispatcher'),
-    events = require('../config/events');
+    events = require('./config/events');
 
 var keyCodes = {
     left:  37,

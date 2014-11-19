@@ -42,4 +42,4 @@ TetrominoSprite.prototype.updateModel = function() {
     }
 };
 
-module.exports.TetrominoSprite = TetrominoSprite;
+module.exports = TetrominoSprite;
