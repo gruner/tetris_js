@@ -1,8 +1,9 @@
-define(['debug'], function(debug) {
-
-  var eventSubscriptions = {};
+'use strict';
+    
+var debug = require('./debug'),
+    eventSubscriptions = {};
  
-  return {
+module.exports = {
  
     subscribe: function (eventName, callback) {
 
@@ -48,5 +49,4 @@ define(['debug'], function(debug) {
             subscribers[i].apply(context, data);
         }
     }
-  };
-});
+};

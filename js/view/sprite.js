@@ -1,29 +1,29 @@
-define(function () {
-    /**
-     * Represents the on-screen version of a model
-     */
-    var Sprite = function(color) {
-        this.x = 0;
-        this.y = 0;
-        this.color = color;
-    };
+'use strict';
 
-    // Sprite.prototype.move = function(xOffset, yOffset) {
-    //     this.x += xOffset;
-    //     this.y += yOffset;
-    // };
+/**
+ * Represents the on-screen version of a model
+ */
+var Sprite = function(color) {
+    this.x = 0;
+    this.y = 0;
+    this.color = color;
+};
 
-    // Sprite.prototype.moveLeft = function(xOffset) {
-    //     this.x -= xOffset;
-    // };
+// Sprite.prototype.move = function(xOffset, yOffset) {
+//     this.x += xOffset;
+//     this.y += yOffset;
+// };
 
-    // Sprite.prototype.moveRight = function(xOffset) {
-    //     this.x += xOffset;
-    // };
+// Sprite.prototype.moveLeft = function(xOffset) {
+//     this.x -= xOffset;
+// };
 
-    // Sprite.prototype.moveDown = function(yOffset) {
-    //     this.y += yOffset;
-    // };
+// Sprite.prototype.moveRight = function(xOffset) {
+//     this.x += xOffset;
+// };
 
-    return Sprite;
-});
+// Sprite.prototype.moveDown = function(yOffset) {
+//     this.y += yOffset;
+// };
+
+module.exports.Sprite = Sprite;

@@ -1,10 +1,10 @@
-define(function () {
-    var Animation = function(ctx) {
-        this.ctx = ctx;
-        this.complete = false;
-    };
+'use strict';
 
-    Animation.prototype.draw = function() {};
+var Animation = function(ctx) {
+    this.ctx = ctx;
+    this.complete = false;
+};
 
-    return Animation;
-});
+Animation.prototype.draw = function() {};
+
+module.export.Animation = Animation;

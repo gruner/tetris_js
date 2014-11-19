@@ -1,79 +1,81 @@
-define(['juniper/assertions'], function(assertions) {
+'use strict';
 
-    var TestCase = function() {
-        this.init();
-    };
-
-    /**
-     * Called after instantiation
-     */
-    TestCase.prototype.init = function() {};
-
-    /**
-     * Called before each test method
-     */
-    TestCase.prototype.setup = function() {};
-
-    /**
-     * Called after each test method
-     */
-    TestCase.prototype.teardown = function() {};
+var assertions = require('./assertions');
 
 
-    /**************************************************
-     *   ASSERTIONS - deferred to assertions object
-     **************************************************/
+var TestCase = function() {
+    this.init();
+};
 
-    TestCase.prototype.assertTrue = function(result) {
-        assertions.assertTrue(result);
-    };
+/**
+ * Called after instantiation
+ */
+TestCase.prototype.init = function() {};
 
-    TestCase.prototype.assertFalse = function(result) {
-        assertions.assertFalse(result);
-    };
+/**
+ * Called before each test method
+ */
+TestCase.prototype.setup = function() {};
 
-    TestCase.prototype.assertEquals = function(expected, result) {
-        assertions.assertEquals(expected, result);
-    };
+/**
+ * Called after each test method
+ */
+TestCase.prototype.teardown = function() {};
 
-    // Alias of assertEquals
-    TestCase.prototype.assertEqual = function(expected, result) {
-        assertions.assertEquals(expected, result);
-    };
 
-    TestCase.prototype.assertTypeof = function(type, result) {
-        assertions.assertTypeof(type, result);
-    };
+/**************************************************
+ *   ASSERTIONS - deferred to assertions object
+ **************************************************/
 
-    TestCase.prototype.assertUndefined = function(result) {
-        assertions.assertUndefined(result);
-    };
+TestCase.prototype.assertTrue = function(result) {
+    assertions.assertTrue(result);
+};
 
-    /***********************
-     *   Introspection 
-     ***********************/
+TestCase.prototype.assertFalse = function(result) {
+    assertions.assertFalse(result);
+};
 
-    /**
-     * Returns array of valid test methods
-     */
-    TestCase.prototype.getTestMethods = function() {
-        var testMethods = [];
-        for (var key in this) {
-            if (typeof this[key] === 'function' && TestCase.isTestMethod(key)) {
-                testMethods.push(key);
-            }
+TestCase.prototype.assertEquals = function(expected, result) {
+    assertions.assertEquals(expected, result);
+};
+
+// Alias of assertEquals
+TestCase.prototype.assertEqual = function(expected, result) {
+    assertions.assertEquals(expected, result);
+};
+
+TestCase.prototype.assertTypeof = function(type, result) {
+    assertions.assertTypeof(type, result);
+};
+
+TestCase.prototype.assertUndefined = function(result) {
+    assertions.assertUndefined(result);
+};
+
+/***********************
+ *   Introspection 
+ ***********************/
+
+/**
+ * Returns array of valid test methods
+ */
+TestCase.prototype.getTestMethods = function() {
+    var testMethods = [];
+    for (var key in this) {
+        if (typeof this[key] === 'function' && TestCase.isTestMethod(key)) {
+            testMethods.push(key);
         }
+    }
 
-        return testMethods;
-    };
+    return testMethods;
+};
 
-    /**
-     * Checks that method name begins with 'test';
-     */
-    TestCase.isTestMethod = function(methodName) {
-        var TEST = 'test';
-        return (methodName.substring(0, TEST.length) === TEST);
-    };
+/**
+ * Checks that method name begins with 'test';
+ */
+TestCase.isTestMethod = function(methodName) {
+    var TEST = 'test';
+    return (methodName.substring(0, TEST.length) === TEST);
+};
 
-    return TestCase;
-});
+module.exports.TestCase = TestCase;

@@ -1,13 +1,13 @@
-define(function() {
-    return {
-        gridSize: 30,
-        playfield: {x:0, y:0},
+'use strict';
 
-        /**
-         * Multiplies GameEngine units to the rendered grid size
-         */
-        transpose: function(value) {
-            return this.gridSize * value;
-        }
-    };
-});
+module.exports = {
+    gridSize: 30,
+    playfield: {x:0, y:0},
+
+    /**
+     * Multiplies GameEngine units to the rendered grid size
+     */
+    transpose: function(value) {
+        return this.gridSize * value;
+    }
+};

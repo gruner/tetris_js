@@ -1,15 +1,17 @@
-define(['juniper/testCase', 'gameEngine'], function(TestCase, GameEngine) {
+'use strict';
 
-    var GameEngineTest = function() {};
+var TestCase = require('../juniper/testCase'),
+	GameEngine = require('../gameEngine');
 
-    GameEngineTest.prototype = new TestCase();
+var GameEngineTest = function() {};
 
-    GameEngineTest.prototype.setup = function() {
-        this.fixture = new GameEngine();
-    };
+GameEngineTest.prototype = new TestCase();
 
-    // GameEngineTest.prototype.testFoo = function() {
-    // };
+GameEngineTest.prototype.setup = function() {
+    this.fixture = new GameEngine();
+};
 
-    return GameEngineTest;
-});
+// GameEngineTest.prototype.testFoo = function() {
+// };
+
+module.exports.GameEngineTest = GameEngineTest;

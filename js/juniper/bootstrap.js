@@ -1,42 +1,39 @@
-define([
-    'eventDispatcher',
-    'juniper/runner',
-    'juniper/resultAggregator'
-    ],
-    function(eventDispatcher, Runner, resultAggregator) {
+'use strict';
 
-        return {
+var eventDispatcher = require('../eventDispatcher'),
+    Runner = require('./runner'),
+    resultAggregator = require('./resultAggregator');
 
-            _config: null,
+module.exports = {
 
-            init: function(config) {
-                this._config = config;
-                resultAggregator.bindEvents(eventDispatcher);
-            },
+    _config: null,
 
-            onLoad: function(callback) {
-                var self = this;
-                this.loadTestModules(function(testInstances) {
-                    self.runner = new Runner(testInstances);
-                    callback();
-                });
-            },
+    init: function(config) {
+        this._config = config;
+        resultAggregator.bindEvents(eventDispatcher);
+    },
 
-            loadTestModules: function(callback) {
-                require(this._config.testModules, function() {
-                    testInstances = [];
-                    for (var i = 0, iMax = arguments.length; i < iMax; i++) {
-                        testInstances.push(new arguments[i]());
-                    }
+    onLoad: function(callback) {
+        var self = this;
+        this.loadTestModules(function(testInstances) {
+            self.runner = new Runner(testInstances);
+            callback();
+        });
+    },
 
-                    callback(testInstances);
-                });
-            },
-
-            run: function() {
-                this.runner.dispatcher = eventDispatcher;
-                this.runner.runTests();
+    loadTestModules: function(callback) {
+        require(this._config.testModules, function() {
+            testInstances = [];
+            for (var i = 0, iMax = arguments.length; i < iMax; i++) {
+                testInstances.push(new arguments[i]());
             }
-        };
+
+            callback(testInstances);
+        });
+    },
+
+    run: function() {
+        this.runner.dispatcher = eventDispatcher;
+        this.runner.runTests();
     }
-);
+};

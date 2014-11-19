@@ -30,15 +30,7 @@
         };
 }());
 
-requirejs.config({
-    baseUrl: 'js',
-    paths: {
-        jquery: 'lib/jquery-1.10.2'
-    },
 
-    // cache busting during development
-    urlArgs: "bust=" + (new Date()).getTime()
-});
 
 require(['tetris', 'debug'], function(Tetris, debug) {
 

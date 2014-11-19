@@ -1,8 +1,9 @@
-define(['juniper/events'], function(events) {
+// Subscribes to events and collects test results
 
-    // Subscribes to events and collects test results
+'use strict';
 
-    var results = {
+var events = require('./events'),
+    results = {
         testCount: 0,
         assertCount: 0,
         passes: [],
@@ -33,5 +34,4 @@ define(['juniper/events'], function(events) {
         }
     };
 
-    return results;
-});
+module.exports = results;
