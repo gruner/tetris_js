@@ -2,6 +2,7 @@
 
 var $ = require('jquery'),
     _ = require('underscore'),
+    constants = require('./constants'),
     eventDispatcher = require('../eventDispatcher'),
     events = require('./events');
 
@@ -69,7 +70,7 @@ var display = {
             statusClass: report.status
         });
 
-        if (report.status === 'pass') {
+        if (report.status === constants.PASS) {
             display.el.resultsContainer.append(assertionStatus);
         } else {
             display.el.resultsContainer.prepend(assertionStatus);

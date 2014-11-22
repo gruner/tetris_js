@@ -3,6 +3,7 @@
 'use strict';
 
 var events = require('./events'),
+    constants = require('./constants'),
     results = {
         testCount: 0,
         assertCount: 0,
@@ -19,11 +20,11 @@ var events = require('./events'),
 
             eventDispatcher.subscribe(events.ASSERTION_COMPLETE_EVENT, function(report) {
                 self.assertCount++;
-                if (report.status === 'pass') {
+                if (report.status === constants.PASS) {
                     self.passes = self.passes.concat(testResults.passes);
-                } else if (report.status === 'fail') {
+                } else if (report.status === constants.FAIL) {
                     self.fails = self.fails.concat(testResults.fails);
-                } else if (report.status === 'error') {
+                } else if (report.status === constants.ERROR) {
                     self.errors = self.errors.concat(testResults.errors);
                 }
             });

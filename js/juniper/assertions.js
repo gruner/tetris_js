@@ -1,6 +1,7 @@
 'use strict';
 
 var _ = require('underscore'),
+    constants = require('./constants'),
     dispatcher = require('../eventDispatcher'),
     events = require('./events');
     
@@ -41,18 +42,18 @@ var assertions = {
 
             if (result === true) {
                 report = this.packageResult(
-                    'pass',
+                    constants.PASS,
                     'passed'
                 );
             } else if (result === false) {
                 report = this.packageResult(
-                    'fail',
+                    constants.FAIL,
                     this.getErrorMsg(assertType, arguments.callee.caller.arguments)
                 );
             }
         } catch(e) {
             report = this.packageResult(
-                'error',
+                constants.ERROR,
                 e.message
             );
         }

@@ -44,10 +44,10 @@ TetrominoTest.prototype.testGetBlockCoordinates = function() {
     this.fixture.y = 10;
     var blocks = this.fixture.getBlockCoordinates();
 
-    this.assertEqual(10, blocks[0]['x']);
-    this.assertEqual(10, blocks[0]['y']);
-    this.assertEqual(11, blocks[1]['x']);
-    this.assertEqual(10, blocks[1]['y']);
+    this.assertEqual(10, blocks[0].x);
+    this.assertEqual(10, blocks[0].y);
+    this.assertEqual(11, blocks[1].x);
+    this.assertEqual(10, blocks[1].y);
 };
 
 module.exports = TetrominoTest;

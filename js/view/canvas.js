@@ -72,7 +72,7 @@ Canvas.prototype.drawTetromino = function(tetromino) {
         x, y
         ;
     
-    tetromino.traverseBlocks(function(block) {
+    tetromino.traverseBlocks(function(i, block) {
         x = dimensions.transpose(tetromino.x) + dimensions.transpose(block.x);
         y = dimensions.transpose(tetromino.y) + dimensions.transpose(block.y);
 

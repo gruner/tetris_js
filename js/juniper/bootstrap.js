@@ -6,30 +6,28 @@ var eventDispatcher = require('../eventDispatcher'),
 
 module.exports = {
 
-    _config: null,
+    _tests: null,
 
-    init: function(config) {
-        this._config = config;
+    init: function(tests) {
+        this._tests = tests;
         resultAggregator.bindEvents(eventDispatcher);
     },
 
     onLoad: function(callback) {
-        var self = this;
-        this.loadTestModules(function(testInstances) {
-            self.runner = new Runner(testInstances);
-            callback();
-        });
+        this.runner = new Runner(this.instantiateTests());
+        callback();
     },
 
-    loadTestModules: function(callback) {
-        require(this._config.testModules, function() {
-            testInstances = [];
-            for (var i = 0, iMax = arguments.length; i < iMax; i++) {
-                testInstances.push(new arguments[i]());
-            }
+    instantiateTests: function() {
+        var testInstances = [];
 
-            callback(testInstances);
-        });
+        for (var i = 0, iMax = this._tests.length; i < iMax; i++) {
+            if (typeof this._tests[i] === 'function') {
+                testInstances.push(new this._tests[i]());
+            }
+        }
+
+        return testInstances;
     },
 
     run: function() {

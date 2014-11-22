@@ -3,7 +3,8 @@
 var Playfield = require('./models/playfield'),
     Tetromino = require('./models/tetromino'),
     Sprite = require('./view/sprite'),
-    themes = require('./config/themes'),
+    ThemeLoader = require('./themeLoader'),
+    themeConfigs = require('./config/themes'),
     eventDispatcher = require('./eventDispatcher'),
     events = require('./config/events'),
     constants = require('./config/constants'),
@@ -16,7 +17,6 @@ var GameEngine = function() {
     this.level = 0;
     this.velocity = 0.05;
     this.accelerate = false;
-    this.theme = themes.getTheme(themes.THEME_DEFAULT);
     this.playfield = new Playfield(
         Playfield.defaults.xCount,
         Playfield.defaults.yCount
@@ -29,6 +29,10 @@ GameEngine.QUEUE_MINIMUM = 3;
 GameEngine.ACCELERATED_VELOCITY = 0.5;
 
 GameEngine.prototype.init = function() {
+    var themeLoader = new ThemeLoader(themeConfigs);
+    this.themeLoader = themeLoader;
+    this.theme = themeLoader.getTheme();
+
     this.bindEvents();
     this.getNextPiece();
 };
@@ -154,7 +158,8 @@ GameEngine.prototype.topOut = function() {};
  * only if the new position is valid
  */
 GameEngine.prototype.moveActivePiece = function(movement) {
-    var xOffset = yOffset = 0,
+    var xOffset = 0,
+        yOffset = 0,
         coordinates;
 
     if (movement.direction === constants.DIRECTION_LEFT) {
@@ -167,7 +172,7 @@ GameEngine.prototype.moveActivePiece = function(movement) {
         return;
     }
 
-    coordinates = this.activeTetromino.getProjectedBlockCoordinates(xOffset, yOffset);
+    coordinates = this.activeTetromino.getBlockCoordinatesForOffset(xOffset, yOffset);
     
     if (this.playfield.validateBlockPlacement(coordinates)) {
         this.activeTetromino.moveByOffset(xOffset, yOffset);
@@ -183,7 +188,7 @@ GameEngine.prototype.getProjectedDestination = function() {
         ;
 
     while(valid) {
-        coordinates = this.activeTetromino.getProjectedBlockCoordinates(0, yOffset);
+        coordinates = this.activeTetromino.getBlockCoordinatesForOffset(0, yOffset);
         valid = this.playfield.validateBlockPlacement(coordinates);
         if (valid) {
             yOffset++;

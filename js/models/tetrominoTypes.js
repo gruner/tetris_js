@@ -3,7 +3,7 @@
 /**
  * Define the different types (shapes) of tetrominos
  */
-module.exports = {
+var types = {
     i: {
         blocks: [
             {x: 0, y: 0},
@@ -59,5 +59,19 @@ module.exports = {
             {x: 1, y: 1},
             {x: 2, y: 1},
         ]
+    }
+};
+
+module.exports = {
+    types: types,
+
+    getType: function(typeKey) {
+        if (typeof types[typeKey] !== 'undefined') {
+            return types[typeKey];
+        }
+    },
+
+    getTypeKeys: function() {
+        return Object.keys(types);
     }
 };

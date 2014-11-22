@@ -1,11 +1,12 @@
 'use strict';
 
 var Block = require('./block'),
-    tetrominos = require('../config/tetrominos'),
+    tetrominos = require('./tetrominoTypes'),
     constants = require('../config/constants'),
     debug = require('../debug');
 
 /**
+ * Models a Tetromino tile, composed of Block models
  * All x and y dimensions are based on the playfield grid, NOT the canvas
  */
 var Tetromino = function(type, blocks) {
@@ -18,23 +19,21 @@ var Tetromino = function(type, blocks) {
 };
 
 /**
- * Define the different types (shapes) of tetrominos
+ * Factory for creating a tetromino based on the given type
  */
-Tetromino.types = tetrominos;
+Tetromino.create = function(typeKey) {
 
-/**
- * Creates a tetromino based on the given type
- */
-Tetromino.create = function(type) {
-    if (typeof tetrominos[type] !== 'undefined') {
+    var type = tetrominos.getType(typeKey);
+
+    if (type) {
         var blocks = [];
 
-        for (var i = 0; i < tetrominos[type].blocks.length; i++) {
-            var dims = tetrominos[type].blocks[i];
+        for (var i = 0; i < type.blocks.length; i++) {
+            var dims = type.blocks[i];
             blocks.push(new Block(dims.x, dims.y));
         }
 
-        return new Tetromino(type, blocks);
+        return new Tetromino(typeKey, blocks);
     }
 };
 
@@ -66,11 +65,7 @@ Tetromino.randomizeNextBag = function() {
         return array;
     }
 
-    if (typeof this.tetrominoTypeKeys === 'undefined') {
-        this.tetrominoTypeKeys = Object.keys(Tetromino.types);
-    }
-
-    return shuffle(this.tetrominoTypeKeys);
+    return shuffle(tetrominos.getTypeKeys());
 };
 
 Tetromino.prototype.moveByOffset = function(xOffset, yOffset) {
@@ -92,13 +87,13 @@ Tetromino.prototype.atDestination = function() {
 };
 
 /**
- * Returns array of block absolute block coordinates
+ * Returns array of absolute block coordinates
  */
 Tetromino.prototype.getBlockCoordinates = function() {
     var coordinates = [],
         self = this;
 
-    this.traverseBlocks(function(block) {
+    this.traverseBlocks(function(i, block) {
         coordinates.push({
             x: self.x + block.x,
             y: self.y + block.y
@@ -126,30 +121,39 @@ Tetromino.prototype.releaseBlocks = function() {
     return blocks;
 };
 
-Tetromino.prototype.getProjectedBlockCoordinates = function(xOffset, yOffset) {
+/**
+ * Returns array of coordinates for each block, calculated from offset x and y
+ */
+Tetromino.prototype.getBlockCoordinatesForOffset = function(xOffset, yOffset) {
     var projectedX = this.x + xOffset,
         projectedY = this.y + yOffset,
         coordinates = []
         ;
 
-    for (var i = 0; i < this.blocks.length; i++) {
+    this.traverseBlocks(function(i, block) {
         coordinates.push({
-            x: projectedX + this.blocks[i].x,
-            y: projectedY + this.blocks[i].y
+            x: projectedX + block.x,
+            y: projectedY + block.y
         });
-    }
+    });
 
     return coordinates;
 };
-          
+
+/**
+ * Iterates over blocks array passing each block to the given callback
+ */
 Tetromino.prototype.traverseBlocks = function(callback) {
     var iMax = this.blocks.length,
         i;
     for (i = 0; i < iMax; i++) {
-        callback(this.blocks[i]);
+        callback(i, this.blocks[i]);
     }
 };
 
+/**
+ * Returns array of unique y coordinates for this tetromino's blocks
+ */
 Tetromino.prototype.getTouchingRows = function() {
     var rows = [],
         uniqe = {};
@@ -167,17 +171,12 @@ Tetromino.prototype.getTouchingRows = function() {
     return rows;
 };
 
-Tetromino.prototype.handleCollision = function() {
-};
+// Tetromino.prototype.handleCollision = function() {
+// };
 
-Tetromino.prototype.rotateLeft = function() {
-    this.rotate(constants.DIRECTION_LEFT);
-};
-
-Tetromino.prototype.rotateRight = function() {
-    this.rotate(constants.DIRECTION_RIGHT);
-};
-
+/**
+ * Rotates tetromino left or right by changing its block coordinates
+ */
 Tetromino.prototype.rotate = function(direction) {
     if (direction === constants.DIRECTION_RIGHT) {
         this.traverseBlocks(function(i, block) {
@@ -192,6 +191,14 @@ Tetromino.prototype.rotate = function(direction) {
             block.y = swap;
         });
     }
+};
+
+Tetromino.prototype.rotateLeft = function() {
+    this.rotate(constants.DIRECTION_LEFT);
+};
+
+Tetromino.prototype.rotateRight = function() {
+    this.rotate(constants.DIRECTION_RIGHT);
 };
 
 module.exports = Tetromino;

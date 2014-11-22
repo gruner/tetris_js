@@ -8,5 +8,5 @@ module.exports = {
     ASSERTION_BEGIN_EVENT:      'juniper.assertionBegin',
     ASSERTION_COMPLETE_EVENT:   'juniper.assertionComplete',
     ALL_TESTS_COMPLETE_EVENT:   'juniper.allTestsComplete',
-    ALL_TESTS_COMPILED_EVENT:   'juniper.allTestCompiled'
+    ALL_TESTS_COMPILED_EVENT:   'juniper.allTestsCompiled'
 };

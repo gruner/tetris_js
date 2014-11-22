@@ -122,12 +122,6 @@ Playfield.prototype.validateBlock = function(block) {
     return (this.cellInBounds(block.x, block.y) && this.cellEmpty(block.x, block.y));
 };
 
-Playfield.prototype.placeBlocks = function(blocks) {
-    for (var i = 0, iMax = blocks.length; i < iMax; i++) {
-        this.placeBlock(blocks[i]);
-    }
-};
-
 Playfield.prototype.placeBlock = function(block) {
     if (this.validateBlock(block)) {
         if (typeof this.grid[block.y] === 'undefined') {
@@ -136,6 +130,12 @@ Playfield.prototype.placeBlock = function(block) {
         this.grid[block.y][block.x] = block;
     } else {
         debug.log('invalid block placement at ' + block.x + ', ' + block.y);
+    }
+};
+
+Playfield.prototype.placeBlocks = function(blocks) {
+    for (var i = 0, iMax = blocks.length; i < iMax; i++) {
+        this.placeBlock(blocks[i]);
     }
 };
 

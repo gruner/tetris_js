@@ -1,10 +1,23 @@
 'use strict';
 
-module.exports = {
-    // define the test classes in require.js module format
-    testModules: [
-        'tests/models/playfieldTest',
-        'tests/models/tetrominoTest',
-        'tests/gameEngineTest'
-    ]
-};
+// load all test cases as dependencies
+var tests = [
+	require('./models/playfieldTest'),
+	require('./models/tetrominoTest'),
+	require('./models/tetrominoTypesTest'),
+	require('./models/themeTest'),
+	require('./themeLoaderTest'),
+	require('./gameEngineTest')
+];
+
+var $ = require('jquery'),
+	bootstrap = require('../juniper/bootstrap'),
+	display = require('../juniper/display');
+
+$(document).ready(function() {
+	bootstrap.init(tests);
+    display.init();
+    bootstrap.onLoad(function() {
+        bootstrap.run();
+    });
+});

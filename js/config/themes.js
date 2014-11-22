@@ -1,11 +1,9 @@
 'use strict';
 
-var $ = require('jquery');
-
 /**
  * Config for different themes
  */
-var themes = {
+module.exports = {
     default: {
         playfield: {color: "#000000"},
         ghostPiece: {color: "#cccccc"},
@@ -22,30 +20,4 @@ var themes = {
     level1: {
         parent: 'default'
     }
-};
-
-function getTheme(themeName) {
-    if (typeof themes[themeName] !== undefined) {
-        return expand(themes[themeName]);
-    }
-}
-
-function expand(theme) {
-    if (theme.hasOwnProperty('parent')) {
-        theme = $.expand(theme, getTheme(themes[theme.parent]));
-    }
-
-    return theme;
-}
-
-module.exports = {
-    getTheme: function(themeName) {
-        var theme = getTheme(themeName);
-        if (typeof theme === undefined) {
-            theme = themes.default;
-        }
-
-        return theme;
-    },
-    THEME_DEFAULT: 'default'
 };

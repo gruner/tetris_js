@@ -11,7 +11,8 @@ GameEngineTest.prototype.setup = function() {
     this.fixture = new GameEngine();
 };
 
-// GameEngineTest.prototype.testFoo = function() {
-// };
+GameEngineTest.prototype.testTheme = function() {
+	this.assertFalse(this.fixture.theme === undefined);
+};
 
 module.exports = GameEngineTest;
