@@ -70,6 +70,10 @@ GameEngine.prototype.getVelocity = function() {
     return (this.accelerate) ? GameEngine.ACCELERATED_VELOCITY : this.velocity;
 };
 
+/**
+ * Updates the destination coordinates of the active tetromino
+ * based on its current location
+ */
 GameEngine.prototype.updateDestination = function() {
     var destination = this.getProjectedDestination();
     this.activeTetromino.destinationY = destination.y;
@@ -181,6 +185,9 @@ GameEngine.prototype.moveActivePiece = function(movement) {
     }
 };
 
+/**
+ * 
+ */
 GameEngine.prototype.getProjectedDestination = function() {
     var yOffset = 1,
         valid = true,

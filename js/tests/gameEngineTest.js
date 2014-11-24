@@ -15,4 +15,8 @@ GameEngineTest.prototype.testTheme = function() {
 	this.assertFalse(this.fixture.theme === undefined);
 };
 
+GameEngineTest.prototype.testGetProjectedDestination = function() {
+	//
+};
+
 module.exports = GameEngineTest;
