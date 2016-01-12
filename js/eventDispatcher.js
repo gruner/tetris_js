@@ -43,7 +43,7 @@ module.exports = {
  
         // Set a default value for `this` in the callback
         // TODO: fix this!!!
-        context = context || APP;
+        context = context || window;
 
         for (i = 0; i < subscribers.length; i++) {
             subscribers[i].apply(context, data);
