@@ -52,6 +52,14 @@ TestCase.prototype.assertUndefined = function(result) {
     assertions.assertUndefined(result);
 };
 
+TestCase.prototype.assertNull = function(result) {
+    assertions.assertNull(result);
+};
+
+TestCase.prototype.assertNotNull = function(result) {
+    assertions.assertNotNull(result);
+};
+
 /***********************
  *   Introspection 
  ***********************/
