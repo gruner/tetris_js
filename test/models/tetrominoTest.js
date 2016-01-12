@@ -4,10 +4,7 @@ var assert = require('assert'),
     Tetromino = require('../../js/models/tetromino'),
     tetromino;
 
-var ROW_COUNT = 20,
-    COL_COUNT = 10;
-
-describe('Playfield', function() {
+describe('Tetromino', function() {
 
     beforeEach(function() {
         tetromino = Tetromino.create('o');
