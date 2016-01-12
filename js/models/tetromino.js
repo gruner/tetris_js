@@ -73,6 +73,13 @@ Tetromino.prototype.moveByOffset = function(xOffset, yOffset) {
     this.y += yOffset;
 };
 
+Tetromino.prototype.move = function(coordinates) {
+    if (coordinates.hasOwnProperty('x') && coordinates.hasOwnProperty('y')) {
+        this.x = coordinates.x;
+        this.y = coordinates.y;
+    }
+};
+
 Tetromino.prototype.update = function(yOffset) {
     var newY = this.y + yOffset;
     if (newY <= this.destinationY) {
@@ -82,6 +89,10 @@ Tetromino.prototype.update = function(yOffset) {
     }
 };
 
+/**
+ * Tests that the current y coordinate matches the destination
+ * @return bool
+ */
 Tetromino.prototype.atDestination = function() {
     return (this.y >= this.destinationY);
 };
@@ -152,32 +163,11 @@ Tetromino.prototype.traverseBlocks = function(callback) {
 };
 
 /**
- * Returns array of unique y coordinates for this tetromino's blocks
- */
-Tetromino.prototype.getTouchingRows = function() {
-    var rows = [],
-        uniqe = {};
-    for (var i = 0; i < this.blocks.length; i++) {
-        var row = this.blocks[i].y;
-
-        if(uniqe.hasOwnProperty(row)) {
-            continue;
-        }
-  
-        rows.push(row);
-        uniqe[row] = 1;
-    }
-
-    return rows;
-};
-
-// Tetromino.prototype.handleCollision = function() {
-// };
-
-/**
  * Rotates tetromino left or right by changing its block coordinates
  */
 Tetromino.prototype.rotate = function(direction) {
+    direction = direction || constants.DIRECTION_LEFT;
+
     if (direction === constants.DIRECTION_RIGHT) {
         this.traverseBlocks(function(i, block) {
             var swap = block.x;
@@ -191,6 +181,29 @@ Tetromino.prototype.rotate = function(direction) {
             block.y = swap;
         });
     }
+};
+
+Tetromino.prototype.getBlockCoordinatesForRotation = function(direction) {
+    direction = direction || constants.DIRECTION_LEFT;
+    var coordinates = [];
+
+    if (direction === constants.DIRECTION_RIGHT) {
+        this.traverseBlocks(function(i, block) {
+            coordinates.push({
+                x: block.y,
+                y: block.x
+            });
+        });
+    } else if (direction === constants.DIRECTION_LEFT) {
+        this.traverseBlocks(function(i, block) {
+            coordinates.push({
+                x: -block.y,
+                y: block.x
+            });
+        });
+    }
+
+    return coordinates;
 };
 
 Tetromino.prototype.rotateLeft = function() {
