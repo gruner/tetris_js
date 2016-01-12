@@ -30,7 +30,14 @@ TetrominoTest.prototype.testUpdate = function() {
     this.assertEqual(20, this.fixture.y);
 };
 
-TetrominoTest.prototype.testAtDestination = function() {
+TetrominoTest.prototype.testAtDestinationFalse = function() {
+    this.fixture.y = 9;
+    this.fixture.destinationY = 10;
+    
+    this.assertFalse(this.fixture.atDestination());
+};
+
+TetrominoTest.prototype.testAtDestinationTrue = function() {
     this.fixture.y = 10;
     this.fixture.destinationY = 10;
     
@@ -44,10 +51,20 @@ TetrominoTest.prototype.testGetBlockCoordinates = function() {
     this.fixture.y = 10;
     var blocks = this.fixture.getBlockCoordinates();
 
+    this.assertTrue(4 === blocks.length);
     this.assertEqual(10, blocks[0].x);
     this.assertEqual(10, blocks[0].y);
     this.assertEqual(11, blocks[1].x);
     this.assertEqual(10, blocks[1].y);
+};
+
+TetrominoTest.prototype.testGetBlockCoordinatesForRotation = function() {
+    this.fixture.x = 10;
+    this.fixture.y = 10;
+    
+    var blocks = this.fixture.getBlockCoordinatesForRotation();
+
+    this.assertTrue(4 === blocks.length);
 };
 
 module.exports = TetrominoTest;

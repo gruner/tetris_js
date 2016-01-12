@@ -107,6 +107,21 @@ PlayfieldTest.prototype.testRowComplete_OutOfBounds = function() {
     this.assertFalse(this.fixture.rowComplete(ROW_COUNT + 10));
 };
 
+PlayfieldTest.prototype.testGetCompletedRows = function() {
+    this.fixture.grid[1] = [0,1,2,3,4,5,6,7,8,9];
+    this.fixture.grid[2] = [1,2,3,4,5,6,7,8,9];
+    this.fixture.grid[3] = [0,1,2,3,4,5,6,7,8,9];
+    this.fixture.grid[5] = [0,1,2,3,4,5,6,7,8,9];
+
+    var completedRows = this.fixture.getCompletedRows();
+
+    this.assertEquals(1, completedRows[0]);
+    this.assertEquals(3, completedRows[1]);
+    this.assertEquals(5, completedRows[2]);
+    this.assertEquals(3, completedRows.length);
+};
+
+
 PlayfieldTest.prototype.testCellEmpty_True = function() {
     this.assertTrue(this.fixture.cellEmpty(0,0));
     this.assertTrue(this.fixture.cellEmpty(5,6));
