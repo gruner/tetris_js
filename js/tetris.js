@@ -1,5 +1,6 @@
 var GameEngine = require('./gameEngine'),
     Canvas = require('./view/canvas'),
+    events = require('./config/events'),
     eventBinding = require('./eventBinding'),
     eventDispatcher = require('./eventDispatcher'),
     debug = require('./debug');
@@ -12,7 +13,7 @@ var Tetris = function(canvasElement) {
     this.canvas = new Canvas(canvasElement, this.gameEngine);
     this.frameId = null;
     eventBinding.init();
-    eventDispatcher.subscribe('tetris.topOut', this.stopLoop);
+    eventDispatcher.subscribe(events.topOut, this.stopLoop);
 
     var self = this;
 
