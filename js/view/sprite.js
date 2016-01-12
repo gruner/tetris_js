@@ -6,6 +6,7 @@
 var Sprite = function(color) {
     this.x = 0;
     this.y = 0;
+    this.theme = null;
     this.color = color;
 };
 
