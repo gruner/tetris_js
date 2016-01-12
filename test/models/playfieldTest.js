@@ -191,79 +191,96 @@ describe('Playfield', function() {
         });
     });
 
+    describe('#cellInBounds', function() {
+        it('should return true when cell is in bounds', function() {
+            assert(playfield.cellInBounds(0, 0));
+            assert(playfield.cellInBounds(COL_COUNT - 1, ROW_COUNT - 1));
+        });
+    });
+
+    describe('#cellInBounds', function() {
+        it('should return false when cell is out of bounds', function() {
+            assert(false === playfield.cellInBounds(COL_COUNT, ROW_COUNT));
+            assert(false === playfield.cellInBounds(COL_COUNT + 1, ROW_COUNT + 1));
+            assert(false === playfield.cellInBounds(-1, -1));
+        });
+    });
+
+    describe('#validateBlock', function() {
+        it('should return true for valid block dimensions', function() {
+            assert(playfield.validateBlock({x:0, y:0}));
+        });
+    });
+
+    describe('#validateBlock', function() {
+        it('should return false for out of bound block dimensions', function() {
+            assert(false === playfield.validateBlock({x:-1, y:-1}));
+        });
+    });
+
+    describe('#validateBlock', function() {
+        it('should return false when block is not empty', function() {
+            playfield.grid[0] = [1];
+            assert(false === playfield.validateBlock({x:0, y:0}));
+        });
+    });
+
+    describe('#validateBlockPlacement', function() {
+        it('should return true when blocks are valid for placement', function() {
+            var blocks = [
+                {x:0, y:0},
+                {x:1, y:0},
+                {x:2, y:0}
+            ];
+            assert(playfield.validateBlockPlacement(blocks));
+        });
+    });
+
+    describe('#validateBlockPlacement', function() {
+        it('should return false when one or more blocks are out of bounds', function() {
+            var blocks = [
+                {x:-1, y:-1},
+                {x:1, y:0},
+                {x:2, y:0}
+            ];
+            assert(false === playfield.validateBlockPlacement(blocks));
+        });
+    });
+
+    describe('#validateBlockPlacement', function() {
+        it('should return false when one or more blocks are not empty', function() {
+            playfield.grid[0] = [1];
+            var blocks = [
+                {x:0, y:0},
+                {x:1, y:0},
+                {x:2, y:0}
+            ];
+            assert(false === playfield.validateBlockPlacement(blocks));
+        });
+    });
+
+    describe('#placeBlock', function() {
+        it('should insert block at the correct coordinates', function() {
+            var block = {x:0, y:0};
+            playfield.placeBlock(block);
+            
+            assert.strictEqual(block, playfield.grid[0][0]);
+        });
+    });
+
+    describe('#placeBlocks', function() {
+        it('should insert array of blocks at the correct coordinates', function() {
+            var block1 = {x:0, y:0},
+                block2 = {x:1, y:0},
+                block3 = {x:2, y:0},
+                blocks = [block1, block2, block3]
+                ;
+            playfield.placeBlocks(blocks);
+
+            assert.strictEqual(block1, playfield.grid[0][0]);
+            assert.strictEqual(block2, playfield.grid[0][1]);
+            assert.strictEqual(block3, playfield.grid[0][2]);
+        });
+    });
+
 });
-
-
-// PlayfieldTest.prototype.testCellInBounds_True = function() {
-//     this.assertTrue(playfield.cellInBounds(0, 0));
-//     this.assertTrue(playfield.cellInBounds(COL_COUNT - 1, ROW_COUNT - 1));
-// };
-
-// PlayfieldTest.prototype.testCellInBounds_False = function() {
-//     this.assertFalse(playfield.cellInBounds(COL_COUNT, ROW_COUNT));
-//     this.assertFalse(playfield.cellInBounds(COL_COUNT + 1, ROW_COUNT + 1));
-//     this.assertFalse(playfield.cellInBounds(-1, -1));
-// };
-
-// PlayfieldTest.prototype.testValidateBlock_True = function() {
-//     this.assertTrue(playfield.validateBlock({x:0, y:0}));
-// };
-
-// PlayfieldTest.prototype.testValidateBlock_OutOfBounds = function() {
-//     this.assertFalse(playfield.validateBlock({x:-1, y:-1}));
-// };
-
-// PlayfieldTest.prototype.testValidateBlock_CellNotEmpty = function() {
-//     playfield.grid[0] = [1];
-//     this.assertFalse(playfield.validateBlock({x:0, y:0}));
-// };
-
-// PlayfieldTest.prototype.testValidateBlocks_True = function() {
-//     var blocks = [
-//         {x:0, y:0},
-//         {x:1, y:0},
-//         {x:2, y:0}
-//     ];
-//     this.assertTrue(playfield.validateBlockPlacement(blocks));
-// };
-
-// PlayfieldTest.prototype.testValidateBlocks_OutOfBounds = function() {
-//     var blocks = [
-//         {x:-1, y:-1},
-//         {x:1, y:0},
-//         {x:2, y:0}
-//     ];
-//     this.assertFalse(playfield.validateBlockPlacement(blocks));
-// };
-
-// PlayfieldTest.prototype.testValidateBlocks_CellNotEmpty = function() {
-//     playfield.grid[0] = [1];
-//     var blocks = [
-//         {x:0, y:0},
-//         {x:1, y:0},
-//         {x:2, y:0}
-//     ];
-//     this.assertFalse(playfield.validateBlockPlacement(blocks));
-// };
-
-// PlayfieldTest.prototype.testPlaceBlock = function() {
-//     var block = {x:0, y:0};
-//     playfield.placeBlock(block);
-    
-//     this.assertEquals(block, playfield.grid[0][0]);
-// };
-
-// PlayfieldTest.prototype.testPlaceBlocks = function() {
-//     var block1 = {x:0, y:0},
-//         block2 = {x:1, y:0},
-//         block3 = {x:2, y:0},
-//         blocks = [block1, block2, block3]
-//         ;
-//     playfield.placeBlocks(blocks);
-
-//     this.assertEquals(block1, playfield.grid[0][0]);
-//     this.assertEquals(block2, playfield.grid[0][1]);
-//     this.assertEquals(block3, playfield.grid[0][2]);
-// };
-
-// module.exports = PlayfieldTest;
