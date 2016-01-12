@@ -107,6 +107,8 @@ var display = {
             className: (testResults.fails.length === 0 && testResults.errors.length === 0) ? 'pass' : 'fail',
             status: status
         }));
+
+        document.title += ' | ' + status;
     }
 };
 
