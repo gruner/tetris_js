@@ -6,7 +6,7 @@ var GameEngine = require('./gameEngine'),
     debug = require('./debug');
 
 /**
- * Wrapper that ties all game components together
+ * Bootstraps all game components together
  */
 var Tetris = function(canvasElement) {
     this.gameEngine = new GameEngine();

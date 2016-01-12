@@ -87,7 +87,7 @@ Playfield.prototype.removeRowAt = function(y) {
 };
 
 /**
- * Checks that a row is complete. If a row is undefined, it has no cells,
+ * Checks that a row is complete, i.e. filled with blocks. If a row is undefined, it has no cells,
  * if any cells are undefined they are empty
  * @return bool
  */

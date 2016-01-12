@@ -3,7 +3,7 @@
 /**
  * Models a single square
  */
-var Block = function(x,y) {
+var Block = function(x, y) {
     this.x = x;
     this.y = y;
     this.width = 1;

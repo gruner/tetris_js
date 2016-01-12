@@ -36,7 +36,9 @@ var $ = require('jquery')
     ,Tetris  = require('./tetris')
     ,debug = require('./debug')
     ;
-
+/**
+ * Initializes game on the DOM
+ */
 $(document).ready(function() {
     var el = document.getElementsByClassName('tetris'),
         i,
@@ -44,6 +46,7 @@ $(document).ready(function() {
         ;
 
     for (i = 0; i < iMax; i++) {
+        // TODO: create canvas tag it it doesn't exist
         if (el[i].nodeName == 'CANVAS') {
             var tetris = new Tetris(el[i]);
             tetris.run();
