@@ -91,6 +91,18 @@ var assertions = {
         });
     },
 
+    assertNull: function(result) {
+        this.assert('assertNull', function() {
+            return (null === result);
+        });
+    },
+
+    assertNotNull: function(result) {
+        this.assert('assertNotNull', function() {
+            return (null !== result);
+        });
+    },
+
     getErrorMsg:  function(assertType, assertionArguments) {
         var msg = '';
         if (typeof this[assertType].errorMessage !== 'undefined') {
@@ -122,11 +134,13 @@ var assertions = {
     }
 };
 
-assertions.assertTrue.errorMessage = 'expected value to be true, instead saw <%= actual %>';
-assertions.assertFalse.errorMessage = 'expected value to be false, instead saw <%= actual %>';
-assertions.assertEquals.errorMessage = 'expected <%= expected %> to equal <%= actual %>';
-assertions.assertTypeof.errorMessage = 'expected value to be typeof <%= expected %>, instead saw <%= actual %>';
+assertions.assertTrue.errorMessage      = 'expected value to be true, instead saw <%= actual %>';
+assertions.assertFalse.errorMessage     = 'expected value to be false, instead saw <%= actual %>';
+assertions.assertEquals.errorMessage    = 'expected <%= expected %> to equal <%= actual %>';
+assertions.assertTypeof.errorMessage    = 'expected value to be typeof <%= expected %>, instead saw <%= actual %>';
 assertions.assertUndefined.errorMessage = 'expected value to be undefined, instead saw <%= actual %>';
+assertions.assertNull.errorMessage      = 'expected value to be null, instead saw <%= actual %>';
+assertions.assertNotNull.errorMessage   = 'expected value to not be null, instead saw <%= actual %>';
 
 assertions.bindEvents();
 
