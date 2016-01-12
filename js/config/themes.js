@@ -6,7 +6,7 @@
 module.exports = {
     default: {
         playfield: {color: "#000000"},
-        ghostPiece: {color: "#cccccc"},
+        ghostPiece: {color: "#333333"},
         tetrominos: {
             i: {color: "#dd5b4d"}, // red
             o: {color: "#4f718b"}, // blue
