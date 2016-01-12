@@ -1,3 +1,6 @@
+// Caches the parts of the canvas that don't need to be updated on each animation frame
+
+
 // * Create a canvas element
 // * Get its context
 // * Write pixels to that context
