@@ -2,6 +2,7 @@
     
 var $ = require('jquery'),
     dispatcher = require('./eventDispatcher'),
+    constants = require('./config/constants'),
     events = require('./config/events');
 
 var keyCodes = {
@@ -16,11 +17,13 @@ var eventBinding = {
         $(document).on('keydown', function(e) {
             var code = e.keyCode || e.which;
             if (code === keyCodes.left) {
-                dispatcher.trigger(events.moveActivePiece, {direction: 'left'}, this);
+                dispatcher.trigger(events.moveActivePiece, {direction: constants.DIRECTION_LEFT}, this);
             } else if (code === keyCodes.right) {
-                dispatcher.trigger(events.moveActivePiece, {direction: 'right'}, this);
+                dispatcher.trigger(events.moveActivePiece, {direction: constants.DIRECTION_RIGHT}, this);
             } else if (code === keyCodes.down) {
-                dispatcher.trigger(events.moveActivePiece, {direction: 'down'}, this);
+                dispatcher.trigger(events.moveActivePiece, {direction: constants.DIRECTION_DOWN}, this);
+            } else if (code === keyCodes.up) {
+                dispatcher.trigger(events.rotateActivePiece, {direction: constants.DIRECTION_LEFT}, this);
             }
         });
     },
