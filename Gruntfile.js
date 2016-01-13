@@ -1,39 +1,62 @@
-/*jshint node:true*/
-
 'use strict';
 module.exports = function(grunt) {
-  var pkg = grunt.file.readJSON('./package.json'),
-      path = require('path');
+  grunt.loadNpmTasks('grunt-contrib-watch');
+  grunt.loadNpmTasks('grunt-browserify');
+  grunt.loadNpmTasks('grunt-contrib-uglify');
+  grunt.loadNpmTasks('grunt-contrib-copy');
+  grunt.loadNpmTasks('grunt-contrib-clean');
 
-  require('load-grunt-config')(grunt, {
-    config: {
-      pkg: pkg,
+  grunt.registerTask('default', ['browserify', 'watch']);
 
-      path: {
-        cwd: path.resolve(),
-        src: {
-          cwd: './js'
-        },
-        dist: {
-          cwd: './dist'
-        }
+  grunt.registerTask('build', [
+    'clean',
+    'browserify',
+    'uglify',
+    'copy'
+  ]);
+
+  grunt.initConfig({
+    pkg: grunt.file.readJSON('package.json'),
+    
+    browserify: {
+      main: {
+        src: 'js/main.js',
+        dest: 'dist/js/tetris.js'
+      }
+    },
+    
+    watch: {
+      files: 'js/*',
+      tasks: ['default']
+    },
+    
+    clean: {
+      dist: ['dist']
+    },
+
+    copy: {
+      'dist': {
+        files: [
+          {
+            expand: true,
+            cwd: '.',
+            dest: 'dist',
+            src: ['tetris.html']
+          }
+        ]
+      }
+    },
+
+    uglify: {
+      options: {
+        mangle: false
       },
-      pattern: {
-        all: '**',
-        js: '*.js',
-        css: '*.css',
-        html: '*.html',
+      dist: {
+        files: {
+          'dist/js/tetris.js': ['dist/js/tetris.js']
+        }
       }
     }
+
   });
-
-  grunt.registerTask('default', [
-    'build',
-  ]);
-
-  grunt.registerTask('build', 'Downloads all dependencies and copies them along with src directory into dist directory', [
-    'clean',
-    'browserfy',
-    'copy:dist',
-  ]);
-};
+}
