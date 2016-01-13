@@ -15,11 +15,6 @@ var Canvas = function(canvasElement, gameEngine) {
     this.gameEngine = gameEngine;
     this.imageCache = {};
 
-    this.dimensions = {
-        gridSize: 30,
-        playfield: {x:0, y:0}
-    };
-
     this.init(canvasElement);
 };
 

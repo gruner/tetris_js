@@ -42,7 +42,6 @@ module.exports = {
         data = (data instanceof Array) ? data : [data];
  
         // Set a default value for `this` in the callback
-        // TODO: fix this!!!
         context = context || window;
 
         for (i = 0; i < subscribers.length; i++) {

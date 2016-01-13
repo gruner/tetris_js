@@ -68,11 +68,18 @@ Tetromino.randomizeNextBag = function() {
     return shuffle(tetrominos.getTypeKeys());
 };
 
+/**
+ * Increments the x and y coordinates by the given offsets
+ */
 Tetromino.prototype.moveByOffset = function(xOffset, yOffset) {
     this.x += xOffset;
     this.y += yOffset;
 };
 
+/**
+ * Replaces the tetromino coordinats with the given coordinates
+ * e.g. tetromino.move({x:3, y:7});
+ */
 Tetromino.prototype.move = function(coordinates) {
     if (coordinates.hasOwnProperty('x') && coordinates.hasOwnProperty('y')) {
         this.x = coordinates.x;
@@ -80,6 +87,10 @@ Tetromino.prototype.move = function(coordinates) {
     }
 };
 
+/**
+ * Increments y coordinates by the given offset,
+ * used to update the position as it falls
+ */
 Tetromino.prototype.update = function(yOffset) {
     var newY = this.y + yOffset;
     if (newY <= this.destinationY) {
@@ -115,9 +126,10 @@ Tetromino.prototype.getBlockCoordinates = function() {
 };
 
 /**
- * Blocks are saved with relative coordinates. This 
- * converts the coordinates to absolute values, and removes
- * the blocks from the stack, returning a new array
+ * Blocks are saved with relative coordinates.
+ * This converts the coordinates to absolute values,
+ * and removes the blocks from the stack, returning a new array.
+ * Used to convert a discrete tetromino into blocks on the playfield
  */
 Tetromino.prototype.releaseBlocks = function() {
     var blocks = [];

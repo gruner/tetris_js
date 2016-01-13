@@ -11,6 +11,9 @@ var Playfield = require('./models/playfield'),
     constants = require('./config/constants'),
     debug = require('./debug');
 
+/**
+ * Puts all the pieces together
+ */
 var GameEngine = function() {
     this.activeTetromino = null;
     this.pieceQueue = [];
@@ -129,7 +132,7 @@ GameEngine.prototype.addBlocksToPlayfield = function() {
         blocks[i].color = color;
     }
 
-    // todo: resolve playfield grid vs canvas x,y coordinates
+    // todo: resolve playfield grid vs canvas x,y pixel coordinates
     this.playfield.placeBlocks(blocks);
 };
 
@@ -206,6 +209,7 @@ GameEngine.prototype.rotateActivePiece = function(movement) {
 
 /**
  * Returns destination coordinates for the active tetromino given its current position
+ * by projecting it down the y axis until it colldes with a block or the playfield edge
  */
 GameEngine.prototype.getProjectedDestination = function() {
     var destY = this.activeTetromino.y,
