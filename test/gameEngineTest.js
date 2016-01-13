@@ -20,6 +20,24 @@ describe('GameEngine', function() {
         });
     });
 
+    describe('#update', function() {
+        it('should update all game assets');
+    });
+
+    describe('#getVelocity', function() {
+        it('should determine velocity state', function() {
+            gameEngine.velocity = 50;
+            assert(50 === gameEngine.getVelocity());
+        });
+    });
+
+    describe('#getVelocity', function() {
+        it('should determine accelerated velocity state', function() {
+            gameEngine.accelerate = true;
+            assert(GameEngine.ACCELERATED_VELOCITY == gameEngine.getVelocity());
+        });
+    });
+
     describe('#getProjectedDestination', function() {
         it('should project the destination of a tetromino', function() {
             gameEngine.getNextPiece();
@@ -40,5 +58,13 @@ describe('GameEngine', function() {
             gameEngine.getNextPiece();
             assert.ok(gameEngine.activeTetromino);
         });
+    });
+
+    describe('#moveActivePiece', function() {
+        it('should change the coordinates ');
+    });
+
+    describe('#rotateActivePiece', function() {
+        it('should determine the next tetromino');
     });
 });
