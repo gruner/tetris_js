@@ -46,7 +46,7 @@ $(document).ready(function() {
         ;
 
     for (i = 0; i < iMax; i++) {
-        // TODO: create canvas tag it it doesn't exist
+        // TODO: create canvas tag if it doesn't exist
         if (el[i].nodeName == 'CANVAS') {
             var tetris = new Tetris(el[i]);
             tetris.run();
