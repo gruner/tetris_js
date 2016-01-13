@@ -1,6 +1,6 @@
 'use strict';
 
-var $ = require('jquery'),
+var extend = require('./util/extend'),
     Theme = require('./models/theme');
 
 var ThemeLoader = function(config) {
@@ -15,7 +15,7 @@ ThemeLoader.prototype.extendThemeConfig = function(themeConfig) {
     if (themeConfig && themeConfig.hasOwnProperty('parent')) {
         var parentConfig = this.getThemeConfig(themeConfig.parent);
         if (parentConfig) {
-            themeConfig = $.extend(true, {}, parentConfig, themeConfig);
+            themeConfig = extend.deepExtend(extend.deepExtend({}, parentConfig), themeConfig);
         }
     }
 

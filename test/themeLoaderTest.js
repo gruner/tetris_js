@@ -29,45 +29,38 @@ describe('ThemeLoader', function() {
     });
 
     describe('#getTheme', function() {
-        it('should return default theme', function(done) {
+        it('should return default theme', function() {
             var theme = themeLoader.getTheme('default');
             assert.equal('#001', theme.playfield.color);
             assert.equal("#112", theme.ghostPiece.color);
             assert.equal('#223', theme.tetrominos.i.color);
-
-            done();
         });
     });
 
     describe('#getTheme with no arguments', function() {
-        it('should return default theme', function(done) {
+        it('should return default theme', function() {
             var theme = themeLoader.getTheme();
             assert.equal('#001', theme.playfield.color);
             assert.equal("#112", theme.ghostPiece.color);
             assert.equal('#223', theme.tetrominos.i.color);
-
-            done();
         });
     });
 
     describe('#getTheme with non-existing name', function() {
-        it('should return empty object', function(done) {
+        it('should return hard-coded defaults', function() {
             var theme = themeLoader.getTheme('NO_EXIST');
-            assert.equal({}, theme);
-
-            done();
+            assert.equal('black', theme.playfield.color);
+            assert.equal('blue', theme.tetrominos.o.color);
         });
     });
 
     describe('#extendThemeConfig', function() {
-        it('should return extended theme', function(done) {
+        it('should return extended theme', function() {
             var theme = themeLoader.getTheme('extended');
             assert.equal('#001', theme.playfield.color);
             assert.equal('#556', theme.tetrominos.i.color);
             assert.equal('#334', theme.tetrominos.j.color);
             assert.equal('#445', theme.ghostPiece.color);
-
-            done();
         });
     });
 });

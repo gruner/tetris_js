@@ -22,7 +22,7 @@ describe('Theme', function() {
             assert.strictEqual(Theme.DEFAULT, theme.name);
             assert.strictEqual('-TI-', theme.tetrominos.i.color);
             assert.strictEqual('-TJ-', theme.tetrominos.j.color);
-            assert.strictEqual('red', theme.tetrominos.z.color);
+            assert.strictEqual('magenta', theme.tetrominos.z.color);
         });
     });
 });
