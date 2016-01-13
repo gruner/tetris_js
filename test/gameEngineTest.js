@@ -15,14 +15,13 @@ describe('GameEngine', function() {
     });
 
     describe('#initThemes', function() {
-        it('should initialize with default theme', function(done) {
+        it('should initialize with default theme', function() {
             assert.ok(gameEngine.theme);
-            done();
         });
     });
 
     describe('#getProjectedDestination', function() {
-        it('should project the destination of a tetromino', function(done) {
+        it('should project the destination of a tetromino', function() {
             gameEngine.getNextPiece();
             gameEngine.activeTetromino.move({x:5, y:2});
         
@@ -32,19 +31,14 @@ describe('GameEngine', function() {
 
             assert.equal(5, dest.x);
             assert.equal(22, dest.y); //19
-
-            done();
         });
     });
 
     describe('#getNextPiece', function() {
-        it('should determine the next tetromino', function(done) {
-
+        it('should determine the next tetromino', function() {
             assert.strictEqual(null, gameEngine.activeTetromino);
             gameEngine.getNextPiece();
             assert.ok(gameEngine.activeTetromino);
-
-            done();
         });
     });
 });
