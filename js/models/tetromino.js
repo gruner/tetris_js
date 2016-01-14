@@ -34,6 +34,8 @@ Tetromino.create = function(typeKey) {
         }
 
         return new Tetromino(typeKey, blocks);
+    } else {
+        throw new Error('Cannot create tetromino of type ' + typeKey);
     }
 };
 
@@ -138,6 +140,8 @@ Tetromino.prototype.releaseBlocks = function() {
         var block = this.blocks.shift();
         block.x += this.x;
         block.y += this.y;
+        block.type = this.type; // released blocks reference their original type for styling
+
         blocks.push(block);
     }
 

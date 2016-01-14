@@ -8,7 +8,7 @@ var Block = function(x, y) {
     this.y = y;
     this.width = 1;
     this.height = 1;
-    this.color = null;
+    this.type = null;
 };
 
 /**
