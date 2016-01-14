@@ -123,21 +123,10 @@ GameEngine.prototype.updateDestination = function() {
  * which now belong to the playfield
  */
 GameEngine.prototype.addBlocksToPlayfield = function() {
-    var self = this,
-        color = self.theme.tetrominos[this.activeTetromino.type].color,
-        blocks = this.activeTetromino.releaseBlocks(),
-        i,
-        iMax = blocks.length;
-
-    // It would be nice to handle this color setting without the game
-    // engine having to know about color, but we don't want the models to
-    // have to know about it either
-    for (i = 0; i < iMax; i++) {
-        blocks[i].color = color;
-    }
+    var self = this;
 
     // todo: resolve playfield grid vs canvas x,y pixel coordinates
-    this.playfield.placeBlocks(blocks);
+    this.playfield.placeBlocks(this.activeTetromino.releaseBlocks());
 };
 
 /**
