@@ -36,13 +36,17 @@ Canvas.prototype.bindEvents = function() {
  */
 Canvas.prototype.draw = function() {
     this.drawPlayfield();
-    this.drawBlocks();
+    this.drawRemnantBlocks();
 
     // If animations are in-progress, draw the next frame,
     // otherwise resume normal drawing
     if (!animationQueue.draw()) {
         this.drawGhostPiece(); // has to go before tetromino, so that it's behind it
-        this.drawTetromino(this.gameEngine.activeTetromino);
+        this.drawTetromino(
+            this.gameEngine.activeTetromino,
+            this.gameEngine.getTetrominoStyle(this.gameEngine.activeTetromino.type).color,
+            this.gameEngine.theme.tetrominoBorder
+        );
     }
 };
 
@@ -59,14 +63,19 @@ Canvas.prototype.drawPlayfield = function() {
 };
 
 /**
- * Draws all blocks (pieces of previously dropped tetrominos)
+ * Draws all blocks from previously dropped tetrominos
  */
-Canvas.prototype.drawBlocks = function() {
+Canvas.prototype.drawRemnantBlocks = function() {
     var self = this;
 
     this.gameEngine.playfield.traverseGrid(function(block) {
         if (typeof block !== 'undefined') {
-            self.drawBlock(dimensions.transpose(block.x), dimensions.transpose(block.y), block.color);
+            self.drawBlock(
+                dimensions.transpose(block.x),
+                dimensions.transpose(block.y),
+                this.gameEngine.getTetrominoStyle(block.type).color,
+                this.gameEngine.theme.tetrominoBorder
+            );
         }
     });
 };
@@ -74,18 +83,23 @@ Canvas.prototype.drawBlocks = function() {
 /**
  * Draws a single block
  */
-Canvas.prototype.drawBlock = function(x, y, color) {
-    this.ctx.fillStyle = color;
+Canvas.prototype.drawBlock = function(x, y, fillColor, borderColor) {
+    this.ctx.beginPath();
+
+    this.ctx.fillStyle = fillColor;
     this.ctx.fillRect(x, y, dimensions.gridSize, dimensions.gridSize);
+
+    if (borderColor) {
+        this.ctx.lineWidth = dimensions.blockBorderWidth;
+        this.ctx.strokeStyle = borderColor;
+        this.ctx.strokeRect(x, y, dimensions.gridSize, dimensions.gridSize);
+    }
 };
 
 /**
- * Draws a tetromino in the current theme
- * TODO: Draw the outline of the entire tetromino rather than
- * all of its blocks to prevent gaps between blocks
+ * Draws a tetromino by drawing each of its blocks
  */
-Canvas.prototype.drawTetromino = function(tetromino, color) {
-    color = color || this.gameEngine.theme.tetrominos[tetromino.type].color;
+Canvas.prototype.drawTetromino = function(tetromino, fillColor, borderColor) {
     
     var self = this,
         x, y
@@ -95,24 +109,16 @@ Canvas.prototype.drawTetromino = function(tetromino, color) {
         x = dimensions.transpose(tetromino.x) + dimensions.transpose(block.x);
         y = dimensions.transpose(tetromino.y) + dimensions.transpose(block.y);
 
-        self.drawBlock(x, y, color);
+        self.drawBlock(x, y, fillColor, borderColor);
     });
 };
 
 /**
- * Draws the ghost piece
+ * Draws the ghost piece - the shadow showing where the active piece will come to rest
  */
 Canvas.prototype.drawGhostPiece = function() {
     this.drawTetromino(this.gameEngine.getGhostPiece(), this.gameEngine.theme.ghostPiece.color);
 };
-
-// Canvas.prototype.getTetrominoSprite = function() {
-//     if (typeof this.tetrominoSprite === 'undefined') {
-//         this.tetrominoSprite = new Sprite();
-//     }
-//     this.tetrominoSprite.x = dimensions.transpose(this.gameEngine.activeTetromino.x);
-//     this.tetrominoSprite.y = dimensions.transpose(this.gameEngine.activeTetromino.y);
-// };
 
 /**
  * Handler for the rowComplete event

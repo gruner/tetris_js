@@ -16,6 +16,7 @@ var Theme = function(config) {
         s: {color: "orange"},
         z: {color: "magenta"}
     };
+    this.tetrominoBorder = {color: 'black'};
 
     if (config) {
         extend.deepExtend(this, config);

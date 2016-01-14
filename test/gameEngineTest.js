@@ -1,6 +1,7 @@
 'use strict';
 
 var assert = require('assert'),
+    Tetromino = require('../js/models/tetromino'),
     GameEngine = require('../js/gameEngine'),
     gameEngine;
 
@@ -17,6 +18,21 @@ describe('GameEngine', function() {
     describe('#initThemes', function() {
         it('should initialize with default theme', function() {
             assert.ok(gameEngine.theme);
+        });
+    });
+
+    describe('#getTetrominoStyle', function() {
+        it('should return valid style object', function() {
+            var style = gameEngine.getTetrominoStyle('o');
+            assert.ok(style);
+            assert.ok(style.color);
+        });
+    });
+
+    describe('#getTetrominoStyle', function() {
+        it('should return null', function() {
+            var style = gameEngine.getTetrominoStyle('NO_EXIST');
+            assert(null === style);
         });
     });
 
@@ -40,15 +56,35 @@ describe('GameEngine', function() {
 
     describe('#getProjectedDestination', function() {
         it('should project the destination of a tetromino', function() {
-            gameEngine.getNextPiece();
-            gameEngine.activeTetromino.move({x:5, y:2});
-        
-            var dest = gameEngine.getProjectedDestination();
-        
-            //console.log(dest);
 
-            assert.equal(5, dest.x);
-            assert.equal(22, dest.y); //19
+            var data = [
+                {
+                    type: 'i',
+                    x: 5,
+                    y: 2,
+                    expectedX: 5,
+                    expectedY: 20
+                }
+                // {
+                //     type: 'o',
+                //     x: 10,
+                //     y: 2,
+                //     expectedX: 10,
+                //     expectedY: 19
+                // }
+            ];
+
+            for (var i = 0; i < data.length; i++) {
+                var testData = data[i];
+
+                gameEngine.activeTetromino = Tetromino.create(testData.type);
+                gameEngine.activeTetromino.move({x: testData.x, y: testData.y});
+        
+                var dest = gameEngine.getProjectedDestination();
+
+                assert.equal(testData.expectedX, dest.x);
+                assert.equal(testData.expectedY, dest.y);
+            }
         });
     });
 

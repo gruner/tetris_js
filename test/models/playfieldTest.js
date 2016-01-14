@@ -24,7 +24,10 @@ describe('Playfield', function() {
             assert(true === playfield.cellInBounds(0,0));
             assert(true === playfield.cellInBounds(1,1));
             assert(true === playfield.cellInBounds(5,6));
+            assert(true === playfield.cellInBounds(9,19));
 
+            assert(false === playfield.cellInBounds(9,20));
+            assert(false === playfield.cellInBounds(10,19));
             assert(false === playfield.cellInBounds(10,20));
             assert(false === playfield.cellInBounds(11,20));
             assert(false === playfield.cellInBounds(10,21));

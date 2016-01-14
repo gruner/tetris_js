@@ -15,7 +15,8 @@ module.exports = {
             l: {color: "#eec857"}, // yellow
             s: {color: "#e07a46"}, // orange
             z: {color: "#e07a46"}  // orange
-        }
+        },
+        tetrominoBorder: {color: "#000000"}
     },
     level1: {
         parent: 'default'

@@ -45,6 +45,10 @@ GameEngine.prototype.initThemes = function() {
     this.theme = themeLoader.getTheme();
 };
 
+GameEngine.prototype.getTetrominoStyle = function(type) {
+    return this.theme.tetrominos[type] ? this.theme.tetrominos[type] : null;
+};
+
 GameEngine.prototype.bindEvents = function() {
     var self = this;
 
