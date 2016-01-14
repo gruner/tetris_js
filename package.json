@@ -20,9 +20,11 @@
     "grunt-contrib-clean": "latest",
     "grunt-contrib-copy": "latest",
     "grunt-contrib-uglify": "latest",
-    "grunt-contrib-watch": "latest"
+    "grunt-contrib-watch": "latest",
+    "grunt-mocha-test": "^0.12.7",
+    "mocha": "^2.3.4"
   },
-    "scripts": {
-      "test": "mocha"
+  "scripts": {
+    "test": "mocha"
   }
 }

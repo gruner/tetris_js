@@ -1,12 +1,13 @@
 'use strict';
 module.exports = function(grunt) {
-  grunt.loadNpmTasks('grunt-contrib-watch');
   grunt.loadNpmTasks('grunt-browserify');
-  grunt.loadNpmTasks('grunt-contrib-uglify');
-  grunt.loadNpmTasks('grunt-contrib-copy');
   grunt.loadNpmTasks('grunt-contrib-clean');
+  grunt.loadNpmTasks('grunt-contrib-copy');
+  grunt.loadNpmTasks('grunt-contrib-uglify');
+  grunt.loadNpmTasks('grunt-contrib-watch');
+  grunt.loadNpmTasks('grunt-mocha-test');
 
-  grunt.registerTask('default', ['browserify', 'watch']);
+  grunt.registerTask('default', ['build', 'watch:js']);
 
   grunt.registerTask('build', [
     'clean',
@@ -26,8 +27,14 @@ module.exports = function(grunt) {
     },
     
     watch: {
-      files: 'js/*',
-      tasks: ['default']
+      js: {
+        files: 'js/**/*.js',
+        tasks: ['build', 'mochaTest']
+      },
+      ci: {
+        files: ['js/**/*.js', 'test/**/*.js'],
+        tasks: ['mochaTest']
+      }
     },
     
     clean: {
@@ -55,6 +62,15 @@ module.exports = function(grunt) {
         files: {
           'dist/js/tetris.js': ['dist/js/tetris.js']
         }
+      }
+    },
+
+    mochaTest: {
+      test: {
+        options: {
+          reporter: 'spec',
+        },
+        src: ['test/**/*.js']
       }
     }
 
