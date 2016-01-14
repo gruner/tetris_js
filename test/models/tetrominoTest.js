@@ -11,6 +11,46 @@ describe('Tetromino', function() {
         tetromino = Tetromino.create(TYPE);
     });
 
+    describe('#validateCoordinates', function() {
+        it('should validate coordinates have x and y integers', function() {
+
+            var testSets = [
+                {
+                    coordinates: {x: 0, y: 0},
+                    expected: true
+                },
+                {
+                    coordinates: {x: 1, y: 0},
+                    expected: true
+                },
+                {
+                    coordinates: {x: 0, y: 1},
+                    expected: true
+                },
+                {
+                    coordinates: {x: 1.1, y: 1},
+                    expected: false
+                },
+                {
+                    coordinates: {x: '1', y: 1},
+                    expected: false
+                },
+                {
+                    coordinates: {x: 1.1, y: 1},
+                    expected: false
+                },
+                {
+                    coordinates: {y: 1},
+                    expected: false
+                }
+            ];
+            for (var i = 0; i < testSets.length; i++) {
+                var set = testSets[i];
+                assert(set.expected === tetromino.validateCoordinates(set.coordinates));
+            };
+        });
+    });    
+
     describe('#moveByOffset', function() {
         it('should move dimensions by given offset', function() {
             tetromino.x = 10;
@@ -65,6 +105,14 @@ describe('Tetromino', function() {
             assert.strictEqual(10, blocks[0].y);
             assert.strictEqual(11, blocks[1].x);
             assert.strictEqual(10, blocks[1].y);
+        });
+    });
+
+    describe('#getBlockCoordinatesForOffset', function() {
+        it('should return array of block coordinates', function() {
+            tetromino.x = 10;
+            tetromino.y = 10;
+            var coordinates = tetromino.getBlockCoordinatesForOffset(1,1);
         });
     });
 

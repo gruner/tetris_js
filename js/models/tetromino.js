@@ -70,6 +70,16 @@ Tetromino.randomizeNextBag = function() {
     return shuffle(tetrominos.getTypeKeys());
 };
 
+Tetromino.prototype.validateCoordinates = function(coordinates) {
+    var valid = (coordinates.hasOwnProperty('x') 
+        && coordinates.hasOwnProperty('y')
+        && Number.isInteger(coordinates.x)
+        && Number.isInteger(coordinates.y)
+    );
+
+    return valid;
+};
+
 /**
  * Increments the x and y coordinates by the given offsets
  */
