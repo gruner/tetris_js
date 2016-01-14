@@ -2,12 +2,13 @@
 
 var assert = require('assert'),
     Tetromino = require('../../js/models/tetromino'),
-    tetromino;
+    tetromino,
+    TYPE = 'o';
 
 describe('Tetromino', function() {
 
     beforeEach(function() {
-        tetromino = Tetromino.create('o');
+        tetromino = Tetromino.create(TYPE);
     });
 
     describe('#moveByOffset', function() {
@@ -75,6 +76,15 @@ describe('Tetromino', function() {
             var blocks = tetromino.getBlockCoordinatesForRotation();
 
             assert(4 === blocks.length);
+        });
+    });
+
+    describe('#releaseBlocks', function() {
+        it('should return blocks with the type property', function() {
+            var blocks = tetromino.releaseBlocks();
+
+            assert(blocks.length === 4);
+            assert(blocks[0].type === TYPE);
         });
     });
 
