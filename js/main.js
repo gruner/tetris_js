@@ -36,6 +36,10 @@ var $ = require('jquery')
     ,Tetris  = require('./tetris')
     ,debug = require('./debug')
     ;
+
+// Globally enable
+debug.enable();
+
 /**
  * Initializes game on the DOM
  */

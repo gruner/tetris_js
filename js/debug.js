@@ -1,10 +1,10 @@
 'use strict';
 
-var loggingOn = false;
+var enabled = false;
 
-function toggleLogging(on) {
+function toggle(on) {
     if (consoleAvailable()) {
-        loggingOn = (typeof on === 'undefined') ? !loggingOn : !!on;
+        enabled = (typeof on === 'undefined') ? !enabled : !!on;
     }
 }
 
@@ -14,17 +14,21 @@ function consoleAvailable() {
 
 module.exports = {
     log: function(msg) {
-        if (loggingOn && typeof console !== 'undefined') {
+        if (enabled && typeof console !== 'undefined') {
             console.log(msg);
         }
     },
 
-    enableLogging: function() {
-        toggleLogging(true);
+    enable: function() {
+        toggle(true);
     },
 
-    disableLogging: function() {
-        toggleLogging(false);
+    disable: function() {
+        toggle(false);
+    },
+
+    enabled: function() {
+        return enabled === true;
     },
     
     profile: function(name, callback) {
