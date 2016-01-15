@@ -29,8 +29,12 @@ Tetromino.create = function(typeKey) {
         var blocks = [];
 
         for (var i = 0; i < type.blocks.length; i++) {
-            var dims = type.blocks[i];
-            blocks.push(new Block(dims.x, dims.y));
+            var coordinates = type.blocks[i];
+            if (Tetromino.validateCoordinates(coordinates)) {
+                blocks.push(new Block(coordinates.x, coordinates.y));
+            } else {
+                throw new Error('Invalid block coordinates');
+            }
         }
 
         return new Tetromino(typeKey, blocks);
@@ -70,12 +74,20 @@ Tetromino.randomizeNextBag = function() {
     return shuffle(tetrominos.getTypeKeys());
 };
 
-Tetromino.prototype.validateCoordinates = function(coordinates) {
+/**
+ * Checks that the given object has proper x and y values
+ */
+Tetromino.validateCoordinates = function(coordinates) {
     var valid = (coordinates.hasOwnProperty('x') 
         && coordinates.hasOwnProperty('y')
         && Number.isInteger(coordinates.x)
         && Number.isInteger(coordinates.y)
     );
+
+    if (!valid) {
+        debug.log('Invalid coordinates:');
+        debug.log(coordinates);
+    }
 
     return valid;
 };
@@ -83,17 +95,19 @@ Tetromino.prototype.validateCoordinates = function(coordinates) {
 /**
  * Increments the x and y coordinates by the given offsets
  */
-Tetromino.prototype.moveByOffset = function(xOffset, yOffset) {
-    this.x += xOffset;
-    this.y += yOffset;
+Tetromino.prototype.moveByOffset = function(coordinates) {
+    if (Tetromino.validateCoordinates(coordinates)) {
+        this.x += coordinates.x;
+        this.y += coordinates.y;
+    }
 };
 
 /**
- * Replaces the tetromino coordinats with the given coordinates
+ * Replaces the tetromino coordinates with the given coordinates
  * e.g. tetromino.move({x:3, y:7});
  */
 Tetromino.prototype.move = function(coordinates) {
-    if (coordinates.hasOwnProperty('x') && coordinates.hasOwnProperty('y')) {
+    if (Tetromino.validateCoordinates(coordinates)) {
         this.x = coordinates.x;
         this.y = coordinates.y;
     }
@@ -109,6 +123,13 @@ Tetromino.prototype.update = function(yOffset) {
         this.y = newY;
     } else {
         this.y = this.destinationY;
+    }
+};
+
+Tetromino.prototype.setDestination = function(coordinates) {
+    if (Tetromino.validateCoordinates(coordinates)) {
+        this.destinationX = coordinates.x;
+        this.destinationY = coordinates.y;    
     }
 };
 
@@ -161,9 +182,14 @@ Tetromino.prototype.releaseBlocks = function() {
 /**
  * Returns array of coordinates for each block, calculated from offset x and y
  */
-Tetromino.prototype.getBlockCoordinatesForOffset = function(xOffset, yOffset) {
-    var projectedX = this.x + xOffset,
-        projectedY = this.y + yOffset,
+Tetromino.prototype.getBlockCoordinatesForOffset = function(coordinates) {
+
+    if (!Tetromino.validateCoordinates(coordinates)) {
+        return;
+    }
+
+    var projectedX = this.x + coordinates.x,
+        projectedY = this.y + coordinates.y,
         coordinates = []
         ;
 

@@ -74,11 +74,16 @@ GameEngine.prototype.bindEvents = function() {
  * Calls update on all game assets.
  */
 GameEngine.prototype.update = function() {
-    this.activeTetromino.update(this.getVelocity());
+    
+    this.velocityCounter += this.getVelocity();
+    if (this.velocityCounter >= 1) {
+        this.activeTetromino.update(1);
+        this.velocityCounter = 0;
+    }
+
     this.updateDestination();
 
     if (this.activeTetromino.atDestination()) {
-        
         eventDispatcher.trigger(events.activePiecePositioned);
 
         // Convert tetromino into component blocks
@@ -100,6 +105,8 @@ GameEngine.prototype.update = function() {
     }
 };
 
+GameEngine.prototype.velocityCounter = 0;
+
 /**
  * Returns the velocity for the current state,
  * checking if in accelerated mode (i.e. down button being pressed)
@@ -113,9 +120,7 @@ GameEngine.prototype.getVelocity = function() {
  * based on its current location
  */
 GameEngine.prototype.updateDestination = function() {
-    var dest = this.getProjectedDestination();
-    this.activeTetromino.destinationX = dest.x;
-    this.activeTetromino.destinationY = dest.y;
+    this.activeTetromino.setDestination(this.getProjectedDestination());
 };
 
 /**
@@ -125,8 +130,11 @@ GameEngine.prototype.updateDestination = function() {
 GameEngine.prototype.addBlocksToPlayfield = function() {
     var self = this;
 
+    var blocks = this.activeTetromino.releaseBlocks();
+    debug.log(blocks);
+
     // todo: resolve playfield grid vs canvas x,y pixel coordinates
-    this.playfield.placeBlocks(this.activeTetromino.releaseBlocks());
+    this.playfield.placeBlocks(blocks);
 };
 
 /**
@@ -138,7 +146,7 @@ GameEngine.prototype.getNextPiece = function() {
     }
     this.refreshPieceQueue();
     this.activeTetromino = Tetromino.create(this.pieceQueue.shift());
-    this.updateDestination();
+    //this.updateDestination();
 };
 
 /**
@@ -172,13 +180,14 @@ GameEngine.prototype.moveActivePiece = function(movement) {
     } else if (movement.direction === constants.DIRECTION_DOWN) {
         yOffset = 1;
     } else {
+        debug.log('moveActivePiece: invalid move');
         return;
     }
 
-    coordinates = this.activeTetromino.getBlockCoordinatesForOffset(xOffset, yOffset);
+    coordinates = this.activeTetromino.getBlockCoordinatesForOffset({x:xOffset, y:yOffset});
     
     if (this.playfield.validateBlockPlacement(coordinates)) {
-        this.activeTetromino.moveByOffset(xOffset, yOffset);
+        this.activeTetromino.moveByOffset({x:xOffset, y:yOffset});
     } else {
         eventDispatcher.trigger(events.invalidMove, {});
     }
@@ -211,11 +220,12 @@ GameEngine.prototype.getProjectedDestination = function() {
         ;
 
     while(valid) {
-        coordinates = this.activeTetromino.getBlockCoordinatesForOffset(0, destY);
+        destY++;
+        coordinates = this.activeTetromino.getBlockCoordinatesForOffset({x:0, y:destY});
         valid = this.playfield.validateBlockPlacement(coordinates);
-        if (valid) {
-            destY++;
-        }
+        // if (valid) {
+        //     destY++;
+        // }
     }
 
     return {

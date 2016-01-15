@@ -64,15 +64,18 @@ describe('GameEngine', function() {
                     y: 2,
                     expectedX: 5,
                     expectedY: 20
+                },
+                {
+                    type: 'o',
+                    x: 6,
+                    y: 2,
+                    expectedX: 6,
+                    expectedY: 19
                 }
-                // {
-                //     type: 'o',
-                //     x: 10,
-                //     y: 2,
-                //     expectedX: 10,
-                //     expectedY: 19
-                // }
             ];
+
+            assert(gameEngine.playfield.yCount === 22);
+            assert(gameEngine.playfield.grid.length === 22);
 
             for (var i = 0; i < data.length; i++) {
                 var testData = data[i];
