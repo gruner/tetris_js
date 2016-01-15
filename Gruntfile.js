@@ -11,10 +11,20 @@ module.exports = function(grunt) {
 
   grunt.registerTask('build', [
     'clean',
-    'browserify',
+    'browserify:main',
     'uglify',
     'copy'
   ]);
+
+  // grunt.registerTask('buildDebug', function() {
+  //   var tasks = ['build'];
+
+  //   if (grunt.option('debug')) {
+  //     tasks.append('browserify:debug');
+  //   }
+
+  //   grunt.task.run(tasks);
+  // });
 
   grunt.initConfig({
     pkg: grunt.file.readJSON('package.json'),
@@ -23,6 +33,10 @@ module.exports = function(grunt) {
       main: {
         src: 'js/main.js',
         dest: 'dist/js/tetris.js'
+      },
+      debug: {
+        src: 'js/main.js',
+        dest: 'dist/js/tetris.debug.js'
       }
     },
     
@@ -60,7 +74,7 @@ module.exports = function(grunt) {
       },
       dist: {
         files: {
-          'dist/js/tetris.js': ['dist/js/tetris.js']
+          'dist/js/tetris.min.js': ['dist/js/tetris.js']
         }
       }
     },
