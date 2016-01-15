@@ -73,8 +73,8 @@ Canvas.prototype.drawRemnantBlocks = function() {
             self.drawBlock(
                 dimensions.transpose(block.x),
                 dimensions.transpose(block.y),
-                this.gameEngine.getTetrominoStyle(block.type).color,
-                this.gameEngine.theme.tetrominoBorder
+                self.gameEngine.getTetrominoStyle(block.type).color,
+                self.gameEngine.theme.tetrominoBorder
             );
         }
     });
