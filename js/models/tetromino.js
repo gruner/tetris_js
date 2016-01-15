@@ -3,6 +3,7 @@
 var Block = require('./block'),
     tetrominos = require('./tetrominoTypes'),
     constants = require('../config/constants'),
+    Validate = require('../util/validate'),
     debug = require('../debug');
 
 /**
@@ -30,7 +31,7 @@ Tetromino.create = function(typeKey) {
 
         for (var i = 0; i < type.blocks.length; i++) {
             var coordinates = type.blocks[i];
-            if (Tetromino.validateCoordinates(coordinates)) {
+            if (Validate.coordinates(coordinates)) {
                 blocks.push(new Block(coordinates.x, coordinates.y));
             } else {
                 throw new Error('Invalid block coordinates');
@@ -75,28 +76,10 @@ Tetromino.randomizeNextBag = function() {
 };
 
 /**
- * Checks that the given object has proper x and y values
- */
-Tetromino.validateCoordinates = function(coordinates) {
-    var valid = (coordinates.hasOwnProperty('x') 
-        && coordinates.hasOwnProperty('y')
-        && Number.isInteger(coordinates.x)
-        && Number.isInteger(coordinates.y)
-    );
-
-    if (!valid) {
-        debug.log('Invalid coordinates:');
-        debug.log(coordinates);
-    }
-
-    return valid;
-};
-
-/**
  * Increments the x and y coordinates by the given offsets
  */
 Tetromino.prototype.moveByOffset = function(coordinates) {
-    if (Tetromino.validateCoordinates(coordinates)) {
+    if (Validate.coordinates(coordinates)) {
         this.x += coordinates.x;
         this.y += coordinates.y;
     }
@@ -107,7 +90,7 @@ Tetromino.prototype.moveByOffset = function(coordinates) {
  * e.g. tetromino.move({x:3, y:7});
  */
 Tetromino.prototype.move = function(coordinates) {
-    if (Tetromino.validateCoordinates(coordinates)) {
+    if (Validate.coordinates(coordinates)) {
         this.x = coordinates.x;
         this.y = coordinates.y;
     }
@@ -127,7 +110,7 @@ Tetromino.prototype.update = function(yOffset) {
 };
 
 Tetromino.prototype.setDestination = function(coordinates) {
-    if (Tetromino.validateCoordinates(coordinates)) {
+    if (Validate.coordinates(coordinates)) {
         this.destinationX = coordinates.x;
         this.destinationY = coordinates.y;    
     }
@@ -184,7 +167,7 @@ Tetromino.prototype.releaseBlocks = function() {
  */
 Tetromino.prototype.getBlockCoordinatesForOffset = function(coordinates) {
 
-    if (!Tetromino.validateCoordinates(coordinates)) {
+    if (!Validate.coordinates(coordinates)) {
         return;
     }
 

@@ -1,6 +1,7 @@
 'use strict';
 
-var debug = require('../debug');
+var debug = require('../debug'),
+    Validate = require('../util/validate');
 
 /**
  * Models the state of the playfield game grid.
@@ -176,10 +177,9 @@ Playfield.prototype.validateBlockPlacement = function(blocks) {
  */
 Playfield.prototype.validateBlock = function(block) {
     return (
-        block.hasOwnProperty('x') &&
-        block.hasOwnProperty('y') &&
-        this.cellInBounds(block.x, block.y) &&
-        this.cellEmpty(block.x, block.y)
+        Validate.coordinates(block)
+        && this.cellInBounds(block.x, block.y)
+        && this.cellEmpty(block.x, block.y)
     );
 };
 

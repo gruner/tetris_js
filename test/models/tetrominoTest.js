@@ -9,47 +9,7 @@ describe('Tetromino', function() {
 
     beforeEach(function() {
         tetromino = Tetromino.create(TYPE);
-    });
-
-    describe('#validateCoordinates', function() {
-        it('should validate coordinates have x and y integers', function() {
-
-            var testSets = [
-                {
-                    coordinates: {x: 0, y: 0},
-                    expected: true
-                },
-                {
-                    coordinates: {x: 1, y: 0},
-                    expected: true
-                },
-                {
-                    coordinates: {x: 0, y: 1},
-                    expected: true
-                },
-                {
-                    coordinates: {x: 1.1, y: 1},
-                    expected: false
-                },
-                {
-                    coordinates: {x: '1', y: 1},
-                    expected: false
-                },
-                {
-                    coordinates: {x: 1.1, y: 1},
-                    expected: false
-                },
-                {
-                    coordinates: {y: 1},
-                    expected: false
-                }
-            ];
-            for (var i = 0; i < testSets.length; i++) {
-                var set = testSets[i];
-                assert(set.expected === Tetromino.validateCoordinates(set.coordinates));
-            };
-        });
-    });    
+    });   
 
     describe('#moveByOffset', function() {
         it('should move dimensions by given offset', function() {
