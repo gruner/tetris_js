@@ -15,8 +15,7 @@ var Tetromino = function(type, blocks) {
     this.y = 0;
     this.type = type;
     this.blocks = blocks;
-    this.destinationX = null;
-    this.destinationY = null;
+    this.destination = null;
 };
 
 /**
@@ -102,17 +101,16 @@ Tetromino.prototype.move = function(coordinates) {
  */
 Tetromino.prototype.update = function(yOffset) {
     var newY = this.y + yOffset;
-    if (newY <= this.destinationY) {
+    if (newY <= this.destination.y) {
         this.y = newY;
     } else {
-        this.y = this.destinationY;
+        this.y = this.destination.y;
     }
 };
 
 Tetromino.prototype.setDestination = function(coordinates) {
     if (Validate.coordinates(coordinates)) {
-        this.destinationX = coordinates.x;
-        this.destinationY = coordinates.y;    
+        this.destination = coordinates;  
     }
 };
 
@@ -121,7 +119,7 @@ Tetromino.prototype.setDestination = function(coordinates) {
  * @return bool
  */
 Tetromino.prototype.atDestination = function() {
-    return (this.y >= this.destinationY);
+    return (this.y >= this.destination.y);
 };
 
 /**

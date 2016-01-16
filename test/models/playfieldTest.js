@@ -21,20 +21,19 @@ describe('Playfield', function() {
 
     describe('#cellInBounds', function() {
         it('should calculate if a cell exists within the playfield bounds', function() {
-            assert(true === playfield.cellInBounds(0,0));
-            assert(true === playfield.cellInBounds(1,1));
-            assert(true === playfield.cellInBounds(5,6));
-            assert(true === playfield.cellInBounds(9,19));
+            assert(true === playfield.cellInBounds({x:0, y:0}));
+            assert(true === playfield.cellInBounds({x:1, y:1}));
+            assert(true === playfield.cellInBounds({x:5, y:6}));
+            assert(true === playfield.cellInBounds({x:9, y:19}));
 
-            assert(false === playfield.cellInBounds(9,20));
-            assert(false === playfield.cellInBounds(10,19));
-            assert(false === playfield.cellInBounds(10,20));
-            assert(false === playfield.cellInBounds(11,20));
-            assert(false === playfield.cellInBounds(10,21));
-            assert(false === playfield.cellInBounds(11,21));
-            assert(false === playfield.cellInBounds(50,50));
-            assert(false === playfield.cellInBounds(1000,1000));
-            
+            assert(false === playfield.cellInBounds({x:9, y:20}));
+            assert(false === playfield.cellInBounds({x:10, y:19}));
+            assert(false === playfield.cellInBounds({x:10, y:20}));
+            assert(false === playfield.cellInBounds({x:11, y:20}));
+            assert(false === playfield.cellInBounds({x:10, y:21}));
+            assert(false === playfield.cellInBounds({x:11, y:21}));
+            assert(false === playfield.cellInBounds({x:50, y:50}));
+            assert(false === playfield.cellInBounds({x:1000, y:1000}));
         });
     });
 
@@ -175,37 +174,37 @@ describe('Playfield', function() {
 
     describe('#cellEmpty', function() {
         it('should return true', function() {
-            assert(playfield.cellEmpty(0,0));
-            assert(playfield.cellEmpty(5,6));
+            assert(playfield.cellEmpty({x:0, y:0}));
+            assert(playfield.cellEmpty({x:5, y:6}));
         });
     });
 
     describe('#cellEmpty', function() {
         it('should return false', function() {
             playfield.grid[0] = [0,1,2,3,4];
-            assert(false === playfield.cellEmpty(0,0));
-            assert(false === playfield.cellEmpty(4,0));
+            assert(false === playfield.cellEmpty({x:0, y:0}));
+            assert(false === playfield.cellEmpty({x:4, y:0}));
         });
     });
 
     describe('#cellEmpty', function() {
         it('should return false when out of bounds', function() {
-            assert(false === playfield.cellEmpty(COL_COUNT + 10, ROW_COUNT + 10));
+            assert(false === playfield.cellEmpty({x:COL_COUNT + 10, y:ROW_COUNT + 10}));
         });
     });
 
     describe('#cellInBounds', function() {
         it('should return true when cell is in bounds', function() {
-            assert(playfield.cellInBounds(0, 0));
-            assert(playfield.cellInBounds(COL_COUNT - 1, ROW_COUNT - 1));
+            assert(playfield.cellInBounds({x:0, y:0}));
+            assert(playfield.cellInBounds({x:COL_COUNT - 1, y:ROW_COUNT - 1}));
         });
     });
 
     describe('#cellInBounds', function() {
         it('should return false when cell is out of bounds', function() {
-            assert(false === playfield.cellInBounds(COL_COUNT, ROW_COUNT));
-            assert(false === playfield.cellInBounds(COL_COUNT + 1, ROW_COUNT + 1));
-            assert(false === playfield.cellInBounds(-1, -1));
+            assert(false === playfield.cellInBounds({x:COL_COUNT, y:ROW_COUNT}));
+            assert(false === playfield.cellInBounds({x:COL_COUNT + 1, y:ROW_COUNT + 1}));
+            assert(false === playfield.cellInBounds({x:-1, y:-1}));
         });
     });
 

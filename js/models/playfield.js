@@ -133,11 +133,11 @@ Playfield.prototype.getCompletedRows = function() {
  * Checks that a cell is empty
  * @return bool
  */
-Playfield.prototype.cellEmpty = function(x, y) {
+Playfield.prototype.cellEmpty = function(cell) {
     var empty = false;
 
-    if (this.cellInBounds(x, y)) {
-        if (typeof this.grid[y] === 'undefined' || typeof this.grid[y][x] === 'undefined') {
+    if (this.cellInBounds(cell)) {
+        if (typeof this.grid[cell.y] === 'undefined' || typeof this.grid[cell.y][cell.x] === 'undefined') {
             empty = true;
         }
     }
@@ -149,8 +149,8 @@ Playfield.prototype.cellEmpty = function(x, y) {
  * Checks that a cell is in the bounds of the playfield
  * @return bool
  */
-Playfield.prototype.cellInBounds = function(x, y) {
-    return (y >= 0 && y < this.yCount && x >= 0 && x < this.xCount);
+Playfield.prototype.cellInBounds = function(cell) {
+    return (cell.y >= 0 && cell.y < this.yCount && cell.x >= 0 && cell.x < this.xCount);
 };
 
 /**
@@ -178,8 +178,8 @@ Playfield.prototype.validateBlockPlacement = function(blocks) {
 Playfield.prototype.validateBlock = function(block) {
     return (
         Validate.coordinates(block)
-        && this.cellInBounds(block.x, block.y)
-        && this.cellEmpty(block.x, block.y)
+        && this.cellInBounds(block)
+        && this.cellEmpty(block)
     );
 };
 

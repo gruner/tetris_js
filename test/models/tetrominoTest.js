@@ -26,7 +26,7 @@ describe('Tetromino', function() {
         it('', function() {
             tetromino.x = 10;
             tetromino.y = 10;
-            tetromino.destinationY = 100;
+            tetromino.destination = {y:100};
             tetromino.update(10);
 
             assert.strictEqual(10, tetromino.x);
@@ -37,7 +37,7 @@ describe('Tetromino', function() {
     describe('#atDestination', function() {
         it('should return false if not at the specified destination', function() {
             tetromino.y = 9;
-            tetromino.destinationY = 10;
+            tetromino.destination = {y:10};
             
             assert(false === tetromino.atDestination());
         });
@@ -46,7 +46,7 @@ describe('Tetromino', function() {
     describe('#atDestination', function() {
         it('should return true if at the specified destination', function() {
             tetromino.y = 10;
-            tetromino.destinationY = 10;
+            tetromino.destination = {y:10};
             
             assert(true === tetromino.atDestination());
             tetromino.y++;

@@ -9,6 +9,7 @@ var Playfield = require('./models/playfield'),
     eventDispatcher = require('./eventDispatcher'),
     events = require('./config/events'),
     constants = require('./config/constants'),
+    features = require('./config/features'),
     debug = require('./debug');
 
 /**
@@ -74,6 +75,11 @@ GameEngine.prototype.bindEvents = function() {
  * Calls update on all game assets.
  */
 GameEngine.prototype.update = function() {
+
+    if (features.enabled('testMovementMode')) { 
+        this.updateDestination();
+        return;
+    }
     
     this.velocityCounter += this.getVelocity();
     if (this.velocityCounter >= 1) {
@@ -169,25 +175,26 @@ GameEngine.prototype.topOut = function() {};
  * after verifying that the move is valid.
  */
 GameEngine.prototype.moveActivePiece = function(movement) {
-    var xOffset = 0,
-        yOffset = 0,
-        coordinates;
+    var offsetCoordinates = {x:0, y:0},
+        blockOffsetCoordinates;
 
     if (movement.direction === constants.DIRECTION_LEFT) {
-        xOffset = -1;
+        offsetCoordinates.x = -1;
     } else if (movement.direction === constants.DIRECTION_RIGHT) {
-        xOffset = 1;
+        offsetCoordinates.x = 1;
     } else if (movement.direction === constants.DIRECTION_DOWN) {
-        yOffset = 1;
+        offsetCoordinates.y = 1;
+    } else if (movement.direction === constants.DIRECTION_UP && features.enabled('testMovementMode')) {
+        offsetCoordinates.y = -1;
     } else {
         debug.log('moveActivePiece: invalid move');
         return;
     }
 
-    coordinates = this.activeTetromino.getBlockCoordinatesForOffset({x:xOffset, y:yOffset});
+    blockOffsetCoordinates = this.activeTetromino.getBlockCoordinatesForOffset(offsetCoordinates);
     
-    if (this.playfield.validateBlockPlacement(coordinates)) {
-        this.activeTetromino.moveByOffset({x:xOffset, y:yOffset});
+    if (this.playfield.validateBlockPlacement(blockOffsetCoordinates)) {
+        this.activeTetromino.moveByOffset(offsetCoordinates);
     } else {
         eventDispatcher.trigger(events.invalidMove, {});
     }

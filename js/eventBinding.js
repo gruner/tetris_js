@@ -3,6 +3,7 @@
 var $ = require('jquery'),
     dispatcher = require('./eventDispatcher'),
     constants = require('./config/constants'),
+    features = require('./config/features'),
     events = require('./config/events');
 
 var keyCodes = {
@@ -23,7 +24,11 @@ var eventBinding = {
             } else if (code === keyCodes.down) {
                 dispatcher.trigger(events.moveActivePiece, {direction: constants.DIRECTION_DOWN}, this);
             } else if (code === keyCodes.up) {
-                dispatcher.trigger(events.rotateActivePiece, {direction: constants.DIRECTION_LEFT}, this);
+                if (features.enabled('testMovementMode')) {
+                    dispatcher.trigger(events.moveActivePiece, {direction: constants.DIRECTION_UP}, this);
+                } else {
+                    dispatcher.trigger(events.rotateActivePiece, {direction: constants.DIRECTION_LEFT}, this);    
+                }
             }
         });
     },
