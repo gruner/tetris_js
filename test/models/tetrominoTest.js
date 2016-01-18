@@ -22,17 +22,18 @@ describe('Tetromino', function() {
         });
     });
 
-    describe('#update', function() {
-        it('', function() {
-            tetromino.x = 10;
-            tetromino.y = 10;
-            tetromino.destination = {y:100};
-            tetromino.update(10);
+    // DEPRICATED
+    // describe('#update', function() {
+    //     it('', function() {
+    //         tetromino.x = 10;
+    //         tetromino.y = 10;
+    //         tetromino.destination = {y:100};
+    //         tetromino.update(10);
 
-            assert.strictEqual(10, tetromino.x);
-            assert.strictEqual(20, tetromino.y);
-        });
-    });
+    //         assert.strictEqual(10, tetromino.x);
+    //         assert.strictEqual(20, tetromino.y);
+    //     });
+    // });
 
     describe('#atDestination', function() {
         it('should return false if not at the specified destination', function() {
@@ -85,6 +86,28 @@ describe('Tetromino', function() {
             assert.equal(12, coordinates[2].y);
 
             assert.equal(12, coordinates[3].x);
+            assert.equal(12, coordinates[3].y);
+        });
+    });
+
+    describe('#getBlockCoordinatesForOffset', function() {
+        it('should return array of block coordinates', function() {
+            var tetromino = Tetromino.create('i');
+            tetromino.x = 10;
+            tetromino.y = 11;
+            var coordinates = tetromino.getBlockCoordinatesForOffset({x:0, y:1});
+
+            assert(4 === coordinates.length);
+            assert.equal(10, coordinates[0].x);
+            assert.equal(12, coordinates[0].y);
+
+            assert.equal(11, coordinates[1].x);
+            assert.equal(12, coordinates[1].y);
+
+            assert.equal(12, coordinates[2].x);
+            assert.equal(12, coordinates[2].y);
+
+            assert.equal(13, coordinates[3].x);
             assert.equal(12, coordinates[3].y);
         });
     });

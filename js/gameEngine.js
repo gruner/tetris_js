@@ -22,6 +22,7 @@ var GameEngine = function() {
     this.level = 0;
     this.velocity = 0.05;
     this.accelerate = false;
+    this.paused = false;
     this.playfield = new Playfield(
         Playfield.defaults.xCount,
         Playfield.defaults.yCount
@@ -38,6 +39,9 @@ GameEngine.ACCELERATED_VELOCITY = 0.5;
 GameEngine.prototype.init = function() {
     this.bindEvents();
     this.getNextPiece();
+    if (features.enabled('initWithRemnants')) {
+        this.playfield.distributeRandomBlocks(20);
+    }
 };
 
 GameEngine.prototype.initThemes = function() {
@@ -46,10 +50,16 @@ GameEngine.prototype.initThemes = function() {
     this.theme = themeLoader.getTheme();
 };
 
+/**
+ * Returns the configured theme style for the given tetromino type
+ */
 GameEngine.prototype.getTetrominoStyle = function(type) {
     return this.theme.tetrominos[type] ? this.theme.tetrominos[type] : null;
 };
 
+/**
+ * Binds to global events
+ */
 GameEngine.prototype.bindEvents = function() {
     var self = this;
 
@@ -68,50 +78,71 @@ GameEngine.prototype.bindEvents = function() {
     eventDispatcher.subscribe(events.deccelerateActivePiece, function() {
         self.accelerate = false;
     });
+
+    eventDispatcher.subscribe(events.pause, function() {
+        self.togglePause();
+    });
 };
 
 /**
- * Called on main update loop.
+ * Called from main update loop.
  * Calls update on all game assets.
  */
 GameEngine.prototype.update = function() {
 
     if (features.enabled('testMovementMode')) { 
-        this.updateDestination();
+        this.updateProjectedDestination();
         return;
     }
     
-    this.velocityCounter += this.getVelocity();
-    if (this.velocityCounter >= 1) {
-        this.activeTetromino.update(1);
-        this.velocityCounter = 0;
-    }
+    if (this.moveDownOnCurrentFrame()) {
+        
+        // Move down if able, else trigger final position events
 
-    this.updateDestination();
-
-    if (this.activeTetromino.atDestination()) {
-        eventDispatcher.trigger(events.activePiecePositioned);
-
-        // Convert tetromino into component blocks
-        this.addBlocksToPlayfield();
-
-        var completedRows = this.playfield.getCompletedRows();
-        if (completedRows.length) {
-            this.playfield.removeRows(completedRows);
-            eventDispatcher.trigger(events.rowComplete, {rows: completedRows});
-
-            // TODO: need a way to pause the update loop while the animation runs
-            // pause for animation of row removal
-            eventDispatcher.subscribe(events.rowRemoved, function() {
-                this.getNextPiece();
-            });
+        var validMoveDown = this.playfield.validateBlockPlacement(
+            this.activeTetromino.getBlockCoordinatesForMoveDown()
+        );
+        if (validMoveDown) {
+            this.activeTetromino.moveDown();
         } else {
-            this.getNextPiece();
+            eventDispatcher.trigger(events.activePiecePositioned);
+
+            // Convert tetromino into component blocks
+            this.addBlocksToPlayfield();
+
+            var completedRows = this.playfield.getCompletedRows();
+            if (completedRows.length) {
+                this.playfield.removeRows(completedRows);
+                eventDispatcher.trigger(events.rowComplete, {rows: completedRows});
+
+                // TODO: need a way to pause the update loop while the animation runs
+                // pause for animation of row removal
+                eventDispatcher.subscribe(events.rowRemoved, function() {
+                    this.getNextPiece();
+                });
+            } else {
+                this.getNextPiece();
+            }
         }
+
+        //this.updateProjectedDestination();
     }
 };
 
-GameEngine.prototype.velocityCounter = 0;
+GameEngine.prototype.frameCounter = 0;
+
+/**
+ * Only move the tetromino down on specific intervals,
+ * timed by counting the number of game loops.
+ */
+GameEngine.prototype.moveDownOnCurrentFrame = function() {
+    this.frameCounter += this.getVelocity();
+    if (this.frameCounter >= 1) {
+        this.frameCounter = 0;
+
+        return true;
+    }
+};
 
 /**
  * Returns the velocity for the current state,
@@ -125,7 +156,7 @@ GameEngine.prototype.getVelocity = function() {
  * Updates the destination coordinates of the active tetromino
  * based on its current location
  */
-GameEngine.prototype.updateDestination = function() {
+GameEngine.prototype.updateProjectedDestination = function() {
     this.activeTetromino.setDestination(this.getProjectedDestination());
 };
 
@@ -139,7 +170,6 @@ GameEngine.prototype.addBlocksToPlayfield = function() {
     var blocks = this.activeTetromino.releaseBlocks();
     debug.log(blocks);
 
-    // todo: resolve playfield grid vs canvas x,y pixel coordinates
     this.playfield.placeBlocks(blocks);
 };
 
@@ -152,7 +182,6 @@ GameEngine.prototype.getNextPiece = function() {
     }
     this.refreshPieceQueue();
     this.activeTetromino = Tetromino.create(this.pieceQueue.shift());
-    //this.updateDestination();
 };
 
 /**
@@ -162,6 +191,17 @@ GameEngine.prototype.getNextPiece = function() {
 GameEngine.prototype.refreshPieceQueue = function() {
     if (this.pieceQueue.length <= GameEngine.QUEUE_MINIMUM) {
         this.pieceQueue = this.pieceQueue.concat(Tetromino.randomizeNextBag());
+    }
+};
+
+/**
+ * Pauses or resumes the game
+ * TODO: currently it stops the game
+ */
+GameEngine.prototype.togglePause = function() {
+    this.paused = !this.paused;
+    if (this.paused) {
+        eventDispatcher.trigger('topOut');
     }
 };
 
@@ -218,21 +258,20 @@ GameEngine.prototype.rotateActivePiece = function(movement) {
 
 /**
  * Returns destination coordinates for the active tetromino given its current position
- * by projecting it down the y axis until it colldes with a block or the playfield edge
+ * by projecting it down the y axis until it collides with a block or the playfield edge
  */
 GameEngine.prototype.getProjectedDestination = function() {
     var destY = this.activeTetromino.y,
-        valid = true,
-        coordinates
+        valid = true
         ;
 
     while(valid) {
-        destY++;
-        coordinates = this.activeTetromino.getBlockCoordinatesForOffset({x:0, y:destY});
-        valid = this.playfield.validateBlockPlacement(coordinates);
-        // if (valid) {
-        //     destY++;
-        // }
+        valid = this.playfield.validateBlockPlacement(
+            this.activeTetromino.getBlockCoordinatesForOffset({x:0, y:destY})
+        );
+        if (valid) {
+            destY++;
+        }
     }
 
     return {
@@ -248,8 +287,8 @@ GameEngine.prototype.getProjectedDestination = function() {
 GameEngine.prototype.getGhostPiece = function() {
     var ghostPiece = Tetromino.create(this.activeTetromino.type);
 
-    ghostPiece.x = this.activeTetromino.destinationX;
-    ghostPiece.y = this.activeTetromino.destinationY;
+    ghostPiece.x = this.activeTetromino.destination.x;
+    ghostPiece.y = this.activeTetromino.destination.y;
 
     return ghostPiece;
 };

@@ -95,18 +95,23 @@ Tetromino.prototype.move = function(coordinates) {
     }
 };
 
+Tetromino.prototype.moveDown = function() {
+    this.move({x:this.x, y:this.y+1});
+};
+
 /**
+ * DEPRICATED
  * Increments y coordinates by the given offset,
  * used to update the position as it falls
  */
-Tetromino.prototype.update = function(yOffset) {
-    var newY = this.y + yOffset;
-    if (newY <= this.destination.y) {
-        this.y = newY;
-    } else {
-        this.y = this.destination.y;
-    }
-};
+// Tetromino.prototype.update = function(yOffset) {
+//     var newY = this.y + yOffset;
+//     if (newY <= this.destination.y) {
+//         this.y = newY;
+//     } else {
+//         this.y = this.destination.y;
+//     }
+// };
 
 Tetromino.prototype.setDestination = function(coordinates) {
     if (Validate.coordinates(coordinates)) {
@@ -182,6 +187,10 @@ Tetromino.prototype.getBlockCoordinatesForOffset = function(coordinates) {
     });
 
     return coordinates;
+};
+
+Tetromino.prototype.getBlockCoordinatesForMoveDown = function() {
+    return this.getBlockCoordinatesForOffset({x:0, y:this.y+1});
 };
 
 /**
