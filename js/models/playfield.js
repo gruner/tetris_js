@@ -1,6 +1,7 @@
 'use strict';
 
 var debug = require('../debug'),
+    Block = require('./block'),
     Validate = require('../util/validate');
 
 /**
@@ -94,8 +95,7 @@ Playfield.prototype.removeRowAt = function(y) {
  */
 Playfield.prototype.rowComplete = function(y) {
     var complete,
-        i,
-        iMax;
+        i;
 
     if (typeof this.grid[y] === 'undefined') {
         complete = false;
@@ -158,7 +158,7 @@ Playfield.prototype.cellInBounds = function(cell) {
  * @return bool
  */
 Playfield.prototype.validateBlockPlacement = function(blocks) {
-    var valid = true;
+    var valid = Array.isArray(blocks);
     for (var i = 0; i < blocks.length; i++) {
         if (!this.validateBlock(blocks[i])) {
             valid = false;
@@ -203,6 +203,22 @@ Playfield.prototype.placeBlock = function(block) {
 Playfield.prototype.placeBlocks = function(blocks) {
     for (var i = 0, iMax = blocks.length; i < iMax; i++) {
         this.placeBlock(blocks[i]);
+    }
+};
+
+Playfield.prototype.distributeRandomBlocks = function(blockCount) {
+    // While there remain blocks to distribute...
+    while (0 !== blockCount) {
+        var block = new Block(
+            Math.floor(Math.random() * this.xCount),
+            Math.floor(Math.random() * this.yCount)
+        );
+        block.type = 'o';
+
+        if (this.validateBlock(block)) {
+            this.placeBlock(block);
+            blockCount--;
+        }
     }
 };
 

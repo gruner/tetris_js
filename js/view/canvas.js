@@ -7,19 +7,22 @@ var eventDispatcher = require('../eventDispatcher'),
     RowCompleteAnimation = require('./rowCompleteAnimation'),
     RowCollapseAnimation = require('./rowCollapseAnimation'),
     canvasCache = require('./canvasCache'),
-    animationQueue = require('./animationQueue');
+    animationQueue = require('./animationQueue'),
+    features = require('../config/features');
 
+/**
+ * Renders the view according to GameEngine state.
+ * Encapsulates canvas draw commands.
+ */
 var Canvas = function(canvasElement, gameEngine) {
 
     this.ctx = null; // canvas context
     this.gameEngine = gameEngine;
-    this.imageCache = {};
 
     this.init(canvasElement);
 };
 
 Canvas.prototype.init = function(canvasElement) {
-
     if (canvasElement.getContext) {
         this.ctx = canvasElement.getContext('2d');
     } else {
@@ -28,7 +31,8 @@ Canvas.prototype.init = function(canvasElement) {
 };
 
 Canvas.prototype.bindEvents = function() {
-    eventDispatcher.subscribe(events.rowComplete, this.animateRowComplete);
+    var self = this;
+    eventDispatcher.subscribe(events.rowComplete, self.animateRowComplete);
 };
 
 /**
@@ -41,7 +45,9 @@ Canvas.prototype.draw = function() {
     // If animations are in-progress, draw the next frame,
     // otherwise resume normal drawing
     if (!animationQueue.draw()) {
-        this.drawGhostPiece(); // has to go before tetromino, so that it's behind it
+        if (features.enabled('ghostPiece')) {
+            this.drawGhostPiece(); // has to draw before tetromino, so that it renders behind it
+        }
         this.drawTetromino(
             this.gameEngine.activeTetromino,
             this.gameEngine.getTetrominoStyle(this.gameEngine.activeTetromino.type).color,
@@ -55,11 +61,13 @@ Canvas.prototype.draw = function() {
  * @TODO cache this as an image after the first draw
  */
 Canvas.prototype.drawPlayfield = function() {
-    var width = dimensions.transpose(this.gameEngine.playfield.xCount),
-        height = dimensions.transpose(this.gameEngine.playfield.yCount);
-
     this.ctx.fillStyle = this.gameEngine.theme.playfield.color;
-    this.ctx.fillRect(dimensions.playfield.x, dimensions.playfield.y, width, height);
+    this.ctx.fillRect(
+        dimensions.playfieldOrigin.x,
+        dimensions.playfieldOrigin.y,
+        dimensions.transpose(this.gameEngine.playfield.xCount),
+        dimensions.transpose(this.gameEngine.playfield.yCount)
+    );
 };
 
 /**
@@ -67,7 +75,6 @@ Canvas.prototype.drawPlayfield = function() {
  */
 Canvas.prototype.drawRemnantBlocks = function() {
     var self = this;
-
     this.gameEngine.playfield.traverseGrid(function(block) {
         if (typeof block !== 'undefined') {
             self.drawBlock(
@@ -81,11 +88,10 @@ Canvas.prototype.drawRemnantBlocks = function() {
 };
 
 /**
- * Draws a single block
+ * Draws a single block. All game elements are made of blocks.
  */
 Canvas.prototype.drawBlock = function(x, y, fillColor, borderColor) {
     this.ctx.beginPath();
-
     this.ctx.fillStyle = fillColor;
     this.ctx.fillRect(x, y, dimensions.gridSize, dimensions.gridSize);
 
@@ -100,16 +106,17 @@ Canvas.prototype.drawBlock = function(x, y, fillColor, borderColor) {
  * Draws a tetromino by drawing each of its blocks
  */
 Canvas.prototype.drawTetromino = function(tetromino, fillColor, borderColor) {
-    
     var self = this,
-        x, y
-        ;
+        originX = dimensions.transpose(tetromino.x),
+        originY = dimensions.transpose(tetromino.y);
     
     tetromino.traverseBlocks(function(i, block) {
-        x = dimensions.transpose(tetromino.x) + dimensions.transpose(block.x);
-        y = dimensions.transpose(tetromino.y) + dimensions.transpose(block.y);
-
-        self.drawBlock(x, y, fillColor, borderColor);
+        self.drawBlock(
+            originX + dimensions.transpose(block.x),
+            originY + dimensions.transpose(block.y),
+            fillColor,
+            borderColor
+        );
     });
 };
 
@@ -130,6 +137,9 @@ Canvas.prototype.animateRowComplete = function(data) {
     animationQueue.push(new RowCollapseAnimation(this.ctx, rows));
 };
 
-Canvas.prototype.spliceTop = function() {};
+/**
+ * When a row is complete, save everything above it in order to animate it moving down
+ */
+// Canvas.prototype.spliceTop = function() {};
 
 module.exports = Canvas;

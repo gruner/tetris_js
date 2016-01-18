@@ -13,6 +13,8 @@ describe('GameEngine', function() {
 
     beforeEach(function() {
         gameEngine = new GameEngine();
+        var tetromino = Tetromino.create('i');
+
     });
 
     describe('#initThemes', function() {

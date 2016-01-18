@@ -3,7 +3,16 @@
 var features = {
     testMovementMode: {
         desc: "Allows free movement of a single tetromino without it falling",
-        enabled: true
+        enabled: false
+    },
+    initWithRemnants: {
+        desc: "Starts the game with remnant blocks already on the playfield",
+        enabled: false
+    },
+    enableGhostPiece: {
+        desc: "Highlights where the current piece will land",
+        enabled: false,
+        public: true
     }
 };
 
@@ -20,5 +29,15 @@ module.exports = {
         if (featureConfig.hasOwnProperty('enabled')) {
             features[featureKey] = featureConfig;
         }
+    },
+    getPublic: function() {
+        var publicFeatures = {};
+        for (var feature in features) {
+            if (features[feature].public === true) {
+                publicFeatures[feature] = features[feature];
+            }
+        }
+
+        return publicFeatures;
     }
 };
