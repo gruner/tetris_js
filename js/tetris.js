@@ -8,6 +8,9 @@ var GameEngine = require('./gameEngine'),
  * Bootstraps all game components together
  */
 var Tetris = function(canvasElement) {
+    
+    canvasElement = canvasElement || Tetris.createCanvasElement();
+
     var self = this;
 
     this.gameEngine = new GameEngine();
@@ -29,5 +32,13 @@ var Tetris = function(canvasElement) {
         window.cancelAnimationFrame(self.frameId);
     });
 };
+
+/**
+ * Creates canvas tag on the DOM if one wasn't passed in.
+ * TODO: consider preferring this approach as we can dynamically
+ * size the element in line with existing configs.
+ */
+Tetris.createCanvasElement = function() {
+}
 
 module.exports = Tetris;

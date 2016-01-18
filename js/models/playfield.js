@@ -207,13 +207,15 @@ Playfield.prototype.placeBlocks = function(blocks) {
 };
 
 Playfield.prototype.distributeRandomBlocks = function(blockCount) {
+    var blockTypes = require('./tetrominoTypes').getTypeKeys();
+
     // While there remain blocks to distribute...
     while (0 !== blockCount) {
         var block = new Block(
             Math.floor(Math.random() * this.xCount),
             Math.floor(Math.random() * this.yCount)
         );
-        block.type = 'o';
+        block.type = blockTypes[Math.floor(Math.random() * blockTypes.length)];
 
         if (this.validateBlock(block)) {
             this.placeBlock(block);

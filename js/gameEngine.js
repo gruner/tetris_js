@@ -40,7 +40,7 @@ GameEngine.prototype.init = function() {
     this.bindEvents();
     this.getNextPiece();
     if (features.enabled('initWithRemnants')) {
-        this.playfield.distributeRandomBlocks(20);
+        this.playfield.distributeRandomBlocks(10);
     }
 };
 
@@ -95,7 +95,7 @@ GameEngine.prototype.update = function() {
         return;
     }
     
-    if (this.moveDownOnCurrentFrame()) {
+    if (this.shouldMoveDownOnCurrentFrame()) {
         
         // Move down if able, else trigger final position events
 
@@ -104,18 +104,20 @@ GameEngine.prototype.update = function() {
         );
         if (validMoveDown) {
             this.activeTetromino.moveDown();
-        } else {
+        } else { // Can't move down any farther, piece is in final position
+
             eventDispatcher.trigger(events.activePiecePositioned);
 
             // Convert tetromino into component blocks
             this.addBlocksToPlayfield();
 
+            // Check for completed rows
             var completedRows = this.playfield.getCompletedRows();
             if (completedRows.length) {
                 this.playfield.removeRows(completedRows);
                 eventDispatcher.trigger(events.rowComplete, {rows: completedRows});
 
-                // TODO: need a way to pause the update loop while the animation runs
+                // TODO: find a way to pause the update loop while the animation runs
                 // pause for animation of row removal
                 eventDispatcher.subscribe(events.rowRemoved, function() {
                     this.getNextPiece();
@@ -125,7 +127,9 @@ GameEngine.prototype.update = function() {
             }
         }
 
-        //this.updateProjectedDestination();
+        if (features.enabled('displayGhostPiece')) { 
+            this.updateProjectedDestination();
+        }
     }
 };
 
@@ -135,7 +139,7 @@ GameEngine.prototype.frameCounter = 0;
  * Only move the tetromino down on specific intervals,
  * timed by counting the number of game loops.
  */
-GameEngine.prototype.moveDownOnCurrentFrame = function() {
+GameEngine.prototype.shouldMoveDownOnCurrentFrame = function() {
     this.frameCounter += this.getVelocity();
     if (this.frameCounter >= 1) {
         this.frameCounter = 0;
@@ -201,7 +205,7 @@ GameEngine.prototype.refreshPieceQueue = function() {
 GameEngine.prototype.togglePause = function() {
     this.paused = !this.paused;
     if (this.paused) {
-        eventDispatcher.trigger('topOut');
+        eventDispatcher.trigger(events.topOut);
     }
 };
 

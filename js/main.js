@@ -54,6 +54,7 @@ $(document).ready(function() {
         if (el[i].nodeName == 'CANVAS') {
             var tetris = new Tetris(el[i]);
             tetris.run();
+            break;
         }
     }
 });
