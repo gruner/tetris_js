@@ -190,7 +190,7 @@ Tetromino.prototype.getBlockCoordinatesForOffset = function(coordinates) {
 };
 
 Tetromino.prototype.getBlockCoordinatesForMoveDown = function() {
-    return this.getBlockCoordinatesForOffset({x:0, y:this.y+1});
+    return this.getBlockCoordinatesForOffset({x:0, y:1});
 };
 
 /**
