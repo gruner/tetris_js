@@ -10,7 +10,8 @@ var keyCodes = {
     left:  37,
     up:    38,
     right: 39,
-    down:  40
+    down:  40,
+    spacebar: 32
 };
 
 var eventBinding = {
@@ -27,8 +28,10 @@ var eventBinding = {
                 if (features.enabled('testMovementMode')) {
                     dispatcher.trigger(events.moveActivePiece, {direction: constants.DIRECTION_UP}, this);
                 } else {
-                    dispatcher.trigger(events.rotateActivePiece, {direction: constants.DIRECTION_LEFT}, this);    
+                    dispatcher.trigger(events.rotateActivePiece, {direction: constants.DIRECTION_LEFT}, this);
                 }
+            } else if (code === keyCodes.spacebar) {
+                dispatcher.trigger(events.pause);
             }
         });
     },

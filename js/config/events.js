@@ -9,5 +9,6 @@ module.exports = {
     rowComplete:            'tetris.rowComplete',
     rowRemoved:             'tetris.rowRemoved',
     invalidMove:            'tetris.invalidMove',
-    topOut:                 'tetris.topOut'
+    topOut:                 'tetris.topOut',
+    pause:                  'tetris.pause'
 };
