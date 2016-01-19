@@ -109,16 +109,17 @@ GameEngine.prototype.update = function() {
             eventDispatcher.trigger(events.activePiecePositioned);
 
             // Convert tetromino into component blocks
-            this.addBlocksToPlayfield();
+            this.playfield.placeBlocks(this.activeTetromino.releaseBlocks());
 
             // Check for completed rows
             var completedRows = this.playfield.getCompletedRows();
             if (completedRows.length) {
                 this.playfield.removeRows(completedRows);
-                eventDispatcher.trigger(events.rowComplete, {rows: completedRows});
+                eventDispatcher.trigger(events.rowComplete, completedRows);
 
                 // TODO: find a way to pause the update loop while the animation runs
                 // pause for animation of row removal
+                // TODO: unsubscribe after doing it once
                 eventDispatcher.subscribe(events.rowRemoved, function() {
                     this.getNextPiece();
                 });
@@ -162,19 +163,6 @@ GameEngine.prototype.getVelocity = function() {
  */
 GameEngine.prototype.updateProjectedDestination = function() {
     this.activeTetromino.setDestination(this.getProjectedDestination());
-};
-
-/**
- * Converts the active tetromino into its component blocks,
- * which now belong to the playfield
- */
-GameEngine.prototype.addBlocksToPlayfield = function() {
-    var self = this;
-
-    var blocks = this.activeTetromino.releaseBlocks();
-    debug.log(blocks);
-
-    this.playfield.placeBlocks(blocks);
 };
 
 /**
