@@ -62,7 +62,7 @@ module.exports = function(grunt) {
             expand: true,
             cwd: '.',
             dest: 'dist',
-            src: ['tetris.html']
+            src: ['tetris.html', 'sounds/*.mp3']
           }
         ]
       }

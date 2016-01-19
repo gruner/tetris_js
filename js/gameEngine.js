@@ -27,7 +27,7 @@ var GameEngine = function() {
         Playfield.defaults.xCount,
         Playfield.defaults.yCount
     );
-    this.soundEffects = new SoundEffects();
+    //this.soundEffects = new SoundEffects();
 
     this.initThemes();
     this.init();
