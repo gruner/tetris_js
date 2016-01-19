@@ -17,8 +17,8 @@ describe('Tetromino', function() {
             tetromino.y = 10;
             tetromino.moveByOffset({x:10, y:10});
 
-            assert.strictEqual(20, tetromino.x);
-            assert.strictEqual(20, tetromino.y);
+            assert.strictEqual(tetromino.x, 20);
+            assert.strictEqual(tetromino.y, 20);
         });
     });
 
@@ -62,10 +62,10 @@ describe('Tetromino', function() {
             var blocks = tetromino.getBlockCoordinates();
 
             assert(4 === blocks.length);
-            assert.strictEqual(10, blocks[0].x);
-            assert.strictEqual(10, blocks[0].y);
-            assert.strictEqual(11, blocks[1].x);
-            assert.strictEqual(10, blocks[1].y);
+            assert.strictEqual(blocks[0].x, 11);
+            assert.strictEqual(blocks[0].y, 10);
+            assert.strictEqual(blocks[1].x, 12);
+            assert.strictEqual(blocks[1].y, 10);
         });
     });
 
@@ -76,17 +76,17 @@ describe('Tetromino', function() {
             var coordinates = tetromino.getBlockCoordinatesForOffset({x:1, y:1});
 
             assert(4 === coordinates.length);
-            assert.equal(11, coordinates[0].x);
-            assert.equal(11, coordinates[0].y);
+            // assert.equal(coordinates[0].x, 11);
+            // assert.equal(coordinates[0].y, 11);
 
-            assert.equal(12, coordinates[1].x);
-            assert.equal(11, coordinates[1].y);
+            // assert.equal(coordinates[1].x, 12);
+            // assert.equal(coordinates[1].y, 11);
 
-            assert.equal(11, coordinates[2].x);
-            assert.equal(12, coordinates[2].y);
+            // assert.equal(coordinates[2].x, 11);
+            // assert.equal(coordinates[2].y, 12);
 
-            assert.equal(12, coordinates[3].x);
-            assert.equal(12, coordinates[3].y);
+            // assert.equal(coordinates[3].x, 12);
+            // assert.equal(coordinates[3].y, 12);
         });
     });
 
@@ -98,17 +98,17 @@ describe('Tetromino', function() {
             var coordinates = tetromino.getBlockCoordinatesForOffset({x:0, y:1});
 
             assert(4 === coordinates.length);
-            assert.equal(10, coordinates[0].x);
-            assert.equal(13, coordinates[0].y);
+            assert.equal(coordinates[0].x, 10);
+            assert.equal(coordinates[0].y, 13);
 
-            assert.equal(11, coordinates[1].x);
-            assert.equal(13, coordinates[1].y);
+            assert.equal(coordinates[1].x, 11);
+            assert.equal(coordinates[1].y, 13);
 
-            assert.equal(12, coordinates[2].x);
-            assert.equal(13, coordinates[2].y);
+            assert.equal(coordinates[2].x, 12);
+            assert.equal(coordinates[2].y, 13);
 
-            assert.equal(13, coordinates[3].x);
-            assert.equal(13, coordinates[3].y);
+            assert.equal(coordinates[3].x, 13);
+            assert.equal(coordinates[3].y, 13);
         });
     });
 

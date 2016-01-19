@@ -103,7 +103,7 @@ GameEngine.prototype.update = function() {
             this.activeTetromino.getBlockCoordinatesForMoveDown()
         );
         if (validMoveDown) {
-            this.activeTetromino.moveDown();
+            this.activeTetromino.doGravity();
         } else { // Can't move down any farther, piece is in final position
 
             eventDispatcher.trigger(events.activePiecePositioned);

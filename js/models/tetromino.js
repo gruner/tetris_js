@@ -26,18 +26,24 @@ Tetromino.create = function(typeKey) {
     var type = tetrominos.getType(typeKey);
 
     if (type) {
-        var blocks = [];
+        var blockRotations = [],
+            tetromino;
 
         for (var i = 0; i < type.blocks.length; i++) {
-            var coordinates = type.blocks[i];
-            if (Validate.coordinates(coordinates)) {
-                blocks.push(new Block(coordinates.x, coordinates.y));
-            } else {
-                throw new Error('Invalid block coordinates');
-            }
+            var blocks = [];
+            for (var j = 0; j < type.blocks[i].length; j++) {
+                var coordinates = type.blocks[i][j];
+                if (Validate.coordinates(coordinates)) {
+                    blocks.push(new Block(coordinates.x, coordinates.y));
+                } else {
+                    throw new Error('Invalid block coordinates');
+                }
+            };
+
+            blockRotations.push(blocks);
         }
 
-        return new Tetromino(typeKey, blocks);
+        return new Tetromino(typeKey, blockRotations);
     } else {
         throw new Error('Cannot create tetromino of type ' + typeKey);
     }
@@ -95,7 +101,7 @@ Tetromino.prototype.move = function(coordinates) {
     }
 };
 
-Tetromino.prototype.moveDown = function() {
+Tetromino.prototype.doGravity = function() {
     this.move({x:this.x, y:this.y+1});
 };
 
@@ -129,6 +135,7 @@ Tetromino.prototype.atDestination = function() {
 
 /**
  * Returns array of absolute block coordinates
+ * for the current orientation
  */
 Tetromino.prototype.getBlockCoordinates = function() {
     var coordinates = [],
@@ -146,27 +153,29 @@ Tetromino.prototype.getBlockCoordinates = function() {
 
 /**
  * Blocks are saved with relative coordinates.
- * This converts the coordinates to absolute values,
- * and removes the blocks from the stack, returning a new array.
+ * This converts the coordinates to absolute values, returning a new array.
  * Used to convert a discrete tetromino into blocks on the playfield
  */
 Tetromino.prototype.releaseBlocks = function() {
-    var blocks = [];
+    var self = this,
+        blocks = [];
 
-    while(this.blocks.length) {
-        var block = this.blocks.shift();
-        block.x += this.x;
-        block.y += this.y;
-        block.type = this.type; // released blocks reference their original type for styling
+    this.traverseBlocks(function(i, block) {
+        var absoluteBlock = new Block(
+            block.x += self.x,
+            block.y += self.y
+        );
+        absoluteBlock.type = self.type; // released blocks reference their original type for styling
 
-        blocks.push(block);
-    }
+        blocks.push(absoluteBlock);
+    });
 
     return blocks;
 };
 
 /**
- * Returns array of coordinates for each block, calculated from offset x and y
+ * Returns array of coordinates for each block in the current orientation,
+ * calculated from offset x and y
  */
 Tetromino.prototype.getBlockCoordinatesForOffset = function(coordinates) {
 
@@ -197,53 +206,44 @@ Tetromino.prototype.getBlockCoordinatesForMoveDown = function() {
  * Iterates over blocks array passing each block to the given callback
  */
 Tetromino.prototype.traverseBlocks = function(callback) {
-    var iMax = this.blocks.length,
+    var iMax = this.blocks[0].length,
         i;
     for (i = 0; i < iMax; i++) {
-        callback(i, this.blocks[i]);
+        callback(i, this.blocks[0][i]);
     }
 };
 
 /**
- * Rotates tetromino left or right by changing its block coordinates
+ * Rotates tetromino left or right by cycling through block orientation configurations
  */
 Tetromino.prototype.rotate = function(direction) {
     direction = direction || constants.DIRECTION_LEFT;
 
     if (direction === constants.DIRECTION_RIGHT) {
-        this.traverseBlocks(function(i, block) {
-            var swap = block.x;
-            block.x = block.y;
-            block.y = swap;
-        });
+        // The first becomes last
+        this.blocks.push(this.blocks.shift());
     } else if (direction === constants.DIRECTION_LEFT) {
-        this.traverseBlocks(function(i, block) {
-            var swap = block.x;
-            block.x = -block.y;
-            block.y = swap;
-        });
+        // The last becomes first
+        this.blocks.unshift(this.blocks.pop());
     }
 };
 
+/**
+ * Returns array of absolute coordinates for the given rotation
+ */
 Tetromino.prototype.getBlockCoordinatesForRotation = function(direction) {
-    direction = direction || constants.DIRECTION_LEFT;
-    var coordinates = [];
+    var coordinates = [],
+        rotatedBlocks = this.blocks.length > 1 ? this.blocks[1] : this.blocks[0],
 
-    if (direction === constants.DIRECTION_RIGHT) {
-        this.traverseBlocks(function(i, block) {
-            coordinates.push({
-                x: block.y,
-                y: block.x
-            });
+    rotatedBlocks = direction === constants.DIRECTION_RIGHT ? rotatedBlocks : this.blocks[this.blocks.length - 1];
+
+    for (var i = 0; i < rotatedBlocks.length; i++) {
+        coordinates.push({
+            x: this.x + rotatedBlocks[i].x,
+            y: this.y + rotatedBlocks[i].y
         });
-    } else if (direction === constants.DIRECTION_LEFT) {
-        this.traverseBlocks(function(i, block) {
-            coordinates.push({
-                x: -block.y,
-                y: block.x
-            });
-        });
-    }
+        
+    };
 
     return coordinates;
 };
