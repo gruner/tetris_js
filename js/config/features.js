@@ -11,7 +11,7 @@ var features = {
     },
     displayGhostPiece: {
         desc: "Highlights where the current piece will land",
-        enabled: false,
+        enabled: true,
         public: true
     }
 };
