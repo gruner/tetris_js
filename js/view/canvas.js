@@ -131,10 +131,10 @@ Canvas.prototype.drawGhostPiece = function() {
  * Handler for the rowComplete event
  * Adds row complete and collapse animations to the animation queue
  */
-Canvas.prototype.animateRowComplete = function(data) {
-    var rows = data.rows;
+Canvas.prototype.animateRowComplete = function(rows) {
+    console.logs(rows);
     animationQueue.push(new RowCompleteAnimation(this.ctx, rows));
-    animationQueue.push(new RowCollapseAnimation(this.ctx, rows));
+    //animationQueue.push(new RowCollapseAnimation(this.ctx, rows));
 };
 
 /**

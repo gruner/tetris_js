@@ -65,7 +65,7 @@ describe('GameEngine', function() {
                     x: 5,
                     y: 2,
                     expectedX: 5,
-                    expectedY: 20
+                    expectedY: 19
                 },
                 {
                     type: 'o',

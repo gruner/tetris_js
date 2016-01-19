@@ -99,16 +99,16 @@ describe('Tetromino', function() {
 
             assert(4 === coordinates.length);
             assert.equal(10, coordinates[0].x);
-            assert.equal(12, coordinates[0].y);
+            assert.equal(13, coordinates[0].y);
 
             assert.equal(11, coordinates[1].x);
-            assert.equal(12, coordinates[1].y);
+            assert.equal(13, coordinates[1].y);
 
             assert.equal(12, coordinates[2].x);
-            assert.equal(12, coordinates[2].y);
+            assert.equal(13, coordinates[2].y);
 
             assert.equal(13, coordinates[3].x);
-            assert.equal(12, coordinates[3].y);
+            assert.equal(13, coordinates[3].y);
         });
     });
 
