@@ -1,9 +1,11 @@
 'use strict';
 
 var Animation = require('./animation'),
-    dimensions = require('../config/canvasDimensions');
+    dimensions = require('../config/canvasDimensions'),
+    eventDispatcher = require('../eventDispatcher'),
+    events = require('../config/events');
 
-var OPACITY_CHANGE_RATE = 0.5,
+var OPACITY_CHANGE_RATE = 0.05,
     ENDING_OPACITY = 0.05;
 
 /**
@@ -14,19 +16,21 @@ var RowCompleteAnimation = function(ctx, rows) {
     this.rows = rows;
     this.complete = false;
     this.opacity = 1;
-    this.finalFillColor = this.gameEngine.theme.playfield.color;
+    this.finalFillColor = '#000000';//this.gameEngine.theme.playfield.color;
 };
 
 //RowCompleteAnimation.prototype = new Animation();
 
 RowCompleteAnimation.prototype.draw = function() {
-	var width = dimensions.transpose(this.gameEngine.playfield.xCount),
+	var width = dimensions.transpose(10), //this.gameEngine.playfield.xCount
         height = dimensions.transpose(this.rows.length);
 
+    this.ctx.beginPath();
     this.ctx.fillStyle = this.getFill();
-    this.ctx.fillRect(dimensions.playfield.x, dimensions.transpose(this.rows[0]), width, height);
+    this.ctx.fillRect(dimensions.playfieldOrigin.x, dimensions.transpose(this.rows[0]), width, height);
 
     if (this.opacity <= ENDING_OPACITY) {
+        eventDispatcher.trigger(events.rowRemoved);
     	this.complete = true;
     }
 };
@@ -47,4 +51,4 @@ RowCompleteAnimation.prototype.getOpacity = function() {
 	return this.opacity;
 };
 
-module.export = RowCompleteAnimation;
+module.exports = RowCompleteAnimation;

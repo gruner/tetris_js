@@ -4,22 +4,25 @@
 
 'use strict';
 
-module.exports = {
-    animations: [],
+var animations = [];
 
+module.exports = {
     /**
      * Draws the next frame in the animation stack
      * @return bool - whether or not a frame was drawn
      */
     draw: function() {
-        if (this.animations.length) {
-            this.animations[0].draw();
-            if (this.animations[0].complete) {
-                this.animations.shift();
+        if (animations.length) {
+            animations[0].draw();
+            if (animations[0].complete) {
+                animations.shift();
             }
             return true;
         } else {
         	return false;
         }
+    },
+    push: function(animation) {
+        return animations.push(animation);
     }
 };

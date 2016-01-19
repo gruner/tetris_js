@@ -7,4 +7,4 @@ var Animation = function(ctx) {
 
 Animation.prototype.draw = function() {};
 
-module.export = Animation;
+module.exports = Animation;

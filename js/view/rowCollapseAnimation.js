@@ -15,4 +15,4 @@ RowCollapseAnimation.prototype.draw = function() {
     // animate the saved top moving down
 };
 
-module.export = RowCollapseAnimation;
+module.exports = RowCollapseAnimation;
