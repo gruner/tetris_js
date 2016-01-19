@@ -24,6 +24,20 @@ module.exports = {
         // eventSubscriptions for this event.
         subscribers.push(callback);
     },
+
+    // unsubscribe: function(eventName, key) {
+    //     var subscribers = eventSubscriptions[eventName];
+    //     if (subscribers[key]) {
+    //         // remove
+    //     }
+    // },
+
+    // once: function() {
+    //     var self = this;
+    //     this.subscribe(function () {
+
+    //     });
+    // },
  
     trigger: function (eventName, data, context) {
  
