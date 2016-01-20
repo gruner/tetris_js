@@ -65,12 +65,12 @@ Playfield.prototype.traverseGrid = function(callback) {
 /**
  * Removes an array of rows one at a time
  */
-Playfield.prototype.removeRows = function(rows) {
+Playfield.prototype.clearRows = function(rows) {
     var i,
         iMax = rows.length;
 
     for (i = 0; i < iMax; i++) {
-        this.removeRowAt(i);
+        this.clearRowAt(i);
     }
 };
 
@@ -78,7 +78,7 @@ Playfield.prototype.removeRows = function(rows) {
  * Removes a row at the given index and adds
  * a new empty row to the top
  */
-Playfield.prototype.removeRowAt = function(y) {
+Playfield.prototype.clearRowAt = function(y) {
     var row;
     if (y < this.grid.length) {
         row = this.grid.splice(y, 1)[0];

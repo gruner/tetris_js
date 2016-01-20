@@ -99,12 +99,12 @@ GameEngine.prototype.update = function() {
         
         // Move down if able, else trigger final position events
 
-        var validMoveDown = this.playfield.validateBlockPlacement(
+        var validDrop = this.playfield.validateBlockPlacement(
             this.activeTetromino.getBlockCoordinatesForDrop()
         );
-        if (validMoveDown) {
+        if (validDrop) {
             this.activeTetromino.drop();
-        } else { // Can't move down any farther, piece is in final position
+        } else { // Can't move down any farther, lock piece in final position
 
             eventDispatcher.trigger(events.activePiecePositioned);
 
@@ -114,7 +114,7 @@ GameEngine.prototype.update = function() {
             // Check for completed rows
             var completedRows = this.playfield.getCompletedRows();
             if (completedRows.length) {
-                this.playfield.removeRows(completedRows);
+                this.playfield.clearRows(completedRows);
                 eventDispatcher.trigger(events.rowComplete, completedRows);
 
                 // TODO: find a way to pause the update loop while the animation runs
@@ -151,7 +151,7 @@ GameEngine.prototype.shouldMoveDownOnCurrentFrame = function() {
 
 /**
  * Returns the gravity for the current state,
- * checking if in accelerated mode (i.e. down button being pressed)
+ * checking if in "soft drop" mode (i.e. down button being pressed)
  */
 GameEngine.prototype.getGravity = function() {
     return (this.accelerateGravity) ? GameEngine.ACCELERATED_GRAVITY : this.gravity;
