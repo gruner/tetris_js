@@ -36,11 +36,11 @@ Playfield.prototype.createEmptyRow = function() {
 };
 
 /**
- * Executes a callback for each row in the grid, passing the contents
- * of the row to the callback
+ * Executes a callback for each row in the grid (bottom to top)
+ * passing the contents of the row to the callback
  */
 Playfield.prototype.traverseRows = function(callback) {
-    for (var i = 0; i < this.yCount; i++) {
+    for (var i = this.yCount - 1; i >= 0; i--) {
         var row = this.grid[i];
         callback(i, row);
     }
@@ -87,6 +87,13 @@ Playfield.prototype.clearRowAt = function(y) {
 
     return row;
 };
+
+/**
+ * Settle any remaining blocks after a row is cleared
+ */
+Playfield.prototype.settleBlocks = function() {
+    var self = this;
+}
 
 /**
  * Checks that a row is complete, i.e. filled with blocks. If a row is undefined, it has no cells,

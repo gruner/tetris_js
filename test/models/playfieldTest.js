@@ -37,11 +37,11 @@ describe('Playfield', function() {
         });
     });
 
-    describe('#removeRowAt', function() {
+    describe('#clearRowAt', function() {
         it('should insert new empty row', function() {
 
             playfield.grid[0] = [1,2,3,4,5];
-            playfield.removeRowAt(10);
+            playfield.clearRowAt(10);
         
             assert.strictEqual(0, playfield.grid[0].length);
             assert.strictEqual(5, playfield.grid[1].length);
@@ -49,11 +49,11 @@ describe('Playfield', function() {
         });
     });
 
-    describe('#removeRowAt', function() {
+    describe('#clearRowAt', function() {
         it('should insert new empty row', function() {
 
             playfield.grid[0] = [1,2,3,4,5];
-            playfield.removeRowAt(10);
+            playfield.clearRowAt(10);
         
             assert.strictEqual(0, playfield.grid[0].length);
             assert.strictEqual(5, playfield.grid[1].length);
@@ -61,11 +61,11 @@ describe('Playfield', function() {
         });
     });
 
-    describe('#removeRowAt', function() {
+    describe('#clearRowAt', function() {
         it('should remove row and insert new empty row at top of playfield', function() {
 
             playfield.grid[0] = [1,2,3,4,5];
-            playfield.removeRowAt(10);
+            playfield.clearRowAt(10);
         
             assert.strictEqual(0, playfield.grid[0].length);
             assert.strictEqual(5, playfield.grid[1].length);
@@ -74,45 +74,45 @@ describe('Playfield', function() {
         });
     });
 
-    describe('#removeRowAt', function() {
+    describe('#clearRowAt', function() {
         it('should remove row', function() {
 
             playfield.grid[10] = [0,1,2,3,4,5];
 
             assert.strictEqual(6, playfield.grid[10].length);
-            playfield.removeRowAt(10);
+            playfield.clearRowAt(10);
 
             assert(playfield.grid[10] === undefined);
             
         });
     });
 
-    describe('#removeRowAt', function() {
+    describe('#clearRowAt', function() {
         it('should move top row down', function() {
             var row = [1,2,3,4,5];
             playfield.grid[9] = row;
-            playfield.removeRowAt(10);
+            playfield.clearRowAt(10);
 
             assert.strictEqual(row, playfield.grid[10]);
             
         });
     });
 
-    describe('#removeRowAt', function() {
+    describe('#clearRowAt', function() {
         it('should return removed row', function() {
             var row = [1,2,3,4,5];
             playfield.grid[10] = row;
-            var result = playfield.removeRowAt(10);
+            var result = playfield.clearRowAt(10);
 
             assert.strictEqual(row, result);
             
         });
     });
 
-    describe('#removeRowAt', function() {
+    describe('#clearRowAt', function() {
         it('should not alter grid if row is out of bounds', function() {
             playfield.grid[0] = [1,2,3,4,5];
-            var row = playfield.removeRowAt(100);
+            var row = playfield.clearRowAt(100);
 
             assert(row === undefined);
             // ensure row 0 is not altered
@@ -165,10 +165,10 @@ describe('Playfield', function() {
 
             var completedRows = playfield.getCompletedRows();
 
-            assert.equal(1, completedRows[0]);
-            assert.equal(3, completedRows[1]);
-            assert.equal(5, completedRows[2]);
-            assert.equal(3, completedRows.length);
+            assert.equal(completedRows[0], 5);
+            assert.equal(completedRows[1], 3);
+            assert.equal(completedRows[2], 1);
+            assert.equal(completedRows.length, 3);
         });
     });
 
