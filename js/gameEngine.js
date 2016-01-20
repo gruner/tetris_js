@@ -20,8 +20,8 @@ var GameEngine = function() {
     this.pieceQueue = [];
     this.pieceHistory = [];
     this.level = 0;
-    this.velocity = 0.05;
-    this.accelerate = false;
+    this.gravity = 0.05;
+    this.accelerateGravity = false;
     this.paused = false;
     this.playfield = new Playfield(
         Playfield.defaults.xCount,
@@ -34,7 +34,7 @@ var GameEngine = function() {
 };
 
 GameEngine.QUEUE_MINIMUM = 3;
-GameEngine.ACCELERATED_VELOCITY = 0.5;
+GameEngine.ACCELERATED_GRAVITY = 0.5;
 
 GameEngine.prototype.init = function() {
     this.bindEvents();
@@ -100,10 +100,10 @@ GameEngine.prototype.update = function() {
         // Move down if able, else trigger final position events
 
         var validMoveDown = this.playfield.validateBlockPlacement(
-            this.activeTetromino.getBlockCoordinatesForMoveDown()
+            this.activeTetromino.getBlockCoordinatesForDrop()
         );
         if (validMoveDown) {
-            this.activeTetromino.doGravity();
+            this.activeTetromino.drop();
         } else { // Can't move down any farther, piece is in final position
 
             eventDispatcher.trigger(events.activePiecePositioned);
@@ -120,7 +120,7 @@ GameEngine.prototype.update = function() {
                 // TODO: find a way to pause the update loop while the animation runs
                 // pause for animation of row removal
                 // TODO: unsubscribe after doing it once
-                eventDispatcher.subscribe(events.rowRemoved, function() {
+                eventDispatcher.subscribe(events.rowCleared, function() {
                     this.getNextPiece();
                 });
             } else {
@@ -141,7 +141,7 @@ GameEngine.prototype.frameCounter = 0;
  * timed by counting the number of game loops.
  */
 GameEngine.prototype.shouldMoveDownOnCurrentFrame = function() {
-    this.frameCounter += this.getVelocity();
+    this.frameCounter += this.getGravity();
     if (this.frameCounter >= 1) {
         this.frameCounter = 0;
 
@@ -150,11 +150,11 @@ GameEngine.prototype.shouldMoveDownOnCurrentFrame = function() {
 };
 
 /**
- * Returns the velocity for the current state,
+ * Returns the gravity for the current state,
  * checking if in accelerated mode (i.e. down button being pressed)
  */
-GameEngine.prototype.getVelocity = function() {
-    return (this.accelerate) ? GameEngine.ACCELERATED_VELOCITY : this.velocity;
+GameEngine.prototype.getGravity = function() {
+    return (this.accelerateGravity) ? GameEngine.ACCELERATED_GRAVITY : this.gravity;
 };
 
 /**
@@ -175,6 +175,14 @@ GameEngine.prototype.getNextPiece = function() {
     this.refreshPieceQueue();
     this.activeTetromino = Tetromino.create(this.pieceQueue.shift());
 };
+
+/**
+ * Sets a delay after a tetromino has been placed
+ * before the next piece is spawned
+ */
+GameEngine.prototype.spawnDelay = function() {
+
+}
 
 /**
  * Ensures that there is a minimum number of pieces in the queue,

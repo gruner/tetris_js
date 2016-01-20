@@ -7,7 +7,7 @@ module.exports = {
     deccelerateActivePiece: 'tetris.accelerateActivePiece',
     activePiecePositioned:  'tetris.activePiecePositioned',
     rowComplete:            'tetris.rowComplete',
-    rowRemoved:             'tetris.rowRemoved',
+    rowCleared:             'tetris.rowCleared',
     invalidMove:            'tetris.invalidMove',
     topOut:                 'tetris.topOut',
     pause:                  'tetris.pause'

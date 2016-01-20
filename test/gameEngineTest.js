@@ -42,17 +42,17 @@ describe('GameEngine', function() {
         it('should update all game assets');
     });
 
-    describe('#getVelocity', function() {
-        it('should determine velocity state', function() {
-            gameEngine.velocity = 50;
-            assert(50 === gameEngine.getVelocity());
+    describe('#getGravity', function() {
+        it('should determine gravity rate', function() {
+            gameEngine.gravity = 50;
+            assert.equal(gameEngine.getGravity(), 50);
         });
     });
 
-    describe('#getVelocity', function() {
-        it('should determine accelerated velocity state', function() {
-            gameEngine.accelerate = true;
-            assert(GameEngine.ACCELERATED_VELOCITY == gameEngine.getVelocity());
+    describe('#getGravity', function() {
+        it('should determine if gravity rate is accelerated', function() {
+            gameEngine.accelerateGravity = true;
+            assert.equal(GameEngine.ACCELERATED_GRAVITY, gameEngine.getGravity());
         });
     });
 

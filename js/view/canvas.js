@@ -13,6 +13,7 @@ var eventDispatcher = require('../eventDispatcher'),
 /**
  * Renders the view according to GameEngine state.
  * Encapsulates canvas draw commands.
+ * TODO: Hide first two rows where tetrominos spawn
  */
 var Canvas = function(canvasElement, gameEngine) {
 

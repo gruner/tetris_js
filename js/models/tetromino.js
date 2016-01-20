@@ -101,7 +101,10 @@ Tetromino.prototype.move = function(coordinates) {
     }
 };
 
-Tetromino.prototype.doGravity = function() {
+/**
+ * Moves tetromino down by one grid unit
+ */
+Tetromino.prototype.drop = function() {
     this.move({x:this.x, y:this.y+1});
 };
 
@@ -198,7 +201,7 @@ Tetromino.prototype.getBlockCoordinatesForOffset = function(coordinates) {
     return coordinates;
 };
 
-Tetromino.prototype.getBlockCoordinatesForMoveDown = function() {
+Tetromino.prototype.getBlockCoordinatesForDrop = function() {
     return this.getBlockCoordinatesForOffset({x:0, y:1});
 };
 
