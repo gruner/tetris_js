@@ -14,9 +14,7 @@ module.exports = {
         // Retrieve a list of current subscribers for eventName (if any)
         var subscribers = eventSubscriptions[eventName];
    
-        if (typeof subscribers === 'undefined') {
-            // If no subscribers for this event were found,
-            // initialize a new empty array
+        if (subscribers === undefined) {
             subscribers = eventSubscriptions[eventName] = [];
         }
    
@@ -25,29 +23,32 @@ module.exports = {
         subscribers.push(callback);
     },
 
-    // unsubscribe: function(eventName, key) {
-    //     var subscribers = eventSubscriptions[eventName];
-    //     if (subscribers[key]) {
-    //         // remove
-    //     }
-    // },
+    unsubscribe: function(eventName, callback) {
+        var subscribers = eventSubscriptions[eventName];
+ 
+        if (subscribers === undefined) { return; }
 
-    // once: function() {
-    //     var self = this;
-    //     this.subscribe(function () {
+        var index = subscribers.indexOf(callback);
 
-    //     });
-    // },
+        if (index !== -1) {
+            subscribers.splice(index, 1);
+        }
+    },
+
+    once: function(eventName, callback) {
+        var self = this;
+        this.subscribe(eventName, function() {
+            callback.apply(this, arguments);
+            self.unsubscribe(eventName, callback);
+        });
+    },
  
     trigger: function (eventName, data, context) {
  
-        var
-            // Retrieve a list of subscribers for the event being triggered
-            subscribers = eventSubscriptions[eventName],
-            i, iMax;
+        var subscribers = eventSubscriptions[eventName],
+            i;
  
         if (typeof subscribers === 'undefined') {
-            // No list found for this event, return early to abort execution
             return;
         }
  
@@ -56,10 +57,19 @@ module.exports = {
         data = (data instanceof Array) ? data : [data];
  
         // Set a default value for `this` in the callback
+        var window = window || global;
         context = context || window;
 
         for (i = 0; i < subscribers.length; i++) {
             subscribers[i].apply(context, data);
         }
-    }
+    },
+
+    hasSubscriber: function (eventName, callback) {
+        if (eventSubscriptions[eventName] !== undefined && eventSubscriptions[eventName].indexOf(callback) !== - 1 ) {
+            return true;
+        }
+
+        return false;
+    },
 };
