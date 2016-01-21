@@ -70,7 +70,7 @@ Playfield.prototype.clearRows = function(rows) {
         iMax = rows.length;
 
     for (i = 0; i < iMax; i++) {
-        this.clearRowAt(i);
+        this.clearRowAt(rows[i]);
     }
 };
 
@@ -81,7 +81,7 @@ Playfield.prototype.clearRows = function(rows) {
 Playfield.prototype.clearRowAt = function(y) {
     var row;
     if (y < this.grid.length) {
-        row = this.grid.splice(y, 1)[0];
+        row = this.grid.splice(y, 1)[0]; // splice returns array, we only want the first element
         this.grid.unshift([]);
     }
 
@@ -89,11 +89,59 @@ Playfield.prototype.clearRowAt = function(y) {
 };
 
 /**
- * Settle any remaining blocks after a row is cleared
+ * Settle any remaining blocks after a row is cleared.
+ * Implements naive ------
+ *
+ * For each occupied cell in a row, check if the cell below it is empty
+ * And merge them
+ *
+ *   xx
+ * xx  xxxxxx => xxxxxxxxxx
+ * ------
+ *   xxxx
+ * xx  xxxxxx => no change, treat line as a whole
  */
-Playfield.prototype.settleBlocks = function() {
-    var self = this;
-}
+Playfield.prototype.settleRows = function() {
+    var self = this,
+        j;
+
+    // For each row, find empty places
+    // that the above row can fill
+    self.traverseRows(function(i, targetRow) {
+        var topNeighboringRow = self.grid[i-1], // traversing botom to top
+            mergable = false;
+
+        if (!targetRow || !topNeighboringRow) { return; }
+
+        for (j = 0; j < topNeighboringRow.length; j++) {
+            if (topNeighboringRow[j]) {
+                if (targetRow[j] === undefined) {
+                    mergable = true;
+                } else {
+                    mergable = false;
+                    break;
+                }
+            }
+        }
+
+        if (mergable) {
+            self.grid[i] = self.mergeRows(targetRow, topNeighboringRow);
+            self.clearRowAt(i-1);
+        }
+    });
+};
+
+/**
+ * Merges row2 into row1
+ */
+Playfield.prototype.mergeRows = function(row1, row2) {
+    var merged = new Array(this.xCount);
+    for (var i = 0; i < this.xCount; i++) {
+        merged[i] = (row2[i] !== undefined) ? row2[i] : row1[i];
+    }
+
+    return merged;
+};
 
 /**
  * Checks that a row is complete, i.e. filled with blocks. If a row is undefined, it has no cells,

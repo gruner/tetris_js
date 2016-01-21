@@ -37,6 +37,35 @@ describe('Playfield', function() {
         });
     });
 
+    describe('#clearRows', function() {
+        it('should remove specified rows', function() {
+
+            playfield.grid[0] = [1,2,3,4,5];
+            playfield.grid[1] = [1,2,3,4,5];
+            playfield.grid[2] = [1,2,3,4,5];
+            playfield.grid[3] = [1,2,3,4,5];
+            playfield.grid[4] = [1,2,3,4,5];
+            playfield.grid[5] = [1,2,3,4,5];
+
+            playfield.clearRows([0, 2, 5]);
+
+            // Should Result in:
+            // playfield.grid[0] = [];
+            // playfield.grid[1] = [];
+            // playfield.grid[2] = [];
+            // playfield.grid[3] = [1,2,3,4,5];
+            // playfield.grid[4] = [1,2,3,4,5];
+            // playfield.grid[5] = [1,2,3,4,5];
+        
+            assert.strictEqual(playfield.grid[0].length, 0);
+            assert.strictEqual(playfield.grid[1].length, 0);
+            assert.strictEqual(playfield.grid[2].length, 0);
+            assert.strictEqual(playfield.grid[3].length, 5);
+            assert.strictEqual(playfield.grid[4].length, 5);
+            assert.strictEqual(playfield.grid[5].length, 5);
+        });
+    });
+
     describe('#clearRowAt', function() {
         it('should insert new empty row', function() {
 
@@ -118,6 +147,48 @@ describe('Playfield', function() {
             // ensure row 0 is not altered
             assert.equal(5, playfield.grid[0].length);
             
+        });
+    });
+
+    describe('#settleRows', function() {
+        it('should merge compatible rows', function() {
+
+            var n = undefined;
+
+            playfield.grid[4] = [0,1,2,n,n,n];
+            playfield.grid[5] = [n,n,n,3,4,5];
+
+            playfield.settleRows();
+
+            assert.strictEqual(playfield.grid[5].length, COL_COUNT);
+            assert.equal(playfield.grid[5][0], 0);
+            assert.equal(playfield.grid[5][1], 1);
+            assert.equal(playfield.grid[5][2], 2);
+            assert.equal(playfield.grid[5][3], 3);
+            assert.equal(playfield.grid[5][4], 4);
+            assert.equal(playfield.grid[5][5], 5);
+        });
+    });
+
+    describe('#mergeRows', function() {
+        it('should merge compatible rows', function() {
+
+            var n = undefined,
+                r1 = [0,1,2,n,n,n,6,7,n,n],
+                r2 = [0,n,n,3,4,5,n,n,8,9],
+                result = playfield.mergeRows(r1, r2);
+
+            assert.equal(result.length, 10);
+            assert.equal(result[0], 0);
+            assert.equal(result[1], 1);
+            assert.equal(result[2], 2);
+            assert.equal(result[3], 3);
+            assert.equal(result[4], 4);
+            assert.equal(result[5], 5);
+            assert.equal(result[6], 6);
+            assert.equal(result[7], 7);
+            assert.equal(result[8], 8);
+            assert.equal(result[9], 9);
         });
     });
 
