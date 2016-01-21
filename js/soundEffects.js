@@ -9,10 +9,10 @@ var events = require('./config/events'),
  * See http://www.html5rocks.com/en/tutorials/webaudio/intro/
  */
 var SoundEffects = function() {
-    if (!this.initAudioContext()) { return; }
-
     this.isMuted = true;
     this.sources = {};
+
+    if (!this.initAudioContext()) { return; }
     this.bindEvents();
     this.loadSoundFiles();
 };

@@ -1,9 +1,11 @@
 'use strict';
 
+var debug = require('./debug');
+
 // Modified version of http://www.html5rocks.com/en/tutorials/webaudio/intro/js/buffer-loader.js
 
-function BufferLoader(context, urlList, callback) {
-    this.context = context;
+function BufferLoader(ctx, urlList, callback) {
+    this.ctx = ctx;
     this.urlList = urlList;
     this.onload = callback;
     this.bufferList = {};
@@ -20,28 +22,28 @@ BufferLoader.prototype.loadBuffer = function(key, url) {
   
     request.onload = function() {
         // Asynchronously decode the audio file data in request.response
-        loader.context.decodeAudioData(
-          request.response,
-          function(buffer) {
-            if (!buffer) {
-                alert('error decoding file data: ' + url);
-                return;
-            }
-            loader.bufferList[key] = buffer;
+        loader.ctx.decodeAudioData(
+            request.response,
+            function(buffer) {
+                if (!buffer) {
+                    debug.log('error decoding file data: ' + url);
+                    return;
+                }
+                loader.bufferList[key] = buffer;
 
-            // When all buffers are loaded, call the callback
-            if (++loader.loadCount === Object.keys(loader.urlList).length) {
-                loader.onload(loader.bufferList);
+                // When all buffers are loaded, call the callback
+                if (++loader.loadCount === Object.keys(loader.urlList).length) {
+                    loader.onload(loader.bufferList);
+                }
+            },
+            function(error) {
+                debug.log('decodeAudioData error', error);
             }
-        },
-        function(error) {
-          console.error('decodeAudioData error', error);
-        }
-      );
+        );
     }
   
     request.onerror = function() {
-        //alert('BufferLoader: XHR error');
+        debug.log('BufferLoader: XHR error');
     }
   
     request.send();
@@ -49,7 +51,7 @@ BufferLoader.prototype.loadBuffer = function(key, url) {
 
 BufferLoader.prototype.load = function() {
     for (var key in this.urlList) {
-        this.loadBuffer(key, this.urlList[i]);
+        this.loadBuffer(key, this.urlList[key]);
     };
 }
 
