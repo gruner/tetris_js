@@ -103,6 +103,7 @@ Playfield.prototype.clearRowAt = function(y) {
  */
 Playfield.prototype.settleRows = function() {
     var self = this,
+        merges = false,
         j;
 
     // For each row, find empty places
@@ -127,8 +128,11 @@ Playfield.prototype.settleRows = function() {
         if (mergable) {
             self.grid[i] = self.mergeRows(targetRow, topNeighboringRow);
             self.clearRowAt(i-1);
+            merges = true;
         }
     });
+
+    return merges;
 };
 
 /**

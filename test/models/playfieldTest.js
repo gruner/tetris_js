@@ -158,8 +158,9 @@ describe('Playfield', function() {
             playfield.grid[4] = [0,1,2,n,n,n];
             playfield.grid[5] = [n,n,n,3,4,5];
 
-            playfield.settleRows();
+            var result = playfield.settleRows();
 
+            assert(result);
             assert.strictEqual(playfield.grid[5].length, COL_COUNT);
             assert.equal(playfield.grid[5][0], 0);
             assert.equal(playfield.grid[5][1], 1);
@@ -167,6 +168,26 @@ describe('Playfield', function() {
             assert.equal(playfield.grid[5][3], 3);
             assert.equal(playfield.grid[5][4], 4);
             assert.equal(playfield.grid[5][5], 5);
+        });
+    });
+
+    describe('#settleRows', function() {
+        it('should not merge incompatible rows', function() {
+
+            var n = undefined;
+
+            playfield.grid[4] = [1,1,1,n,n,n];
+            playfield.grid[5] = [2,n,n,2,2,2];
+
+            var result = playfield.settleRows();
+
+            assert(!result);
+            assert.equal(playfield.grid[5][0], 2);
+            assert.equal(playfield.grid[5][1], n);
+            assert.equal(playfield.grid[5][2], n);
+            assert.equal(playfield.grid[5][3], 2);
+            assert.equal(playfield.grid[5][4], 2);
+            assert.equal(playfield.grid[5][5], 2);
         });
     });
 
