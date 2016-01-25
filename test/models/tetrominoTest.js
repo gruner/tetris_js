@@ -22,39 +22,6 @@ describe('Tetromino', function() {
         });
     });
 
-    // DEPRICATED
-    // describe('#update', function() {
-    //     it('', function() {
-    //         tetromino.x = 10;
-    //         tetromino.y = 10;
-    //         tetromino.destination = {y:100};
-    //         tetromino.update(10);
-
-    //         assert.strictEqual(10, tetromino.x);
-    //         assert.strictEqual(20, tetromino.y);
-    //     });
-    // });
-
-    describe('#atDestination', function() {
-        it('should return false if not at the specified destination', function() {
-            tetromino.y = 9;
-            tetromino.destination = {y:10};
-            
-            assert(false === tetromino.atDestination());
-        });
-    });
-
-    describe('#atDestination', function() {
-        it('should return true if at the specified destination', function() {
-            tetromino.y = 10;
-            tetromino.destination = {y:10};
-            
-            assert(true === tetromino.atDestination());
-            tetromino.y++;
-            assert(true === tetromino.atDestination());
-        });
-    });
-
     describe('#getBlockCoordinates', function() {
         it('should return array of block coordinates', function() {
             tetromino.x = 10;

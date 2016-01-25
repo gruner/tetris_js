@@ -15,7 +15,6 @@ var Tetromino = function(type, blocks) {
     this.y = 0;
     this.type = type;
     this.blocks = blocks;
-    this.destination = null;
 };
 
 /**
@@ -106,34 +105,6 @@ Tetromino.prototype.move = function(coordinates) {
  */
 Tetromino.prototype.drop = function() {
     this.move({x:this.x, y:this.y+1});
-};
-
-/**
- * DEPRICATED
- * Increments y coordinates by the given offset,
- * used to update the position as it falls
- */
-// Tetromino.prototype.update = function(yOffset) {
-//     var newY = this.y + yOffset;
-//     if (newY <= this.destination.y) {
-//         this.y = newY;
-//     } else {
-//         this.y = this.destination.y;
-//     }
-// };
-
-Tetromino.prototype.setDestination = function(coordinates) {
-    if (Validate.coordinates(coordinates)) {
-        this.destination = coordinates;  
-    }
-};
-
-/**
- * Tests that the current y coordinate matches the destination
- * @return bool
- */
-Tetromino.prototype.atDestination = function() {
-    return (this.y >= this.destination.y);
 };
 
 /**

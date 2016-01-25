@@ -22,6 +22,7 @@ var GameEngine = function() {
     this.level = 0;
     this.gravity = 0.05;
     this.accelerateGravity = false;
+    this.isSuspended = false;
     this.paused = false;
     this.playfield = new Playfield(
         Playfield.defaults.xCount,
@@ -90,8 +91,7 @@ GameEngine.prototype.bindEvents = function() {
  */
 GameEngine.prototype.update = function() {
 
-    if (features.enabled('testMovementMode')) { 
-        this.updateProjectedDestination();
+    if (this.isSuspended) {
         return;
     }
     
@@ -111,25 +111,32 @@ GameEngine.prototype.update = function() {
             // Convert tetromino into component blocks
             this.playfield.placeBlocks(this.activeTetromino.releaseBlocks());
 
-            // Check for completed rows
-            var completedRows = this.playfield.getCompletedRows();
-            if (completedRows.length) {
-                this.playfield.clearRows(completedRows);
-                eventDispatcher.trigger(events.rowComplete, completedRows);
+            this.settleBlocks();
 
-                // TODO: find a way to pause the update loop while the animation runs
-                // pause for animation of row removal
-                // TODO: unsubscribe after doing it once
-                eventDispatcher.subscribe(events.rowCleared, function() {
-                    this.getNextPiece();
-                });
-            } else {
-                this.getNextPiece();
-            }
-        }
+            // // Check for completed rows
+            // var completedRows = this.playfield.getCompletedRows();
+            // if (completedRows.length) {
 
-        if (features.enabled('displayGhostPiece')) { 
-            this.updateProjectedDestination();
+            //     // Suspend while rows are cleared and settled
+            //     this.isSuspended = true;
+                
+            //     this.playfield.clearRows(completedRows);
+            //     eventDispatcher.trigger(events.rowComplete, completedRows);
+
+            //     // Wait for animation to complete
+            //     // TODO: unsubscribe after doing it once
+            //     var self = this;
+            //     eventDispatcher.subscribe(events.rowCleared, function() {
+            //         self.playfield.settleBlocks();
+            //     });
+
+            //     eventDispatcher.subscribe(events.playfieldSettled, function() {
+            //         self.isSuspended = false;
+            //         self.getNextPiece();
+            //     });
+            // } else {
+            //     this.getNextPiece();
+            // }
         }
     }
 };
@@ -150,19 +157,57 @@ GameEngine.prototype.shouldMoveDownOnCurrentFrame = function() {
 };
 
 /**
+ * Recursively check if rows are completed after completed rows are cleared and blocks are settled
+ */
+GameEngine.prototype.settleBlocks = function(iteration) {
+    var self = this,
+        iteration = iteration || 0;
+
+    // Don't need to make this call on the first iteration
+    if (iteration > 0) {
+        // Resume if the playfield has nothing to settle
+        if (! self.playfield.settleRows()) {
+            self.resume();
+            return;
+        }
+    }
+    
+    var completedRows = self.playfield.getCompletedRows();
+
+    if (completedRows.length) {
+
+        // Suspend updates while rows are cleared and settled
+        self.isSuspended = true;
+        
+        // Update the model
+        self.playfield.clearRows(completedRows);
+
+        // Trigger rowComplete - starts animation
+        eventDispatcher.trigger(events.rowComplete, completedRows);
+
+        // After row is cleared, settle blocks
+        eventDispatcher.once(events.rowCleared, function() {
+            self.settleBlocks(iteration); // recursively check if settling completes any rows
+        });
+    } else {
+        // After blocks are settled, resume updates
+        self.resume();
+    }
+};
+
+GameEngine.prototype.resume = function() {
+    if (this.isSuspended) {
+        this.isSuspended = false;
+        this.getNextPiece();
+    }
+};
+
+/**
  * Returns the gravity for the current state,
  * checking if in "soft drop" mode (i.e. down button being pressed)
  */
 GameEngine.prototype.getGravity = function() {
     return (this.accelerateGravity) ? GameEngine.ACCELERATED_GRAVITY : this.gravity;
-};
-
-/**
- * Updates the destination coordinates of the active tetromino
- * based on its current location
- */
-GameEngine.prototype.updateProjectedDestination = function() {
-    this.activeTetromino.setDestination(this.getProjectedDestination());
 };
 
 /**
@@ -281,14 +326,17 @@ GameEngine.prototype.getProjectedDestination = function() {
 };
 
 /**
- * Returns a tetromino instance for a tetromino at the destination of the active tetromino,
+ * Returns a tetromino instance for a tetromino at the projected destination of the active tetromino,
  * for displaying a "ghost piece" where the active tetromino will land
  */
 GameEngine.prototype.getGhostPiece = function() {
-    var ghostPiece = Tetromino.create(this.activeTetromino.type);
+    var ghostPiece = Tetromino.create(this.activeTetromino.type),
+        dest = this.getProjectedDestination();
 
-    ghostPiece.x = this.activeTetromino.destination.x;
-    ghostPiece.y = this.activeTetromino.destination.y;
+    // TODO: copy the orientation of the tetromino.
+
+    ghostPiece.x = dest.x;
+    ghostPiece.y = dest.y;
 
     return ghostPiece;
 };
