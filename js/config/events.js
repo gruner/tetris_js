@@ -8,6 +8,7 @@ module.exports = {
     activePiecePositioned:  'tetris.activePiecePositioned',
     rowComplete:            'tetris.rowComplete',
     rowCleared:             'tetris.rowCleared',
+    playfieldSettled:       'tetris.playfieldSettled',
     invalidMove:            'tetris.invalidMove',
     topOut:                 'tetris.topOut',
     pause:                  'tetris.pause'
