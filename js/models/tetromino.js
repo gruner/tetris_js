@@ -37,7 +37,7 @@ Tetromino.create = function(typeKey) {
                 } else {
                     throw new Error('Invalid block coordinates');
                 }
-            };
+            }
 
             blockRotations.push(blocks);
         }
@@ -157,19 +157,19 @@ Tetromino.prototype.getBlockCoordinatesForOffset = function(coordinates) {
         return;
     }
 
-    var projectedX = this.x + coordinates.x,
-        projectedY = this.y + coordinates.y,
-        coordinates = []
+    var offsetX = this.x + coordinates.x,
+        offsetY = this.y + coordinates.y,
+        offsetCoordinates = []
         ;
 
     this.traverseBlocks(function(i, block) {
-        coordinates.push({
-            x: projectedX + block.x,
-            y: projectedY + block.y
+        offsetCoordinates.push({
+            x: offsetX + block.x,
+            y: offsetY + block.y
         });
     });
 
-    return coordinates;
+    return offsetCoordinates;
 };
 
 Tetromino.prototype.getBlockCoordinatesForDrop = function() {
@@ -217,7 +217,7 @@ Tetromino.prototype.getBlockCoordinatesForRotation = function(direction) {
             y: this.y + rotatedBlocks[i].y
         });
         
-    };
+    }
 
     return coordinates;
 };
