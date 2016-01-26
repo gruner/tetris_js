@@ -3,7 +3,7 @@
 var assert = require('assert'),
     Block = require('../../js/models/block');
 
-describe('Theme', function() {
+describe('Block', function() {
 
     describe('#constructor', function() {
         it('should create valid block', function() {
@@ -16,7 +16,7 @@ describe('Theme', function() {
     });
 
     describe('#collidesWith', function() {
-        it('should return true if blocks collide', function() {
+        it('should determine if blocks collide', function() {
 
             var testData = [
                 {

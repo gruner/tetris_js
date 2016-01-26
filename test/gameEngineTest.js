@@ -65,14 +65,14 @@ describe('GameEngine', function() {
                     x: 5,
                     y: 2,
                     expectedX: 5,
-                    expectedY: 19
+                    expectedY: 20
                 },
                 {
                     type: 'o',
                     x: 6,
                     y: 2,
                     expectedX: 6,
-                    expectedY: 19
+                    expectedY: 20
                 }
             ];
 
@@ -85,18 +85,18 @@ describe('GameEngine', function() {
                 gameEngine.activeTetromino = Tetromino.create(testData.type);
                 gameEngine.activeTetromino.move({x: testData.x, y: testData.y});
         
-                var dest = gameEngine.getProjectedDestination();
+                var dest = gameEngine.getProjectedDestination(gameEngine.activeTetromino);
 
-                assert.equal(testData.expectedX, dest.x);
-                assert.equal(testData.expectedY, dest.y);
+                assert.equal(dest.x, testData.expectedX);
+                assert.equal(dest.y, testData.expectedY);
             }
         });
     });
 
-    describe('#getNextPiece', function() {
+    describe('#advanceNextPiece', function() {
         it('should determine the next tetromino', function() {
             assert.strictEqual(null, gameEngine.activeTetromino);
-            gameEngine.getNextPiece();
+            gameEngine.advanceNextPiece();
             assert.ok(gameEngine.activeTetromino);
         });
     });
