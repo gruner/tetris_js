@@ -111,32 +111,34 @@ GameEngine.prototype.update = function() {
             // Convert tetromino into component blocks
             this.playfield.placeBlocks(this.activeTetromino.releaseBlocks());
 
-            this.settleBlocks();
+            //this.settleBlocks();
 
-            // // Check for completed rows
-            // var completedRows = this.playfield.getCompletedRows();
-            // if (completedRows.length) {
+            // TODO: Check if game over
 
-            //     // Suspend while rows are cleared and settled
-            //     this.isSuspended = true;
+            // Check for completed rows
+            var completedRows = this.playfield.getCompletedRows();
+            if (completedRows.length) {
+
+                // Suspend while rows are cleared and settled
+                this.isSuspended = true;
                 
-            //     this.playfield.clearRows(completedRows);
-            //     eventDispatcher.trigger(events.rowComplete, completedRows);
+                this.playfield.clearRows(completedRows);
+                eventDispatcher.trigger(events.rowComplete, completedRows);
 
-            //     // Wait for animation to complete
-            //     // TODO: unsubscribe after doing it once
-            //     var self = this;
-            //     eventDispatcher.subscribe(events.rowCleared, function() {
-            //         self.playfield.settleBlocks();
-            //     });
+                // Wait for animation to complete
+                // TODO: unsubscribe after doing it once
+                var self = this;
+                eventDispatcher.subscribe(events.rowCleared, function() {
+                    self.playfield.settleBlocks();
+                });
 
-            //     eventDispatcher.subscribe(events.playfieldSettled, function() {
-            //         self.isSuspended = false;
-            //         self.advanceNextPiece();
-            //     });
-            // } else {
-            //     this.advanceNextPiece();
-            // }
+                eventDispatcher.subscribe(events.playfieldSettled, function() {
+                    self.isSuspended = false;
+                    self.advanceNextPiece();
+                });
+            } else {
+                this.advanceNextPiece();
+            }
         }
     }
 };
