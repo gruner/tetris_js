@@ -106,39 +106,22 @@ GameEngine.prototype.update = function() {
             this.activeTetromino.drop();
         } else { // Can't move down any farther, lock piece in final position
 
+            // Check for end of game - tetromino hasn't moved, and can't drop
+            if (this.activeTetromino.atOrigin()) {
+                this.topOut();
+                return;
+            }
+
             eventDispatcher.trigger(events.activePiecePositioned);
 
             // Convert tetromino into component blocks
             this.playfield.placeBlocks(this.activeTetromino.releaseBlocks());
+            
+            // Set the next tetromino
+            this.advanceNextPiece();
 
-            //this.settleBlocks();
-
-            // TODO: Check if game over
-
-            // Check for completed rows
-            var completedRows = this.playfield.getCompletedRows();
-            if (completedRows.length) {
-
-                // Suspend while rows are cleared and settled
-                this.isSuspended = true;
-                
-                this.playfield.clearRows(completedRows);
-                eventDispatcher.trigger(events.rowComplete, completedRows);
-
-                // Wait for animation to complete
-                // TODO: unsubscribe after doing it once
-                var self = this;
-                eventDispatcher.subscribe(events.rowCleared, function() {
-                    self.playfield.settleBlocks();
-                });
-
-                eventDispatcher.subscribe(events.playfieldSettled, function() {
-                    self.isSuspended = false;
-                    self.advanceNextPiece();
-                });
-            } else {
-                this.advanceNextPiece();
-            }
+            // Check for completed rows and process them
+            this.settleBlocks();
         }
     }
 };
@@ -187,7 +170,7 @@ GameEngine.prototype.settleBlocks = function(iteration) {
         // Trigger rowComplete - starts animation
         eventDispatcher.trigger(events.rowComplete, completedRows);
 
-        // After row is cleared, settle blocks
+        // After row is cleared, settle blocks again
         eventDispatcher.once(events.rowCleared, function() {
             self.settleBlocks(iteration); // recursively check if settling completes any rows
         });
@@ -203,7 +186,6 @@ GameEngine.prototype.settleBlocks = function(iteration) {
 GameEngine.prototype.resume = function() {
     if (this.isSuspended) {
         this.isSuspended = false;
-        this.advanceNextPiece();
     }
 };
 
@@ -257,14 +239,17 @@ GameEngine.prototype.refreshPieceQueue = function() {
 GameEngine.prototype.togglePause = function() {
     this.paused = !this.paused;
     if (this.paused) {
-        eventDispatcher.trigger(events.topOut);
+        this.topOut();
     }
 };
 
 /**
  * Ends the game
  */
-GameEngine.prototype.topOut = function() {};
+GameEngine.prototype.topOut = function() {
+    this.isSuspended = true;
+    eventDispatcher.trigger(events.topOut);
+};
 
 /**
  * Moves the active piece by 1 grid unit in the specified direction
