@@ -9,7 +9,7 @@ var eventDispatcher = require('../eventDispatcher'),
     canvasCache = require('./canvasCache'),
     animationQueue = require('./animationQueue'),
     features = require('../config/features'),
-    debug = require(../debug);
+    debug = require('../debug');
 
 /**
  * Renders the view according to GameEngine state.
