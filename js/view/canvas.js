@@ -8,7 +8,8 @@ var eventDispatcher = require('../eventDispatcher'),
     RowCollapseAnimation = require('./rowCollapseAnimation'),
     canvasCache = require('./canvasCache'),
     animationQueue = require('./animationQueue'),
-    features = require('../config/features');
+    features = require('../config/features'),
+    debug = require(../debug);
 
 /**
  * Renders the view according to GameEngine state.
@@ -21,6 +22,7 @@ var Canvas = function(canvasElement, gameEngine) {
     this.gameEngine = gameEngine;
 
     this.init(canvasElement);
+    this.bindEvents();
 };
 
 Canvas.prototype.init = function(canvasElement) {
@@ -33,7 +35,11 @@ Canvas.prototype.init = function(canvasElement) {
 
 Canvas.prototype.bindEvents = function() {
     var self = this;
-    eventDispatcher.subscribe(events.rowComplete, self.animateRowComplete);
+
+    eventDispatcher.subscribe(events.rowComplete, function(completedRows) {
+        animationQueue.push(new RowCompleteAnimation(self.ctx, completedRows));
+        //animationQueue.push(new RowCollapseAnimation(this.ctx, rows));
+    });
 };
 
 /**
@@ -46,7 +52,7 @@ Canvas.prototype.draw = function() {
     // If animations are in-progress, draw the next frame,
     // otherwise resume normal drawing
     if (!animationQueue.draw()) {
-        if (features.enabled('ghostPiece')) {
+        if (features.enabled('displayGhostPiece')) {
             this.drawGhostPiece(); // has to draw before tetromino, so that it renders behind it
         }
         this.drawTetromino(
@@ -54,6 +60,8 @@ Canvas.prototype.draw = function() {
             this.gameEngine.getTetrominoStyle(this.gameEngine.activeTetromino.type).color,
             this.gameEngine.theme.tetrominoBorder
         );
+    } else {
+        debug.info('drawing');
     }
 };
 
@@ -126,16 +134,6 @@ Canvas.prototype.drawTetromino = function(tetromino, fillColor, borderColor) {
  */
 Canvas.prototype.drawGhostPiece = function() {
     this.drawTetromino(this.gameEngine.getGhostPiece(), this.gameEngine.theme.ghostPiece.color);
-};
-
-/**
- * Handler for the rowComplete event
- * Adds row complete and collapse animations to the animation queue
- */
-Canvas.prototype.animateRowComplete = function(rows) {
-    console.logs(rows);
-    animationQueue.push(new RowCompleteAnimation(this.ctx, rows));
-    //animationQueue.push(new RowCollapseAnimation(this.ctx, rows));
 };
 
 /**

@@ -3,7 +3,8 @@
 var Animation = require('./animation'),
     dimensions = require('../config/canvasDimensions'),
     eventDispatcher = require('../eventDispatcher'),
-    events = require('../config/events');
+    events = require('../config/events'),
+    debug = require('../debug');
 
 var OPACITY_CHANGE_RATE = 0.05,
     ENDING_OPACITY = 0.05;
@@ -17,6 +18,8 @@ var RowCompleteAnimation = function(ctx, rows) {
     this.complete = false;
     this.opacity = 1;
     this.finalFillColor = '#000000';//this.gameEngine.theme.playfield.color;
+
+    debug.info(rows);
 };
 
 //RowCompleteAnimation.prototype = new Animation();
@@ -27,10 +30,10 @@ RowCompleteAnimation.prototype.draw = function() {
 
     this.ctx.beginPath();
     this.ctx.fillStyle = this.getFill();
-    this.ctx.fillRect(dimensions.playfieldOrigin.x, dimensions.transpose(this.rows[0]), width, height);
+    this.ctx.fillRect(dimensions.playfieldOrigin.x, dimensions.transpose(this.rows[this.rows.length - 1]), width, height);
 
     if (this.opacity <= ENDING_OPACITY) {
-        eventDispatcher.trigger(events.rowRemoved);
+        eventDispatcher.trigger(events.rowCleared);
     	this.complete = true;
     }
 };

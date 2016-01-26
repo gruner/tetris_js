@@ -1,6 +1,12 @@
 'use strict';
 
-var enabled = false;
+var enabled = false,
+    levels = {
+        info: 1,
+        debug: 2,
+        error: 4
+    },
+    level = levels.debug;
 
 function toggle(on) {
     if (consoleAvailable()) {
@@ -16,6 +22,12 @@ module.exports = {
     log: function(msg) {
         if (enabled && typeof console !== 'undefined') {
             console.log(msg);
+        }
+    },
+
+    info: function(msg) {
+        if (level >= levels.info) {
+            this.log(msg);
         }
     },
 
