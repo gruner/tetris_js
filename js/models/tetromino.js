@@ -15,6 +15,7 @@ var Tetromino = function(type, blocks) {
     this.y = 0;
     this.type = type;
     this.blocks = blocks;
+    this.origin = {x:3, y:0}
 };
 
 /**
@@ -105,6 +106,13 @@ Tetromino.prototype.move = function(coordinates) {
  */
 Tetromino.prototype.drop = function() {
     this.move({x:this.x, y:this.y+1});
+};
+
+/**
+ * Checks that tetromino is at its original coordinates
+ */
+Tetromino.prototype.atOrigin = function() {
+    return (this.x === this.origin.x && this.y === this.origin.y);
 };
 
 /**
