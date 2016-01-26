@@ -236,9 +236,9 @@ Playfield.prototype.validateBlockPlacement = function(blocks) {
  */
 Playfield.prototype.validateBlock = function(block) {
     return (
-        Validate.coordinates(block)
-        && this.cellInBounds(block)
-        && this.cellEmpty(block)
+        Validate.coordinates(block) && 
+        this.cellInBounds(block) && 
+        this.cellEmpty(block)
     );
 };
 
