@@ -15,8 +15,8 @@ var keyCodes = {
 };
 
 var eventBinding = {
-    bindKeydown: function() {
-        $(document).on('keydown', function(e) {
+    bindKeydown: function($document) {
+        $document.on('keydown', function(e) {
             var code = e.keyCode || e.which;
             if (code === keyCodes.left) {
                 dispatcher.trigger(events.moveActivePiece, {direction: constants.DIRECTION_LEFT}, this);
@@ -34,26 +34,23 @@ var eventBinding = {
                 dispatcher.trigger(events.pause);
             }
         });
-    },
-    bindKeyup: function() {
-        $(document).on('keyup', function(e) {
-            var code = e.keyCode || e.which;
-            // if (code === keyCodes.left) {
-            //     dispatcher.trigger(events.moveActivePiece, {direction: 'left'}, this);
-            // } else if (code === keyCodes.right) {
-            //     dispatcher.trigger(events.moveActivePiece, {direction: 'right'}, this);
-            // } else if (code === keyCodes.down) {
-            //     dispatcher.trigger(events.moveActivePiece, {direction: 'down'}, this);
-            // }
-        });
     }
+
+    // bindKeyup: function($document) {
+    //     $document.on('keyup', function(e) {
+    //         var code = e.keyCode || e.which;
+    //     });
+    // }
 };
 
 module.exports = {
     init: function() {
-        for (var i in eventBinding) {
+        var $document = $(document),
+            i;
+
+        for (i in eventBinding) {
             if (eventBinding.hasOwnProperty(i)) {
-                eventBinding[i]();
+                eventBinding[i]($document);
             }
         }
     }
