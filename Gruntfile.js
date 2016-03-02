@@ -16,16 +16,6 @@ module.exports = function(grunt) {
     'copy'
   ]);
 
-  // grunt.registerTask('buildDebug', function() {
-  //   var tasks = ['build'];
-
-  //   if (grunt.option('debug')) {
-  //     tasks.append('browserify:debug');
-  //   }
-
-  //   grunt.task.run(tasks);
-  // });
-
   grunt.initConfig({
     pkg: grunt.file.readJSON('package.json'),
     
