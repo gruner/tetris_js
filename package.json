@@ -10,8 +10,7 @@
   "author": "Andrew Gruner",
   "license": "MIT",
   "dependencies": {
-    "underscore": "^1.7.0",
-    "jquery": "^2.1.1"
+    "underscore": "^1.7.0"
   },
   "devDependencies": {
     "browserify": "latest",

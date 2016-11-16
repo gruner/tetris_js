@@ -9,9 +9,23 @@
     		margin: 40px;
     	}
     </style>
-    <script src="js/tetris.min.js"></script>
 </head>
 <body>
     <canvas class="tetris" width="300" height="660"></canvas>
+    <script src="js/tetris.min.js"></script>
+    <script>
+        var el = document.getElementsByClassName('tetris'),
+            i,
+            iMax = el.length
+            ;
+
+        for (i = 0; i < iMax; i++) {
+            if (el[i].nodeName == 'CANVAS') {
+                var tetris = new Tetris(el[i]);
+                tetris.run();
+                break;
+            }
+        }
+    </script>
 </body>
 </html
