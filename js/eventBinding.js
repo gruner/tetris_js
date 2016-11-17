@@ -1,7 +1,6 @@
 'use strict';
     
-var $ = require('jquery'),
-    dispatcher = require('./eventDispatcher'),
+var dispatcher = require('./eventDispatcher'),
     constants = require('./config/constants'),
     features = require('./config/features'),
     events = require('./config/events');
@@ -15,8 +14,8 @@ var keyCodes = {
 };
 
 var eventBinding = {
-    bindKeydown: function($document) {
-        $document.on('keydown', function(e) {
+    bindKeydown: function() {
+        document.addEventListener('keydown', function(e) {
             var code = e.keyCode || e.which;
             if (code === keyCodes.left) {
                 dispatcher.trigger(events.moveActivePiece, {direction: constants.DIRECTION_LEFT}, this);
@@ -45,12 +44,11 @@ var eventBinding = {
 
 module.exports = {
     init: function() {
-        var $document = $(document),
-            i;
+        var i;
 
         for (i in eventBinding) {
             if (eventBinding.hasOwnProperty(i)) {
-                eventBinding[i]($document);
+                eventBinding[i]();
             }
         }
     }
