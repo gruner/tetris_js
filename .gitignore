@@ -17,6 +17,5 @@ xcuserdata
 .svn
 CVS
 
-dist/*
 node_modules/*
 sounds/src/*

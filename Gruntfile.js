@@ -22,11 +22,11 @@ module.exports = function(grunt) {
     browserify: {
       main: {
         src: 'js/main.js',
-        dest: 'dist/js/tetris.js'
+        dest: 'release/js/tetris.js'
       },
       debug: {
         src: 'js/main.js',
-        dest: 'dist/js/tetris.debug.js'
+        dest: 'release/js/tetris.debug.js'
       }
     },
     
@@ -42,16 +42,16 @@ module.exports = function(grunt) {
     },
     
     clean: {
-      dist: ['dist']
+      release: ['release']
     },
 
     copy: {
-      'dist': {
+      'release': {
         files: [
           {
             expand: true,
             cwd: '.',
-            dest: 'dist',
+            dest: 'release',
             src: ['tetris.html', 'sounds/*.mp3']
           }
         ]
@@ -62,9 +62,9 @@ module.exports = function(grunt) {
       options: {
         mangle: false
       },
-      dist: {
+      release: {
         files: {
-          'dist/js/tetris.min.js': ['dist/js/tetris.js']
+          'release/js/tetris.min.js': ['release/js/tetris.js']
         }
       }
     },
