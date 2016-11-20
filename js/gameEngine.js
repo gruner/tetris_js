@@ -43,6 +43,7 @@ GameEngine.prototype.init = function() {
     if (features.enabled('initWithRemnants')) {
         this.playfield.distributeRandomBlocks(10);
     }
+    this.soundEffects.enabled = features.enabled('soundEffects');
 };
 
 GameEngine.prototype.initThemes = function() {

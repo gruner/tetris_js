@@ -9,7 +9,7 @@ var events = require('./config/events'),
  * See http://www.html5rocks.com/en/tutorials/webaudio/intro/
  */
 var SoundEffects = function() {
-    this.isMuted = true;
+    this.enabled = false; // this breaks the game after the first sound plays
     this.sources = {};
 
     if (!this.initAudioContext()) { return; }
@@ -44,7 +44,9 @@ SoundEffects.prototype.loadSoundFiles = function() {
         bufferLoader = new BufferLoader(
             self.ctx,
             sounds,
-            self.onSoundsLoaded
+            function(bufferList) {
+                self.onSoundsLoaded(bufferList);
+            }
         );
 
     bufferLoader.load();
@@ -67,7 +69,7 @@ SoundEffects.prototype.onSoundsLoaded = function(bufferList) {
  */
 SoundEffects.prototype.play = function(soundKey) {
     // Play the source
-    if (!this.isMuted && this.sources[soundKey]) {
+    if (this.enabled && this.sources[soundKey]) {
         this.sources[soundKey].start(0);
     }
 };

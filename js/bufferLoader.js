@@ -40,19 +40,19 @@ BufferLoader.prototype.loadBuffer = function(key, url) {
                 debug.log('decodeAudioData error', error);
             }
         );
-    }
+    };
   
     request.onerror = function() {
         debug.log('BufferLoader: XHR error');
-    }
+    };
   
     request.send();
-}
+};
 
 BufferLoader.prototype.load = function() {
     for (var key in this.urlList) {
         this.loadBuffer(key, this.urlList[key]);
-    };
-}
+    }
+};
 
 module.exports = BufferLoader;

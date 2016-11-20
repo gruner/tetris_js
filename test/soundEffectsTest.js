@@ -14,7 +14,7 @@ describe('SoundEffects', function() {
 
     describe('#constructor', function() {
         it('should initialize', function() {
-            assert(soundEffects.isMuted === true);
+            assert(soundEffects.enabled === false);
             assert(soundEffects.sources);
         });
     });

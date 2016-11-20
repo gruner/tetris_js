@@ -41,20 +41,20 @@ BufferLoader.prototype.loadBuffer = function(key, url) {
                 debug.log('decodeAudioData error', error);
             }
         );
-    }
+    };
   
     request.onerror = function() {
         debug.log('BufferLoader: XHR error');
-    }
+    };
   
     request.send();
-}
+};
 
 BufferLoader.prototype.load = function() {
     for (var key in this.urlList) {
         this.loadBuffer(key, this.urlList[key]);
-    };
-}
+    }
+};
 
 module.exports = BufferLoader;
 },{"./debug":8}],2:[function(require,module,exports){
@@ -112,6 +112,11 @@ var features = {
     displayGhostPiece: {
         desc: "Highlights where the current piece will land",
         enabled: true,
+        public: true
+    },
+    soundEffects: {
+        desc: "Play sound effects",
+        enabled: false,
         public: true
     }
 };
@@ -408,6 +413,7 @@ GameEngine.prototype.init = function() {
     if (features.enabled('initWithRemnants')) {
         this.playfield.distributeRandomBlocks(10);
     }
+    this.soundEffects.enabled = features.enabled('soundEffects');
 };
 
 GameEngine.prototype.initThemes = function() {
@@ -1521,7 +1527,7 @@ var events = require('./config/events'),
  * See http://www.html5rocks.com/en/tutorials/webaudio/intro/
  */
 var SoundEffects = function() {
-    this.isMuted = true;
+    this.enabled = false; // this breaks the game after the first sound plays
     this.sources = {};
 
     if (!this.initAudioContext()) { return; }
@@ -1556,7 +1562,9 @@ SoundEffects.prototype.loadSoundFiles = function() {
         bufferLoader = new BufferLoader(
             self.ctx,
             sounds,
-            self.onSoundsLoaded
+            function(bufferList) {
+                self.onSoundsLoaded(bufferList);
+            }
         );
 
     bufferLoader.load();
@@ -1579,7 +1587,7 @@ SoundEffects.prototype.onSoundsLoaded = function(bufferList) {
  */
 SoundEffects.prototype.play = function(soundKey) {
     // Play the source
-    if (!this.isMuted && this.sources[soundKey]) {
+    if (this.enabled && this.sources[soundKey]) {
         this.sources[soundKey].start(0);
     }
 };
@@ -1613,8 +1621,6 @@ var Tetris = function(canvasElement) {
         self.gameEngine.update();
         self.canvas.draw();
     };
-
-    // self.frameId = requestAnimationFrame(self.run);
 
     eventDispatcher.subscribe(events.topOut, function() {
         window.cancelAnimationFrame(self.frameId);
@@ -1766,6 +1772,9 @@ module.exports = {
     },
     push: function(animation) {
         return animations.push(animation);
+    },
+    clear: function() {
+        animations = [];
     }
 };
 },{}],25:[function(require,module,exports){

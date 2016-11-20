@@ -24,5 +24,8 @@ module.exports = {
     },
     push: function(animation) {
         return animations.push(animation);
+    },
+    clear: function() {
+        animations = [];
     }
 };

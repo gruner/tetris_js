@@ -26,8 +26,6 @@ var Tetris = function(canvasElement) {
         self.canvas.draw();
     };
 
-    // self.frameId = requestAnimationFrame(self.run);
-
     eventDispatcher.subscribe(events.topOut, function() {
         window.cancelAnimationFrame(self.frameId);
     });

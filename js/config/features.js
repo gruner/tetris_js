@@ -13,6 +13,11 @@ var features = {
         desc: "Highlights where the current piece will land",
         enabled: true,
         public: true
+    },
+    soundEffects: {
+        desc: "Play sound effects",
+        enabled: false,
+        public: true
     }
 };
 
