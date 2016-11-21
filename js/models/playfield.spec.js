@@ -179,6 +179,7 @@ describe('Playfield', function() {
             assert.equal(playfield.grid[5][3], 3);
             assert.equal(playfield.grid[5][4], 4);
             assert.equal(playfield.grid[5][5], 5);
+            assert.equal(ROW_COUNT, playfield.grid.length);
         });
     });
 
@@ -202,6 +203,7 @@ describe('Playfield', function() {
             assert.equal(playfield.grid[7][3], 3);
             assert.equal(playfield.grid[7][4], 4);
             assert.equal(playfield.grid[7][5], 5);
+            assert.equal(ROW_COUNT, playfield.grid.length);
         });
     });
 
@@ -222,6 +224,7 @@ describe('Playfield', function() {
             assert.equal(playfield.grid[5][3], 2);
             assert.equal(playfield.grid[5][4], 2);
             assert.equal(playfield.grid[5][5], 2);
+            assert.equal(ROW_COUNT, playfield.grid.length);
         });
     });
 
@@ -341,6 +344,13 @@ describe('Playfield', function() {
             assert.equal(completedRows[1], 3);
             assert.equal(completedRows[2], 1);
             assert.equal(completedRows.length, 3);
+        });
+    });
+
+    describe('#getCompletedRows', function() {
+        it('should return empty array', function() {
+            var completedRows = playfield.getCompletedRows();
+            assert.equal(completedRows.length, 0);
         });
     });
 

@@ -34,10 +34,6 @@ module.exports = function(grunt) {
       js: {
         files: 'js/**/*.js',
         tasks: ['build', 'mochaTest']
-      },
-      ci: {
-        files: ['js/**/*.js', 'test/**/*.js'],
-        tasks: ['mochaTest']
       }
     },
     
@@ -74,9 +70,8 @@ module.exports = function(grunt) {
         options: {
           reporter: 'spec',
         },
-        src: ['test/**/*.js']
+        src: ['js/**/*.spec.js']
       }
     }
-
   });
 }

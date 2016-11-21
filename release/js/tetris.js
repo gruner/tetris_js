@@ -534,15 +534,14 @@ GameEngine.prototype.settleBlocks = function(iteration) {
 
         // Suspend updates while rows are cleared and settled
         this.isSuspended = true;
-        
-        // Update the model
-        this.playfield.clearRows(completedRows);
 
         // Trigger rowComplete - starts animation
         eventDispatcher.trigger(events.rowComplete, completedRows);
 
         // After row is cleared (animation is finished), settle blocks again
         eventDispatcher.once(events.rowCleared, function() {
+            // Update the model
+            this.playfield.clearRows(completedRows);
             self.settleBlocks(iteration + 1); // recursively check if settling completes any rows
         });
     } else {
@@ -875,17 +874,6 @@ Playfield.prototype.settleRows = function() {
 
         if (!targetRow || !topNeighboringRow) { return; }
 
-        // for (j = 0; j < topNeighboringRow.length; j++) {
-        //     if (topNeighboringRow[j]) {
-        //         if (targetRow[j] === undefined) {
-        //             mergable = true;
-        //         } else {
-        //             mergable = false;
-        //             break;
-        //         }
-        //     }
-        // }
-
         if (self.rowsAreMergable(targetRow, topNeighboringRow)) {
             self.grid[i] = self.mergeRows(targetRow, topNeighboringRow);
             self.clearRowAt(i-1);
@@ -903,6 +891,7 @@ Playfield.prototype.settleRows = function() {
 
 /**
  * Checks if topNeighboringRow can be merged into targetRow
+ * @return bool
  */
 Playfield.prototype.rowsAreMergable = function(targetRow, topNeighboringRow) {
     var mergable = false,
@@ -924,6 +913,7 @@ Playfield.prototype.rowsAreMergable = function(targetRow, topNeighboringRow) {
 
 /**
  * Merges topNeighboringRow into targetRow
+ * @return array
  */
 Playfield.prototype.mergeRows = function(targetRow, topNeighboringRow) {
     var i,
@@ -1838,7 +1828,7 @@ Canvas.prototype.init = function(canvasElement) {
         this.ctx = canvasElement.getContext('2d');
     } else {
         // canvas-unsupported code here
-        console.log('no ctx');
+        debug.log('no ctx');
     }
 };
 
@@ -1874,6 +1864,7 @@ Canvas.prototype.draw = function() {
     }
 };
 
+// Uncomment to debug animations
 // Canvas.prototype.draw = function() {
 //     this.drawPlayfield();
 //     animationQueue.draw()

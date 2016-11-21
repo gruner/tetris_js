@@ -115,17 +115,6 @@ Playfield.prototype.settleRows = function() {
 
         if (!targetRow || !topNeighboringRow) { return; }
 
-        // for (j = 0; j < topNeighboringRow.length; j++) {
-        //     if (topNeighboringRow[j]) {
-        //         if (targetRow[j] === undefined) {
-        //             mergable = true;
-        //         } else {
-        //             mergable = false;
-        //             break;
-        //         }
-        //     }
-        // }
-
         if (self.rowsAreMergable(targetRow, topNeighboringRow)) {
             self.grid[i] = self.mergeRows(targetRow, topNeighboringRow);
             self.clearRowAt(i-1);
@@ -143,6 +132,7 @@ Playfield.prototype.settleRows = function() {
 
 /**
  * Checks if topNeighboringRow can be merged into targetRow
+ * @return bool
  */
 Playfield.prototype.rowsAreMergable = function(targetRow, topNeighboringRow) {
     var mergable = false,
@@ -164,6 +154,7 @@ Playfield.prototype.rowsAreMergable = function(targetRow, topNeighboringRow) {
 
 /**
  * Merges topNeighboringRow into targetRow
+ * @return array
  */
 Playfield.prototype.mergeRows = function(targetRow, topNeighboringRow) {
     var i,

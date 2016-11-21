@@ -30,7 +30,7 @@ Canvas.prototype.init = function(canvasElement) {
         this.ctx = canvasElement.getContext('2d');
     } else {
         // canvas-unsupported code here
-        console.log('no ctx');
+        debug.log('no ctx');
     }
 };
 
@@ -66,6 +66,7 @@ Canvas.prototype.draw = function() {
     }
 };
 
+// Uncomment to debug animations
 // Canvas.prototype.draw = function() {
 //     this.drawPlayfield();
 //     animationQueue.draw()
