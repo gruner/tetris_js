@@ -54,7 +54,7 @@ module.exports = {
  
         // Ensure data is an array or is wrapped in an array,
         // for Function.prototype.apply use
-        data = (data instanceof Array) ? data : [data];
+        data = [data];
  
         // Set a default value for `this` in the callback
         var window = window || global;

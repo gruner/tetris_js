@@ -347,7 +347,7 @@ module.exports = {
  
         // Ensure data is an array or is wrapped in an array,
         // for Function.prototype.apply use
-        data = (data instanceof Array) ? data : [data];
+        data = [data];
  
         // Set a default value for `this` in the callback
         var window = window || global;
@@ -541,9 +541,9 @@ GameEngine.prototype.settleBlocks = function(iteration) {
         // Trigger rowComplete - starts animation
         eventDispatcher.trigger(events.rowComplete, completedRows);
 
-        // After row is cleared, settle blocks again
+        // After row is cleared (animation is finished), settle blocks again
         eventDispatcher.once(events.rowCleared, function() {
-            self.settleBlocks(iteration); // recursively check if settling completes any rows
+            self.settleBlocks(iteration + 1); // recursively check if settling completes any rows
         });
     } else {
         // After blocks are settled, resume updates
@@ -842,7 +842,7 @@ Playfield.prototype.clearRowAt = function(y) {
     var row;
     if (y < this.grid.length) {
         row = this.grid.splice(y, 1)[0]; // splice returns array, we only want the first element
-        this.grid.unshift([]);
+        this.grid.unshift([]); // insert new empty top row
     }
 
     return row;
@@ -850,13 +850,13 @@ Playfield.prototype.clearRowAt = function(y) {
 
 /**
  * Settle any remaining blocks after a row is cleared.
- * Implements naive ------
  *
  * For each occupied cell in a row, check if the cell below it is empty
  * And merge them
  *
- *   xx
- * xx  xxxxxx => xxxxxxxxxx
+ *        A
+ *   BB
+ * CC  CCC CC => CCBBCCCACC
  * ------
  *   xxxx
  * xx  xxxxxx => no change, treat line as a whole
@@ -869,39 +869,67 @@ Playfield.prototype.settleRows = function() {
     // For each row, find empty places
     // that the above row can fill
     self.traverseRows(function(i, targetRow) {
-        var topNeighboringRow = self.grid[i-1], // traversing botom to top
-            mergable = false;
+        var topNeighboringRow = self.grid[i-1], // traversing bottom to top
+            mergable = false,
+            mergedRow;
 
         if (!targetRow || !topNeighboringRow) { return; }
 
-        for (j = 0; j < topNeighboringRow.length; j++) {
-            if (topNeighboringRow[j]) {
-                if (targetRow[j] === undefined) {
-                    mergable = true;
-                } else {
-                    mergable = false;
-                    break;
-                }
-            }
-        }
+        // for (j = 0; j < topNeighboringRow.length; j++) {
+        //     if (topNeighboringRow[j]) {
+        //         if (targetRow[j] === undefined) {
+        //             mergable = true;
+        //         } else {
+        //             mergable = false;
+        //             break;
+        //         }
+        //     }
+        // }
 
-        if (mergable) {
+        if (self.rowsAreMergable(targetRow, topNeighboringRow)) {
             self.grid[i] = self.mergeRows(targetRow, topNeighboringRow);
             self.clearRowAt(i-1);
             merges = true;
         }
     });
 
+    // Recurse until all rows are settled
+    if (merges) {
+        self.settleRows();
+    }
+
     return merges;
 };
 
 /**
- * Merges row2 into row1
+ * Checks if topNeighboringRow can be merged into targetRow
  */
-Playfield.prototype.mergeRows = function(row1, row2) {
-    var merged = new Array(this.xCount);
-    for (var i = 0; i < this.xCount; i++) {
-        merged[i] = (row2[i] !== undefined) ? row2[i] : row1[i];
+Playfield.prototype.rowsAreMergable = function(targetRow, topNeighboringRow) {
+    var mergable = false,
+        i;
+
+    for (i = 0; i < topNeighboringRow.length; i++) {
+        if (topNeighboringRow[i]) {
+            if (targetRow[i] === undefined) {
+                mergable = true;
+            } else {
+                mergable = false;
+                break;
+            }
+        }
+    }
+
+    return mergable;
+};
+
+/**
+ * Merges topNeighboringRow into targetRow
+ */
+Playfield.prototype.mergeRows = function(targetRow, topNeighboringRow) {
+    var i,
+        merged = new Array(this.xCount);
+    for (i = 0; i < this.xCount; i++) {
+        merged[i] = (targetRow[i] === undefined) ? topNeighboringRow[i] : targetRow[i];
     }
 
     return merged;
@@ -1810,6 +1838,7 @@ Canvas.prototype.init = function(canvasElement) {
         this.ctx = canvasElement.getContext('2d');
     } else {
         // canvas-unsupported code here
+        console.log('no ctx');
     }
 };
 
@@ -1841,9 +1870,14 @@ Canvas.prototype.draw = function() {
             this.gameEngine.theme.tetrominoBorder
         );
     } else {
-        debug.info('drawing');
+        debug.info('drawing animation');
     }
 };
+
+// Canvas.prototype.draw = function() {
+//     this.drawPlayfield();
+//     animationQueue.draw()
+// };
 
 /**
  * Draws the playfield - the background rectangle
@@ -1922,6 +1956,7 @@ Canvas.prototype.drawGhostPiece = function() {
 // Canvas.prototype.spliceTop = function() {};
 
 module.exports = Canvas;
+
 },{"../config/canvasDimensions":2,"../config/events":4,"../config/features":5,"../debug":8,"../eventDispatcher":10,"./animationQueue":24,"./canvasCache":26,"./rowCollapseAnimation":27,"./rowCompleteAnimation":28,"./sprite":29}],26:[function(require,module,exports){
 'use strict';
 
@@ -1985,7 +2020,7 @@ var Animation = require('./animation'),
     events = require('../config/events'),
     debug = require('../debug');
 
-var OPACITY_CHANGE_RATE = 0.05,
+var OPACITY_CHANGE_RATE = 0.1,
     ENDING_OPACITY = 0.05;
 
 /**
@@ -1998,7 +2033,7 @@ var RowCompleteAnimation = function(ctx, rows) {
     this.opacity = 1;
     this.finalFillColor = '#000000';//this.gameEngine.theme.playfield.color;
 
-    debug.info(rows);
+    console.info('rows', rows);
 };
 
 //RowCompleteAnimation.prototype = new Animation();

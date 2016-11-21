@@ -19,6 +19,34 @@ describe('Playfield', function() {
         });
     });
 
+    describe('#traverseRows', function() {
+        it('should traverse all rows', function() {
+            var traversedRows = [];
+            playfield.traverseRows(function(i) {
+                traversedRows.push(i);
+            });
+
+            assert.equal(ROW_COUNT, traversedRows.length);
+        });
+    });
+
+    describe('#traverseRows', function() {
+        it('should traverse rows from bottom to top', function() {
+            var traversedRows = [],
+                first,
+                last;
+            playfield.traverseRows(function(i) {
+                traversedRows.push(i);
+            });
+
+            first = traversedRows.shift();
+            last = traversedRows.pop();
+
+            assert.equal(ROW_COUNT-1, first);
+            assert.equal(0, last);
+        });
+    });
+
     describe('#cellInBounds', function() {
         it('should calculate if a cell exists within the playfield bounds', function() {
             assert(true === playfield.cellInBounds({x:0, y:0}));
@@ -74,19 +102,6 @@ describe('Playfield', function() {
         
             assert.strictEqual(0, playfield.grid[0].length);
             assert.strictEqual(5, playfield.grid[1].length);
-            
-        });
-    });
-
-    describe('#clearRowAt', function() {
-        it('should insert new empty row', function() {
-
-            playfield.grid[0] = [1,2,3,4,5];
-            playfield.clearRowAt(10);
-        
-            assert.strictEqual(0, playfield.grid[0].length);
-            assert.strictEqual(5, playfield.grid[1].length);
-            
         });
     });
 
@@ -99,7 +114,7 @@ describe('Playfield', function() {
             assert.strictEqual(0, playfield.grid[0].length);
             assert.strictEqual(5, playfield.grid[1].length);
             assert.strictEqual(ROW_COUNT, playfield.grid.length);
-            
+            assert.strictEqual(playfield.yCount, playfield.grid.length);
         });
     });
 
@@ -112,7 +127,6 @@ describe('Playfield', function() {
             playfield.clearRowAt(10);
 
             assert(playfield.grid[10] === undefined);
-            
         });
     });
 
@@ -123,7 +137,6 @@ describe('Playfield', function() {
             playfield.clearRowAt(10);
 
             assert.strictEqual(row, playfield.grid[10]);
-            
         });
     });
 
@@ -134,7 +147,6 @@ describe('Playfield', function() {
             var result = playfield.clearRowAt(10);
 
             assert.strictEqual(row, result);
-            
         });
     });
 
@@ -146,12 +158,11 @@ describe('Playfield', function() {
             assert(row === undefined);
             // ensure row 0 is not altered
             assert.equal(5, playfield.grid[0].length);
-            
         });
     });
 
     describe('#settleRows', function() {
-        it('should merge compatible rows', function() {
+        it('should settle two compatible rows', function() {
 
             var n = undefined;
 
@@ -172,7 +183,30 @@ describe('Playfield', function() {
     });
 
     describe('#settleRows', function() {
-        it('should not merge incompatible rows', function() {
+        it('should settle two+ compatible rows', function() {
+
+            var n = undefined;
+
+            playfield.grid[4] = [n,1,2,n,n,n];
+            playfield.grid[5] = [n,n,n,3,4,n];
+            playfield.grid[6] = [n,n,n,n,n,5];
+            playfield.grid[7] = [0,n,n,n,n,n];
+
+            var result = playfield.settleRows();
+
+            assert(result);
+            assert.strictEqual(playfield.grid[7].length, COL_COUNT);
+            assert.equal(playfield.grid[7][0], 0);
+            assert.equal(playfield.grid[7][1], 1);
+            assert.equal(playfield.grid[7][2], 2);
+            assert.equal(playfield.grid[7][3], 3);
+            assert.equal(playfield.grid[7][4], 4);
+            assert.equal(playfield.grid[7][5], 5);
+        });
+    });
+
+    describe('#settleRows', function() {
+        it('should not settle incompatible rows', function() {
 
             var n = undefined;
 
@@ -188,6 +222,52 @@ describe('Playfield', function() {
             assert.equal(playfield.grid[5][3], 2);
             assert.equal(playfield.grid[5][4], 2);
             assert.equal(playfield.grid[5][5], 2);
+        });
+    });
+
+    describe('#settleRows', function() {
+        it('should not merge incompatible rows', function() {
+
+            var n = undefined;
+
+            playfield.grid[4] = [1,1,1,n,n,n];
+            playfield.grid[5] = [2,n,n,2,2,2];
+            playfield.grid[6] = [n,n,n,n,n,n];
+            playfield.grid[7] = [n,n,n,n,n,n];
+
+            var result = playfield.settleRows();
+
+            assert(result);
+            assert.equal(playfield.grid[7][0], 2);
+            assert.equal(playfield.grid[7][1], n);
+            assert.equal(playfield.grid[7][2], n);
+            assert.equal(playfield.grid[7][3], 2);
+            assert.equal(playfield.grid[7][4], 2);
+            assert.equal(playfield.grid[7][5], 2);
+        });
+    });
+
+    describe('#rowsAreMergable', function() {
+        it('should check if rows can be merged', function() {
+
+            var n = undefined,
+                r2 = [n,2,2,n,n,n,2,2,n,n],
+                r1 = [1,n,n,1,1,1,n,n,1,1],
+                result = playfield.rowsAreMergable(r1, r2);
+
+            assert(result);
+        });
+    });
+
+    describe('#rowsAreMergable', function() {
+        it('should check if rows cannot be merged', function() {
+
+            var n = undefined,
+                r2 = [2,2,2,2,2,n,2,2,n,n],
+                r1 = [1,n,n,1,1,1,n,1,1,1],
+                result = playfield.rowsAreMergable(r1, r2);
+
+            assert(false === result);
         });
     });
 

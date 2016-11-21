@@ -6,7 +6,7 @@ var Animation = require('./animation'),
     events = require('../config/events'),
     debug = require('../debug');
 
-var OPACITY_CHANGE_RATE = 0.05,
+var OPACITY_CHANGE_RATE = 0.1,
     ENDING_OPACITY = 0.05;
 
 /**
@@ -19,7 +19,7 @@ var RowCompleteAnimation = function(ctx, rows) {
     this.opacity = 1;
     this.finalFillColor = '#000000';//this.gameEngine.theme.playfield.color;
 
-    debug.info(rows);
+    console.info('rows', rows);
 };
 
 //RowCompleteAnimation.prototype = new Animation();

@@ -30,6 +30,7 @@ Canvas.prototype.init = function(canvasElement) {
         this.ctx = canvasElement.getContext('2d');
     } else {
         // canvas-unsupported code here
+        console.log('no ctx');
     }
 };
 
@@ -61,9 +62,14 @@ Canvas.prototype.draw = function() {
             this.gameEngine.theme.tetrominoBorder
         );
     } else {
-        debug.info('drawing');
+        debug.info('drawing animation');
     }
 };
+
+// Canvas.prototype.draw = function() {
+//     this.drawPlayfield();
+//     animationQueue.draw()
+// };
 
 /**
  * Draws the playfield - the background rectangle

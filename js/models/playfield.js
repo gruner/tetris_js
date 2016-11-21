@@ -82,7 +82,7 @@ Playfield.prototype.clearRowAt = function(y) {
     var row;
     if (y < this.grid.length) {
         row = this.grid.splice(y, 1)[0]; // splice returns array, we only want the first element
-        this.grid.unshift([]);
+        this.grid.unshift([]); // insert new empty top row
     }
 
     return row;
@@ -90,13 +90,13 @@ Playfield.prototype.clearRowAt = function(y) {
 
 /**
  * Settle any remaining blocks after a row is cleared.
- * Implements naive ------
  *
  * For each occupied cell in a row, check if the cell below it is empty
  * And merge them
  *
- *   xx
- * xx  xxxxxx => xxxxxxxxxx
+ *        A
+ *   BB
+ * CC  CCC CC => CCBBCCCACC
  * ------
  *   xxxx
  * xx  xxxxxx => no change, treat line as a whole
@@ -109,39 +109,67 @@ Playfield.prototype.settleRows = function() {
     // For each row, find empty places
     // that the above row can fill
     self.traverseRows(function(i, targetRow) {
-        var topNeighboringRow = self.grid[i-1], // traversing botom to top
-            mergable = false;
+        var topNeighboringRow = self.grid[i-1], // traversing bottom to top
+            mergable = false,
+            mergedRow;
 
         if (!targetRow || !topNeighboringRow) { return; }
 
-        for (j = 0; j < topNeighboringRow.length; j++) {
-            if (topNeighboringRow[j]) {
-                if (targetRow[j] === undefined) {
-                    mergable = true;
-                } else {
-                    mergable = false;
-                    break;
-                }
-            }
-        }
+        // for (j = 0; j < topNeighboringRow.length; j++) {
+        //     if (topNeighboringRow[j]) {
+        //         if (targetRow[j] === undefined) {
+        //             mergable = true;
+        //         } else {
+        //             mergable = false;
+        //             break;
+        //         }
+        //     }
+        // }
 
-        if (mergable) {
+        if (self.rowsAreMergable(targetRow, topNeighboringRow)) {
             self.grid[i] = self.mergeRows(targetRow, topNeighboringRow);
             self.clearRowAt(i-1);
             merges = true;
         }
     });
 
+    // Recurse until all rows are settled
+    if (merges) {
+        self.settleRows();
+    }
+
     return merges;
 };
 
 /**
- * Merges row2 into row1
+ * Checks if topNeighboringRow can be merged into targetRow
  */
-Playfield.prototype.mergeRows = function(row1, row2) {
-    var merged = new Array(this.xCount);
-    for (var i = 0; i < this.xCount; i++) {
-        merged[i] = (row2[i] !== undefined) ? row2[i] : row1[i];
+Playfield.prototype.rowsAreMergable = function(targetRow, topNeighboringRow) {
+    var mergable = false,
+        i;
+
+    for (i = 0; i < topNeighboringRow.length; i++) {
+        if (topNeighboringRow[i]) {
+            if (targetRow[i] === undefined) {
+                mergable = true;
+            } else {
+                mergable = false;
+                break;
+            }
+        }
+    }
+
+    return mergable;
+};
+
+/**
+ * Merges topNeighboringRow into targetRow
+ */
+Playfield.prototype.mergeRows = function(targetRow, topNeighboringRow) {
+    var i,
+        merged = new Array(this.xCount);
+    for (i = 0; i < this.xCount; i++) {
+        merged[i] = (targetRow[i] === undefined) ? topNeighboringRow[i] : targetRow[i];
     }
 
     return merged;

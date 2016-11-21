@@ -2,12 +2,19 @@
 
 var assert = require('assert'),
     RowCompleteAnimation = require('../../js/view/rowCompleteAnimation'),
-    animation;
+    animation,
+    ctxMock;
 
 describe('RowCompleteAnimation', function() {
 
     beforeEach(function() {
-        animation = new RowCompleteAnimation();
+
+        ctxMock = {
+            beginPath: function() {},
+            fillRect: function() {}
+        };
+
+        animation = new RowCompleteAnimation(ctxMock, []);
     });
 
     describe('#constructor', function() {

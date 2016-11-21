@@ -171,9 +171,9 @@ GameEngine.prototype.settleBlocks = function(iteration) {
         // Trigger rowComplete - starts animation
         eventDispatcher.trigger(events.rowComplete, completedRows);
 
-        // After row is cleared, settle blocks again
+        // After row is cleared (animation is finished), settle blocks again
         eventDispatcher.once(events.rowCleared, function() {
-            self.settleBlocks(iteration); // recursively check if settling completes any rows
+            self.settleBlocks(iteration + 1); // recursively check if settling completes any rows
         });
     } else {
         // After blocks are settled, resume updates

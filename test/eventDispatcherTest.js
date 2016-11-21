@@ -30,7 +30,7 @@ describe('eventDispatcher', function() {
             var cb = function(appliedData) { appliedData.text = "TEST_TRIGGER"},
                 data = {};
             eventDispatcher.subscribe('TEST_TRIGGER', cb);
-            eventDispatcher.trigger('TEST_TRIGGER', [data]);
+            eventDispatcher.trigger('TEST_TRIGGER', data);
 
             assert.equal(data.text, "TEST_TRIGGER");
             assert(eventDispatcher.hasSubscriber('TEST_TRIGGER', cb));
@@ -51,10 +51,10 @@ describe('eventDispatcher', function() {
 
     describe('#trigger', function() {
         it('should pass multiple args to a subscriber', function() {
-            var cb = function(arg1, arg2, arg3) {
-                assert(arg1);
-                assert(arg2);
-                assert(arg3);
+            var cb = function(args) {
+                assert(args[0]);
+                assert(args[1]);
+                assert(args[2]);
             },
             data1 = {},
             data2 = {},
@@ -71,7 +71,7 @@ describe('eventDispatcher', function() {
             var cb = function(appliedData) { appliedData.text = "TEST_ONCE"},
                 data = {};
             eventDispatcher.once('TEST_ONCE', cb);
-            eventDispatcher.trigger('TEST_ONCE', [data]);
+            eventDispatcher.trigger('TEST_ONCE', data);
 
             assert.equal(data.text, "TEST_ONCE");
             assert(!eventDispatcher.hasSubscriber('TEST_ONCE', cb));
