@@ -63,15 +63,29 @@ Playfield.prototype.traverseGrid = function(callback) {
 };
 
 /**
- * Removes an array of rows one at a time
+ * Removes an array of rows
  */
 Playfield.prototype.clearRows = function(rows) {
     var i,
-        iMax = rows.length;
+        rowCount = rows.length,
+        valid = true,
+        returnRows;
 
-    for (i = 0; i < iMax; i++) {
-        this.clearRowAt(rows[i]);
+    for (i = 0; i < rowCount; i++) {
+        if (rows[i] > this.grid.length) {
+            valid = false;
+            break;
+        }
     }
+
+    if (valid) {
+        returnRows = this.grid.splice(rows[0], rowCount);
+        while (this.grid.length < this.yCount) {
+            this.grid.unshift(undefined);
+        }
+    }
+
+    return returnRows;
 };
 
 /**
@@ -79,13 +93,10 @@ Playfield.prototype.clearRows = function(rows) {
  * a new empty row to the top
  */
 Playfield.prototype.clearRowAt = function(y) {
-    var row;
-    if (y < this.grid.length) {
-        row = this.grid.splice(y, 1)[0]; // splice returns array, we only want the first element
-        this.grid.unshift(undefined); // insert new empty top row
+    var rows = this.clearRows([y]);
+    if (rows) {
+        return rows[0];
     }
-
-    return row;
 };
 
 /**
@@ -282,6 +293,9 @@ Playfield.prototype.placeBlocks = function(blocks) {
     }
 };
 
+/**
+ * Adds random blocks to the playfield for debugging
+ */
 Playfield.prototype.distributeRandomBlocks = function(blockCount) {
     var blockTypes = require('./tetrominoTypes').getTypeKeys();
 
@@ -298,6 +312,29 @@ Playfield.prototype.distributeRandomBlocks = function(blockCount) {
             blockCount--;
         }
     }
+};
+
+/**
+ * Adds blocks to the playfield for debugging a row clearing
+ */
+Playfield.prototype.debugRowClear = function() {
+
+    var self = this,
+        block,
+        x,
+        rows = 4,
+        columns = this.xCount - 1;
+
+    this.traverseRows(function(y) {
+        if (rows > 0) {
+            for (x = 0; x < columns; x++) {
+                block = new Block(x,y);
+                block.type = 'i';
+                self.placeBlock(block);
+            }
+        }
+        rows--;
+    });
 };
 
 module.exports = Playfield;

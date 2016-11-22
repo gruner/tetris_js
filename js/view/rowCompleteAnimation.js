@@ -2,8 +2,6 @@
 
 var Animation = require('./animation'),
     dimensions = require('../config/canvasDimensions'),
-    eventDispatcher = require('../eventDispatcher'),
-    events = require('../config/events'),
     debug = require('../debug');
 
 var OPACITY_CHANGE_RATE = 0.1,
@@ -12,9 +10,10 @@ var OPACITY_CHANGE_RATE = 0.1,
 /**
  * Animates the completed row(s) turning white, then disappearing
  */
-var RowCompleteAnimation = function(ctx, rows) {
+var RowCompleteAnimation = function(ctx, rows, onCompleteCallback) {
     this.ctx = ctx;
     this.rows = rows;
+    this.onComplete = onCompleteCallback;
     this.complete = false;
     this.opacity = 1;
     this.finalFillColor = '#000000';//this.gameEngine.theme.playfield.color;
@@ -33,9 +32,10 @@ RowCompleteAnimation.prototype.draw = function() {
     this.ctx.fillRect(dimensions.playfieldOrigin.x, dimensions.transpose(this.rows[this.rows.length - 1]), width, height);
 
     if (this.opacity <= ENDING_OPACITY) {
-        eventDispatcher.trigger(events.rowCleared);
-        //eventDispatcher.trigger(events.animationEnd, 'RowCompleteAnimation');
-    	this.complete = true;
+        this.complete = true;
+        if (typeof this.onComplete === 'function') {
+            this.onComplete();
+        }
     }
 };
 

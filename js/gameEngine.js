@@ -10,26 +10,27 @@ var Playfield = require('./models/playfield'),
     events = require('./config/events'),
     constants = require('./config/constants'),
     features = require('./config/features'),
+    StateMachine = require('javascript-state-machine'),
     debug = require('./debug');
 
 /**
  * Puts all the pieces together
  */
 var GameEngine = function() {
+    
     this.activeTetromino = null;
     this.pieceQueue = [];
     this.pieceHistory = [];
     this.level = 0;
     this.gravity = 0.05;
     this.accelerateGravity = false;
-    this.isSuspended = false;
-    this.paused = false;
     this.playfield = new Playfield(
         Playfield.defaults.xCount,
         Playfield.defaults.yCount
     );
     this.soundEffects = new SoundEffects();
 
+    this.fsm = this.initStates();
     this.initThemes();
     this.init();
 };
@@ -40,16 +41,37 @@ GameEngine.ACCELERATED_GRAVITY = 0.5;
 GameEngine.prototype.init = function() {
     this.bindEvents();
     this.advanceNextPiece();
-    if (features.enabled('initWithRemnants')) {
-        this.playfield.distributeRandomBlocks(10);
-    }
     this.soundEffects.enabled = features.enabled('soundEffects');
+    this.initDebug();
+};
+
+GameEngine.prototype.initStates = function() {
+    return StateMachine.create({
+        initial: 'play',
+        events: [
+            { name: 'rowComplete', from: 'play',  to: 'suspended' },
+            { name: 'rowCleared', from: 'suspended',  to: 'suspended' },
+            //{ name: 'rowCollapse', from: 'animatingRowClear',  to: 'animatingRowCollapse' },
+            { name: 'suspend',     from: 'play',  to: 'suspended' },
+            { name: 'pause',       from: 'play',  to: 'paused' },
+            { name: 'resume',      from: ['play', 'paused', 'suspended'], to: 'play' }
+        ]
+    });
 };
 
 GameEngine.prototype.initThemes = function() {
     var themeLoader = new ThemeLoader(themeConfigs);
     this.themeLoader = themeLoader;
     this.theme = themeLoader.getTheme();
+};
+
+GameEngine.prototype.initDebug = function() {
+    if (features.enabled('initWithRemnants')) {
+        this.playfield.distributeRandomBlocks(10);
+    } else if (features.enabled('initWithTetris')) {
+        this.activeTetromino = Tetromino.create('i');
+        this.playfield.debugRowClear();
+    }
 };
 
 /**
@@ -92,7 +114,7 @@ GameEngine.prototype.bindEvents = function() {
  */
 GameEngine.prototype.update = function() {
 
-    if (this.isSuspended) {
+    if (!this.fsm.is('play')) {
         return;
     }
     
@@ -153,7 +175,7 @@ GameEngine.prototype.settleBlocks = function(iteration) {
     if (iteration > 0) {
         // Resume if the playfield has nothing to settle
         if (! this.playfield.settleRows()) {
-            this.resume();
+            this.fsm.resume();
             return;
         }
     }
@@ -162,31 +184,21 @@ GameEngine.prototype.settleBlocks = function(iteration) {
 
     if (completedRows.length) {
 
-        // Suspend updates while rows are cleared and settled
-        this.isSuspended = true;
-
         // Update the model
         this.playfield.clearRows(completedRows);
 
-        // After row is cleared (animation is finished), settle blocks again
-        eventDispatcher.once(events.rowCleared, function() {
+        // triggered when rowComplete animation completes
+        // After row is cleared, settle blocks again
+        this.fsm.onrowCleared = function() {
+            debug.info('onrowCleared');
             self.settleBlocks(iteration + 1); // recursively check if settling completes any rows
-        });
+        };
 
-        // Trigger rowComplete - starts animation
-        eventDispatcher.trigger(events.rowComplete, completedRows);
+        // Trigger rowComplete - suspends update and starts rowComplete animation
+        this.fsm.rowComplete(completedRows);
     } else {
         // After blocks are settled, resume updates
-        this.resume();
-    }
-};
-
-/**
- * Resumes updates
- */
-GameEngine.prototype.resume = function() {
-    if (this.isSuspended) {
-        this.isSuspended = false;
+        this.fsm.resume();
     }
 };
 
@@ -235,12 +247,12 @@ GameEngine.prototype.refreshPieceQueue = function() {
 
 /**
  * Pauses or resumes the game
- * TODO: currently it stops the game
  */
 GameEngine.prototype.togglePause = function() {
-    this.paused = !this.paused;
-    if (this.paused) {
-        this.topOut();
+    if (this.fsm.is('paused')) {
+        this.fsm.resume();
+    } else {
+        this.fsm.pause();
     }
 };
 
@@ -248,7 +260,7 @@ GameEngine.prototype.togglePause = function() {
  * Ends the game
  */
 GameEngine.prototype.topOut = function() {
-    this.isSuspended = true;
+    this.fsm.suspend();
     eventDispatcher.trigger(events.topOut);
 };
 

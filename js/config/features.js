@@ -9,6 +9,10 @@ var features = {
         desc: "Starts the game with remnant blocks already on the playfield",
         enabled: false
     },
+    initWithTetris: {
+        desc: "Starts the game with blocks ready for a Tetris",
+        enabled: true
+    },
     displayGhostPiece: {
         desc: "Highlights where the current piece will land",
         enabled: true,

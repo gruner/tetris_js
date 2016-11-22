@@ -1,8 +1,6 @@
 'use strict';
 
-var eventDispatcher = require('../eventDispatcher'),
-    events = require('../config/events'),
-    dimensions = require('../config/canvasDimensions'),
+var dimensions = require('../config/canvasDimensions'),
     Sprite = require('./sprite'),
     RowCompleteAnimation = require('./rowCompleteAnimation'),
     RowCollapseAnimation = require('./rowCollapseAnimation'),
@@ -37,10 +35,11 @@ Canvas.prototype.init = function(canvasElement) {
 Canvas.prototype.bindEvents = function() {
     var self = this;
 
-    eventDispatcher.subscribe(events.rowComplete, function(completedRows) {
-        animationQueue.push(new RowCompleteAnimation(self.ctx, completedRows));
-        //animationQueue.push(new RowCollapseAnimation(this.ctx, rows));
-    });
+    this.gameEngine.fsm.onrowComplete = function(e, from, to, completedRows) {
+        animationQueue.push(new RowCompleteAnimation(self.ctx, completedRows, function() {
+            self.gameEngine.fsm.rowCleared();
+        }));
+    };
 };
 
 /**

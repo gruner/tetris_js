@@ -110,6 +110,10 @@ var features = {
         desc: "Starts the game with remnant blocks already on the playfield",
         enabled: false
     },
+    initWithTetris: {
+        desc: "Starts the game with blocks ready for a Tetris",
+        enabled: true
+    },
     displayGhostPiece: {
         desc: "Highlights where the current piece will land",
         enabled: true,
@@ -376,26 +380,27 @@ var Playfield = require('./models/playfield'),
     events = require('./config/events'),
     constants = require('./config/constants'),
     features = require('./config/features'),
+    StateMachine = require('javascript-state-machine'),
     debug = require('./debug');
 
 /**
  * Puts all the pieces together
  */
 var GameEngine = function() {
+    
     this.activeTetromino = null;
     this.pieceQueue = [];
     this.pieceHistory = [];
     this.level = 0;
     this.gravity = 0.05;
     this.accelerateGravity = false;
-    this.isSuspended = false;
-    this.paused = false;
     this.playfield = new Playfield(
         Playfield.defaults.xCount,
         Playfield.defaults.yCount
     );
     this.soundEffects = new SoundEffects();
 
+    this.fsm = this.initStates();
     this.initThemes();
     this.init();
 };
@@ -406,16 +411,37 @@ GameEngine.ACCELERATED_GRAVITY = 0.5;
 GameEngine.prototype.init = function() {
     this.bindEvents();
     this.advanceNextPiece();
-    if (features.enabled('initWithRemnants')) {
-        this.playfield.distributeRandomBlocks(10);
-    }
     this.soundEffects.enabled = features.enabled('soundEffects');
+    this.initDebug();
+};
+
+GameEngine.prototype.initStates = function() {
+    return StateMachine.create({
+        initial: 'play',
+        events: [
+            { name: 'rowComplete', from: 'play',  to: 'suspended' },
+            { name: 'rowCleared', from: 'suspended',  to: 'suspended' },
+            //{ name: 'rowCollapse', from: 'animatingRowClear',  to: 'animatingRowCollapse' },
+            { name: 'suspend',     from: 'play',  to: 'suspended' },
+            { name: 'pause',       from: 'play',  to: 'paused' },
+            { name: 'resume',      from: ['play', 'paused', 'suspended'], to: 'play' }
+        ]
+    });
 };
 
 GameEngine.prototype.initThemes = function() {
     var themeLoader = new ThemeLoader(themeConfigs);
     this.themeLoader = themeLoader;
     this.theme = themeLoader.getTheme();
+};
+
+GameEngine.prototype.initDebug = function() {
+    if (features.enabled('initWithRemnants')) {
+        this.playfield.distributeRandomBlocks(10);
+    } else if (features.enabled('initWithTetris')) {
+        this.activeTetromino = Tetromino.create('i');
+        this.playfield.debugRowClear();
+    }
 };
 
 /**
@@ -458,7 +484,7 @@ GameEngine.prototype.bindEvents = function() {
  */
 GameEngine.prototype.update = function() {
 
-    if (this.isSuspended) {
+    if (!this.fsm.is('play')) {
         return;
     }
     
@@ -519,7 +545,7 @@ GameEngine.prototype.settleBlocks = function(iteration) {
     if (iteration > 0) {
         // Resume if the playfield has nothing to settle
         if (! this.playfield.settleRows()) {
-            this.resume();
+            this.fsm.resume();
             return;
         }
     }
@@ -528,31 +554,21 @@ GameEngine.prototype.settleBlocks = function(iteration) {
 
     if (completedRows.length) {
 
-        // Suspend updates while rows are cleared and settled
-        this.isSuspended = true;
-
         // Update the model
         this.playfield.clearRows(completedRows);
 
-        // After row is cleared (animation is finished), settle blocks again
-        eventDispatcher.once(events.rowCleared, function() {
+        // triggered when rowComplete animation completes
+        // After row is cleared, settle blocks again
+        this.fsm.onrowCleared = function() {
+            debug.info('onrowCleared');
             self.settleBlocks(iteration + 1); // recursively check if settling completes any rows
-        });
+        };
 
-        // Trigger rowComplete - starts animation
-        eventDispatcher.trigger(events.rowComplete, completedRows);
+        // Trigger rowComplete - suspends update and starts rowComplete animation
+        this.fsm.rowComplete(completedRows);
     } else {
         // After blocks are settled, resume updates
-        this.resume();
-    }
-};
-
-/**
- * Resumes updates
- */
-GameEngine.prototype.resume = function() {
-    if (this.isSuspended) {
-        this.isSuspended = false;
+        this.fsm.resume();
     }
 };
 
@@ -601,12 +617,12 @@ GameEngine.prototype.refreshPieceQueue = function() {
 
 /**
  * Pauses or resumes the game
- * TODO: currently it stops the game
  */
 GameEngine.prototype.togglePause = function() {
-    this.paused = !this.paused;
-    if (this.paused) {
-        this.topOut();
+    if (this.fsm.is('paused')) {
+        this.fsm.resume();
+    } else {
+        this.fsm.pause();
     }
 };
 
@@ -614,7 +630,7 @@ GameEngine.prototype.togglePause = function() {
  * Ends the game
  */
 GameEngine.prototype.topOut = function() {
-    this.isSuspended = true;
+    this.fsm.suspend();
     eventDispatcher.trigger(events.topOut);
 };
 
@@ -703,7 +719,7 @@ GameEngine.prototype.getGhostPiece = function() {
 };
 
 module.exports = GameEngine;
-},{"./config/constants":3,"./config/events":4,"./config/features":5,"./config/themes":7,"./debug":8,"./eventDispatcher":10,"./models/playfield":14,"./models/tetromino":15,"./soundEffects":18,"./themeLoader":20,"./view/sprite":29}],12:[function(require,module,exports){
+},{"./config/constants":3,"./config/events":4,"./config/features":5,"./config/themes":7,"./debug":8,"./eventDispatcher":10,"./models/playfield":14,"./models/tetromino":15,"./soundEffects":18,"./themeLoader":20,"./view/sprite":29,"javascript-state-machine":30}],12:[function(require,module,exports){
 'use strict';
 
 var Tetris  = require('./tetris'),
@@ -819,15 +835,29 @@ Playfield.prototype.traverseGrid = function(callback) {
 };
 
 /**
- * Removes an array of rows one at a time
+ * Removes an array of rows
  */
 Playfield.prototype.clearRows = function(rows) {
     var i,
-        iMax = rows.length;
+        rowCount = rows.length,
+        valid = true,
+        returnRows;
 
-    for (i = 0; i < iMax; i++) {
-        this.clearRowAt(rows[i]);
+    for (i = 0; i < rowCount; i++) {
+        if (rows[i] > this.grid.length) {
+            valid = false;
+            break;
+        }
     }
+
+    if (valid) {
+        returnRows = this.grid.splice(rows[0], rowCount);
+        while (this.grid.length < this.yCount) {
+            this.grid.unshift(undefined);
+        }
+    }
+
+    return returnRows;
 };
 
 /**
@@ -835,13 +865,10 @@ Playfield.prototype.clearRows = function(rows) {
  * a new empty row to the top
  */
 Playfield.prototype.clearRowAt = function(y) {
-    var row;
-    if (y < this.grid.length) {
-        row = this.grid.splice(y, 1)[0]; // splice returns array, we only want the first element
-        this.grid.unshift(undefined); // insert new empty top row
+    var rows = this.clearRows([y]);
+    if (rows) {
+        return rows[0];
     }
-
-    return row;
 };
 
 /**
@@ -1038,6 +1065,9 @@ Playfield.prototype.placeBlocks = function(blocks) {
     }
 };
 
+/**
+ * Adds random blocks to the playfield for debugging
+ */
 Playfield.prototype.distributeRandomBlocks = function(blockCount) {
     var blockTypes = require('./tetrominoTypes').getTypeKeys();
 
@@ -1054,6 +1084,29 @@ Playfield.prototype.distributeRandomBlocks = function(blockCount) {
             blockCount--;
         }
     }
+};
+
+/**
+ * Adds blocks to the playfield for debugging a row clearing
+ */
+Playfield.prototype.debugRowClear = function() {
+
+    var self = this,
+        block,
+        x,
+        rows = 4,
+        columns = this.xCount - 1;
+
+    this.traverseRows(function(y) {
+        if (rows > 0) {
+            for (x = 0; x < columns; x++) {
+                block = new Block(x,y);
+                block.type = 'i';
+                self.placeBlock(block);
+            }
+        }
+        rows--;
+    });
 };
 
 module.exports = Playfield;
@@ -1793,9 +1846,7 @@ module.exports = {
 },{}],25:[function(require,module,exports){
 'use strict';
 
-var eventDispatcher = require('../eventDispatcher'),
-    events = require('../config/events'),
-    dimensions = require('../config/canvasDimensions'),
+var dimensions = require('../config/canvasDimensions'),
     Sprite = require('./sprite'),
     RowCompleteAnimation = require('./rowCompleteAnimation'),
     RowCollapseAnimation = require('./rowCollapseAnimation'),
@@ -1830,10 +1881,11 @@ Canvas.prototype.init = function(canvasElement) {
 Canvas.prototype.bindEvents = function() {
     var self = this;
 
-    eventDispatcher.subscribe(events.rowComplete, function(completedRows) {
-        animationQueue.push(new RowCompleteAnimation(self.ctx, completedRows));
-        //animationQueue.push(new RowCollapseAnimation(this.ctx, rows));
-    });
+    this.gameEngine.fsm.onrowComplete = function(e, from, to, completedRows) {
+        animationQueue.push(new RowCompleteAnimation(self.ctx, completedRows, function() {
+            self.gameEngine.fsm.rowCleared();
+        }));
+    };
 };
 
 /**
@@ -1943,7 +1995,7 @@ Canvas.prototype.drawGhostPiece = function() {
 
 module.exports = Canvas;
 
-},{"../config/canvasDimensions":2,"../config/events":4,"../config/features":5,"../debug":8,"../eventDispatcher":10,"./animationQueue":24,"./canvasCache":26,"./rowCollapseAnimation":27,"./rowCompleteAnimation":28,"./sprite":29}],26:[function(require,module,exports){
+},{"../config/canvasDimensions":2,"../config/features":5,"../debug":8,"./animationQueue":24,"./canvasCache":26,"./rowCollapseAnimation":27,"./rowCompleteAnimation":28,"./sprite":29}],26:[function(require,module,exports){
 'use strict';
 
 /**
@@ -2002,8 +2054,6 @@ module.exports = RowCollapseAnimation;
 
 var Animation = require('./animation'),
     dimensions = require('../config/canvasDimensions'),
-    eventDispatcher = require('../eventDispatcher'),
-    events = require('../config/events'),
     debug = require('../debug');
 
 var OPACITY_CHANGE_RATE = 0.1,
@@ -2012,9 +2062,10 @@ var OPACITY_CHANGE_RATE = 0.1,
 /**
  * Animates the completed row(s) turning white, then disappearing
  */
-var RowCompleteAnimation = function(ctx, rows) {
+var RowCompleteAnimation = function(ctx, rows, onCompleteCallback) {
     this.ctx = ctx;
     this.rows = rows;
+    this.onComplete = onCompleteCallback;
     this.complete = false;
     this.opacity = 1;
     this.finalFillColor = '#000000';//this.gameEngine.theme.playfield.color;
@@ -2033,9 +2084,10 @@ RowCompleteAnimation.prototype.draw = function() {
     this.ctx.fillRect(dimensions.playfieldOrigin.x, dimensions.transpose(this.rows[this.rows.length - 1]), width, height);
 
     if (this.opacity <= ENDING_OPACITY) {
-        eventDispatcher.trigger(events.rowCleared);
-        //eventDispatcher.trigger(events.animationEnd, 'RowCompleteAnimation');
-    	this.complete = true;
+        this.complete = true;
+        if (typeof this.onComplete === 'function') {
+            this.onComplete();
+        }
     }
 };
 
@@ -2056,7 +2108,7 @@ RowCompleteAnimation.prototype.getOpacity = function() {
 };
 
 module.exports = RowCompleteAnimation;
-},{"../config/canvasDimensions":2,"../config/events":4,"../debug":8,"../eventDispatcher":10,"./animation":23}],29:[function(require,module,exports){
+},{"../config/canvasDimensions":2,"../debug":8,"./animation":23}],29:[function(require,module,exports){
 'use strict';
 
 /**
@@ -2087,4 +2139,236 @@ var Sprite = function(color) {
 // };
 
 module.exports = Sprite;
+},{}],30:[function(require,module,exports){
+/*
+
+  Javascript State Machine Library - https://github.com/jakesgordon/javascript-state-machine
+
+  Copyright (c) 2012, 2013, 2014, 2015, Jake Gordon and contributors
+  Released under the MIT license - https://github.com/jakesgordon/javascript-state-machine/blob/master/LICENSE
+
+*/
+
+(function () {
+
+  var StateMachine = {
+
+    //---------------------------------------------------------------------------
+
+    VERSION: "2.4.0",
+
+    //---------------------------------------------------------------------------
+
+    Result: {
+      SUCCEEDED:    1, // the event transitioned successfully from one state to another
+      NOTRANSITION: 2, // the event was successfull but no state transition was necessary
+      CANCELLED:    3, // the event was cancelled by the caller in a beforeEvent callback
+      PENDING:      4  // the event is asynchronous and the caller is in control of when the transition occurs
+    },
+
+    Error: {
+      INVALID_TRANSITION: 100, // caller tried to fire an event that was innapropriate in the current state
+      PENDING_TRANSITION: 200, // caller tried to fire an event while an async transition was still pending
+      INVALID_CALLBACK:   300 // caller provided callback function threw an exception
+    },
+
+    WILDCARD: '*',
+    ASYNC: 'async',
+
+    //---------------------------------------------------------------------------
+
+    create: function(cfg, target) {
+
+      var initial      = (typeof cfg.initial == 'string') ? { state: cfg.initial } : cfg.initial; // allow for a simple string, or an object with { state: 'foo', event: 'setup', defer: true|false }
+      var terminal     = cfg.terminal || cfg['final'];
+      var fsm          = target || cfg.target  || {};
+      var events       = cfg.events || [];
+      var callbacks    = cfg.callbacks || {};
+      var map          = {}; // track state transitions allowed for an event { event: { from: [ to ] } }
+      var transitions  = {}; // track events allowed from a state            { state: [ event ] }
+
+      var add = function(e) {
+        var from = Array.isArray(e.from) ? e.from : (e.from ? [e.from] : [StateMachine.WILDCARD]); // allow 'wildcard' transition if 'from' is not specified
+        map[e.name] = map[e.name] || {};
+        for (var n = 0 ; n < from.length ; n++) {
+          transitions[from[n]] = transitions[from[n]] || [];
+          transitions[from[n]].push(e.name);
+
+          map[e.name][from[n]] = e.to || from[n]; // allow no-op transition if 'to' is not specified
+        }
+        if (e.to)
+          transitions[e.to] = transitions[e.to] || [];
+      };
+
+      if (initial) {
+        initial.event = initial.event || 'startup';
+        add({ name: initial.event, from: 'none', to: initial.state });
+      }
+
+      for(var n = 0 ; n < events.length ; n++)
+        add(events[n]);
+
+      for(var name in map) {
+        if (map.hasOwnProperty(name))
+          fsm[name] = StateMachine.buildEvent(name, map[name]);
+      }
+
+      for(var name in callbacks) {
+        if (callbacks.hasOwnProperty(name))
+          fsm[name] = callbacks[name]
+      }
+
+      fsm.current     = 'none';
+      fsm.is          = function(state) { return Array.isArray(state) ? (state.indexOf(this.current) >= 0) : (this.current === state); };
+      fsm.can         = function(event) { return !this.transition && (map[event] !== undefined) && (map[event].hasOwnProperty(this.current) || map[event].hasOwnProperty(StateMachine.WILDCARD)); }
+      fsm.cannot      = function(event) { return !this.can(event); };
+      fsm.transitions = function()      { return (transitions[this.current] || []).concat(transitions[StateMachine.WILDCARD] || []); };
+      fsm.isFinished  = function()      { return this.is(terminal); };
+      fsm.error       = cfg.error || function(name, from, to, args, error, msg, e) { throw e || msg; }; // default behavior when something unexpected happens is to throw an exception, but caller can override this behavior if desired (see github issue #3 and #17)
+      fsm.states      = function() { return Object.keys(transitions).sort() };
+
+      if (initial && !initial.defer)
+        fsm[initial.event]();
+
+      return fsm;
+
+    },
+
+    //===========================================================================
+
+    doCallback: function(fsm, func, name, from, to, args) {
+      if (func) {
+        try {
+          return func.apply(fsm, [name, from, to].concat(args));
+        }
+        catch(e) {
+          return fsm.error(name, from, to, args, StateMachine.Error.INVALID_CALLBACK, "an exception occurred in a caller-provided callback function", e);
+        }
+      }
+    },
+
+    beforeAnyEvent:  function(fsm, name, from, to, args) { return StateMachine.doCallback(fsm, fsm['onbeforeevent'],                       name, from, to, args); },
+    afterAnyEvent:   function(fsm, name, from, to, args) { return StateMachine.doCallback(fsm, fsm['onafterevent'] || fsm['onevent'],      name, from, to, args); },
+    leaveAnyState:   function(fsm, name, from, to, args) { return StateMachine.doCallback(fsm, fsm['onleavestate'],                        name, from, to, args); },
+    enterAnyState:   function(fsm, name, from, to, args) { return StateMachine.doCallback(fsm, fsm['onenterstate'] || fsm['onstate'],      name, from, to, args); },
+    changeState:     function(fsm, name, from, to, args) { return StateMachine.doCallback(fsm, fsm['onchangestate'],                       name, from, to, args); },
+
+    beforeThisEvent: function(fsm, name, from, to, args) { return StateMachine.doCallback(fsm, fsm['onbefore' + name],                     name, from, to, args); },
+    afterThisEvent:  function(fsm, name, from, to, args) { return StateMachine.doCallback(fsm, fsm['onafter'  + name] || fsm['on' + name], name, from, to, args); },
+    leaveThisState:  function(fsm, name, from, to, args) { return StateMachine.doCallback(fsm, fsm['onleave'  + from],                     name, from, to, args); },
+    enterThisState:  function(fsm, name, from, to, args) { return StateMachine.doCallback(fsm, fsm['onenter'  + to]   || fsm['on' + to],   name, from, to, args); },
+
+    beforeEvent: function(fsm, name, from, to, args) {
+      if ((false === StateMachine.beforeThisEvent(fsm, name, from, to, args)) ||
+          (false === StateMachine.beforeAnyEvent( fsm, name, from, to, args)))
+        return false;
+    },
+
+    afterEvent: function(fsm, name, from, to, args) {
+      StateMachine.afterThisEvent(fsm, name, from, to, args);
+      StateMachine.afterAnyEvent( fsm, name, from, to, args);
+    },
+
+    leaveState: function(fsm, name, from, to, args) {
+      var specific = StateMachine.leaveThisState(fsm, name, from, to, args),
+          general  = StateMachine.leaveAnyState( fsm, name, from, to, args);
+      if ((false === specific) || (false === general))
+        return false;
+      else if ((StateMachine.ASYNC === specific) || (StateMachine.ASYNC === general))
+        return StateMachine.ASYNC;
+    },
+
+    enterState: function(fsm, name, from, to, args) {
+      StateMachine.enterThisState(fsm, name, from, to, args);
+      StateMachine.enterAnyState( fsm, name, from, to, args);
+    },
+
+    //===========================================================================
+
+    buildEvent: function(name, map) {
+      return function() {
+
+        var from  = this.current;
+        var to    = map[from] || (map[StateMachine.WILDCARD] != StateMachine.WILDCARD ? map[StateMachine.WILDCARD] : from) || from;
+        var args  = Array.prototype.slice.call(arguments); // turn arguments into pure array
+
+        if (this.transition)
+          return this.error(name, from, to, args, StateMachine.Error.PENDING_TRANSITION, "event " + name + " inappropriate because previous transition did not complete");
+
+        if (this.cannot(name))
+          return this.error(name, from, to, args, StateMachine.Error.INVALID_TRANSITION, "event " + name + " inappropriate in current state " + this.current);
+
+        if (false === StateMachine.beforeEvent(this, name, from, to, args))
+          return StateMachine.Result.CANCELLED;
+
+        if (from === to) {
+          StateMachine.afterEvent(this, name, from, to, args);
+          return StateMachine.Result.NOTRANSITION;
+        }
+
+        // prepare a transition method for use EITHER lower down, or by caller if they want an async transition (indicated by an ASYNC return value from leaveState)
+        var fsm = this;
+        this.transition = function() {
+          fsm.transition = null; // this method should only ever be called once
+          fsm.current = to;
+          StateMachine.enterState( fsm, name, from, to, args);
+          StateMachine.changeState(fsm, name, from, to, args);
+          StateMachine.afterEvent( fsm, name, from, to, args);
+          return StateMachine.Result.SUCCEEDED;
+        };
+        this.transition.cancel = function() { // provide a way for caller to cancel async transition if desired (issue #22)
+          fsm.transition = null;
+          StateMachine.afterEvent(fsm, name, from, to, args);
+        }
+
+        var leave = StateMachine.leaveState(this, name, from, to, args);
+        if (false === leave) {
+          this.transition = null;
+          return StateMachine.Result.CANCELLED;
+        }
+        else if (StateMachine.ASYNC === leave) {
+          return StateMachine.Result.PENDING;
+        }
+        else {
+          if (this.transition) // need to check in case user manually called transition() but forgot to return StateMachine.ASYNC
+            return this.transition();
+        }
+
+      };
+    }
+
+  }; // StateMachine
+
+  //===========================================================================
+
+  //======
+  // NODE
+  //======
+  if (typeof exports !== 'undefined') {
+    if (typeof module !== 'undefined' && module.exports) {
+      exports = module.exports = StateMachine;
+    }
+    exports.StateMachine = StateMachine;
+  }
+  //============
+  // AMD/REQUIRE
+  //============
+  else if (typeof define === 'function' && define.amd) {
+    define(function(require) { return StateMachine; });
+  }
+  //========
+  // BROWSER
+  //========
+  else if (typeof window !== 'undefined') {
+    window.StateMachine = StateMachine;
+  }
+  //===========
+  // WEB WORKER
+  //===========
+  else if (typeof self !== 'undefined') {
+    self.StateMachine = StateMachine;
+  }
+
+}());
+
 },{}]},{},[12]);

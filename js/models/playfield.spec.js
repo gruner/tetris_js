@@ -76,7 +76,38 @@ describe('Playfield', function() {
     });
 
     describe('#clearRows', function() {
-        it('should remove specified rows', function() {
+        it('should remove touching rows', function() {
+
+            playfield.grid[0] = [1,2,3,4,5];
+            playfield.grid[1] = [1,2,3,4,5];
+            playfield.grid[2] = [1,2,3,4,5];
+            playfield.grid[3] = [1,2,3,4,5];
+            playfield.grid[4] = [1,2,3,4,5];
+            playfield.grid[5] = [1,2,3,4,5];
+
+            playfield.clearRows([5, 4, 3]);
+
+            // Should Result in:
+            // playfield.grid[0] = undefined;
+            // playfield.grid[1] = undefined;
+            // playfield.grid[2] = undefined;
+            // playfield.grid[3] = [1,2,3,4,5];
+            // playfield.grid[4] = [1,2,3,4,5];
+            // playfield.grid[5] = [1,2,3,4,5];
+        
+            assert.strictEqual(playfield.grid[0], undefined);
+            assert.strictEqual(playfield.grid[1], undefined);
+            assert.strictEqual(playfield.grid[2], undefined);
+            assert.strictEqual(playfield.grid[3].length, 5);
+            assert.strictEqual(playfield.grid[4].length, 5);
+            assert.strictEqual(playfield.grid[5].length, 5);
+
+            assert.strictEqual(ROW_COUNT, playfield.grid.length);
+        });
+    });
+
+    describe('#clearRows', function() {
+        it('should remove non-touching rows', function() {
 
             playfield.grid[0] = [1,2,3,4,5];
             playfield.grid[1] = [1,2,3,4,5];
@@ -88,9 +119,9 @@ describe('Playfield', function() {
             playfield.clearRows([0, 2, 5]);
 
             // Should Result in:
-            // playfield.grid[0] = [];
-            // playfield.grid[1] = [];
-            // playfield.grid[2] = [];
+            // playfield.grid[0] = undefined;
+            // playfield.grid[1] = undefined;
+            // playfield.grid[2] = undefined;
             // playfield.grid[3] = [1,2,3,4,5];
             // playfield.grid[4] = [1,2,3,4,5];
             // playfield.grid[5] = [1,2,3,4,5];
