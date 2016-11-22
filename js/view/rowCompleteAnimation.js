@@ -34,6 +34,7 @@ RowCompleteAnimation.prototype.draw = function() {
 
     if (this.opacity <= ENDING_OPACITY) {
         eventDispatcher.trigger(events.rowCleared);
+        //eventDispatcher.trigger(events.animationEnd, 'RowCompleteAnimation');
     	this.complete = true;
     }
 };

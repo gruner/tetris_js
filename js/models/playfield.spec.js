@@ -19,6 +19,16 @@ describe('Playfield', function() {
         });
     });
 
+    describe('#buildGrid', function() {
+        it('should initialize grid with undefined rows', function() {
+            var result = playfield.buildGrid();
+            assert.equal(ROW_COUNT, result.length);
+            for (var i = 0; i < result.length; i++) {
+                assert.strictEqual(undefined, result[i]);
+            }
+        });
+    });
+
     describe('#traverseRows', function() {
         it('should traverse all rows', function() {
             var traversedRows = [];
@@ -85,12 +95,41 @@ describe('Playfield', function() {
             // playfield.grid[4] = [1,2,3,4,5];
             // playfield.grid[5] = [1,2,3,4,5];
         
-            assert.strictEqual(playfield.grid[0].length, 0);
-            assert.strictEqual(playfield.grid[1].length, 0);
-            assert.strictEqual(playfield.grid[2].length, 0);
+            assert.strictEqual(playfield.grid[0], undefined);
+            assert.strictEqual(playfield.grid[1], undefined);
+            assert.strictEqual(playfield.grid[2], undefined);
             assert.strictEqual(playfield.grid[3].length, 5);
             assert.strictEqual(playfield.grid[4].length, 5);
             assert.strictEqual(playfield.grid[5].length, 5);
+        });
+    });
+
+    describe('#clearRowAt', function() {
+        it('should clear top row', function() {
+
+            playfield.grid[0] = [1,2,3,4,5];
+            playfield.clearRowAt(0);
+        
+            assert.strictEqual(undefined, playfield.grid[0]);
+        });
+    });
+
+    describe('#clearRowAt', function() {
+        it('should clear bottom row', function() {
+
+            var lastRowIndex = playfield.grid.length - 1;
+
+            playfield.grid[lastRowIndex] = [1,2,3,4,5];
+
+            // verify before clearing
+            assert.strictEqual(ROW_COUNT, playfield.grid.length);
+            assert.strictEqual(5, playfield.grid[lastRowIndex].length);
+            
+            playfield.clearRowAt(lastRowIndex);
+            
+            // after clearing
+            assert.strictEqual(ROW_COUNT, playfield.grid.length);
+            assert.strictEqual(undefined, playfield.grid[lastRowIndex]);
         });
     });
 
@@ -100,7 +139,7 @@ describe('Playfield', function() {
             playfield.grid[0] = [1,2,3,4,5];
             playfield.clearRowAt(10);
         
-            assert.strictEqual(0, playfield.grid[0].length);
+            assert.strictEqual(undefined, playfield.grid[0]);
             assert.strictEqual(5, playfield.grid[1].length);
         });
     });
@@ -111,7 +150,7 @@ describe('Playfield', function() {
             playfield.grid[0] = [1,2,3,4,5];
             playfield.clearRowAt(10);
         
-            assert.strictEqual(0, playfield.grid[0].length);
+            assert.strictEqual(undefined, playfield.grid[0]);
             assert.strictEqual(5, playfield.grid[1].length);
             assert.strictEqual(ROW_COUNT, playfield.grid.length);
             assert.strictEqual(playfield.yCount, playfield.grid.length);

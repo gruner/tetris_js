@@ -11,5 +11,6 @@ module.exports = {
     playfieldSettled:       'tetris.playfieldSettled',
     invalidMove:            'tetris.invalidMove',
     topOut:                 'tetris.topOut',
-    pause:                  'tetris.pause'
+    pause:                  'tetris.pause',
+    animationEnd:           'tetris.animationEnd'
 };

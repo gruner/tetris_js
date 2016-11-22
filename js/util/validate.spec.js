@@ -41,7 +41,7 @@ describe('Validate', function() {
             for (var i = 0; i < testSets.length; i++) {
                 var set = testSets[i];
                 assert(set.expected === Validate.coordinates(set.coordinates));
-            };
+            }
         });
     }); 
 });

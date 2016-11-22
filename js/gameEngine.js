@@ -165,15 +165,16 @@ GameEngine.prototype.settleBlocks = function(iteration) {
         // Suspend updates while rows are cleared and settled
         this.isSuspended = true;
 
-        // Trigger rowComplete - starts animation
-        eventDispatcher.trigger(events.rowComplete, completedRows);
+        // Update the model
+        this.playfield.clearRows(completedRows);
 
         // After row is cleared (animation is finished), settle blocks again
         eventDispatcher.once(events.rowCleared, function() {
-            // Update the model
-            this.playfield.clearRows(completedRows);
             self.settleBlocks(iteration + 1); // recursively check if settling completes any rows
         });
+
+        // Trigger rowComplete - starts animation
+        eventDispatcher.trigger(events.rowComplete, completedRows);
     } else {
         // After blocks are settled, resume updates
         this.resume();

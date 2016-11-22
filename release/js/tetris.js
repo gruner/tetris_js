@@ -95,7 +95,8 @@ module.exports = {
     playfieldSettled:       'tetris.playfieldSettled',
     invalidMove:            'tetris.invalidMove',
     topOut:                 'tetris.topOut',
-    pause:                  'tetris.pause'
+    pause:                  'tetris.pause',
+    animationEnd:           'tetris.animationEnd'
 };
 },{}],5:[function(require,module,exports){
 'use strict';
@@ -295,7 +296,7 @@ module.exports = {
     
 var debug = require('./debug'),
     eventSubscriptions = {};
- 
+
 module.exports = {
  
     subscribe: function (eventName, callback) {
@@ -304,16 +305,11 @@ module.exports = {
             return;
         }
 
-        // Retrieve a list of current subscribers for eventName (if any)
-        var subscribers = eventSubscriptions[eventName];
-   
-        if (subscribers === undefined) {
-            subscribers = eventSubscriptions[eventName] = [];
+        if (!eventSubscriptions.hasOwnProperty(eventName)) {
+            eventSubscriptions[eventName] = [];
         }
-   
-        // Add the given callback function to the end of the array with
-        // eventSubscriptions for this event.
-        subscribers.push(callback);
+
+        eventSubscriptions[eventName].push(callback);
     },
 
     unsubscribe: function(eventName, callback) {
@@ -535,15 +531,16 @@ GameEngine.prototype.settleBlocks = function(iteration) {
         // Suspend updates while rows are cleared and settled
         this.isSuspended = true;
 
-        // Trigger rowComplete - starts animation
-        eventDispatcher.trigger(events.rowComplete, completedRows);
+        // Update the model
+        this.playfield.clearRows(completedRows);
 
         // After row is cleared (animation is finished), settle blocks again
         eventDispatcher.once(events.rowCleared, function() {
-            // Update the model
-            this.playfield.clearRows(completedRows);
             self.settleBlocks(iteration + 1); // recursively check if settling completes any rows
         });
+
+        // Trigger rowComplete - starts animation
+        eventDispatcher.trigger(events.rowComplete, completedRows);
     } else {
         // After blocks are settled, resume updates
         this.resume();
@@ -841,7 +838,7 @@ Playfield.prototype.clearRowAt = function(y) {
     var row;
     if (y < this.grid.length) {
         row = this.grid.splice(y, 1)[0]; // splice returns array, we only want the first element
-        this.grid.unshift([]); // insert new empty top row
+        this.grid.unshift(undefined); // insert new empty top row
     }
 
     return row;
@@ -868,9 +865,7 @@ Playfield.prototype.settleRows = function() {
     // For each row, find empty places
     // that the above row can fill
     self.traverseRows(function(i, targetRow) {
-        var topNeighboringRow = self.grid[i-1], // traversing bottom to top
-            mergable = false,
-            mergedRow;
+        var topNeighboringRow = self.grid[i-1]; // traversing bottom to top
 
         if (!targetRow || !topNeighboringRow) { return; }
 
@@ -2039,6 +2034,7 @@ RowCompleteAnimation.prototype.draw = function() {
 
     if (this.opacity <= ENDING_OPACITY) {
         eventDispatcher.trigger(events.rowCleared);
+        //eventDispatcher.trigger(events.animationEnd, 'RowCompleteAnimation');
     	this.complete = true;
     }
 };

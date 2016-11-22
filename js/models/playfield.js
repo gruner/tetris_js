@@ -82,7 +82,7 @@ Playfield.prototype.clearRowAt = function(y) {
     var row;
     if (y < this.grid.length) {
         row = this.grid.splice(y, 1)[0]; // splice returns array, we only want the first element
-        this.grid.unshift([]); // insert new empty top row
+        this.grid.unshift(undefined); // insert new empty top row
     }
 
     return row;
@@ -109,9 +109,7 @@ Playfield.prototype.settleRows = function() {
     // For each row, find empty places
     // that the above row can fill
     self.traverseRows(function(i, targetRow) {
-        var topNeighboringRow = self.grid[i-1], // traversing bottom to top
-            mergable = false,
-            mergedRow;
+        var topNeighboringRow = self.grid[i-1]; // traversing bottom to top
 
         if (!targetRow || !topNeighboringRow) { return; }
 

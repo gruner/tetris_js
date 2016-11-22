@@ -2,7 +2,7 @@
     
 var debug = require('./debug'),
     eventSubscriptions = {};
- 
+
 module.exports = {
  
     subscribe: function (eventName, callback) {
@@ -11,16 +11,11 @@ module.exports = {
             return;
         }
 
-        // Retrieve a list of current subscribers for eventName (if any)
-        var subscribers = eventSubscriptions[eventName];
-   
-        if (subscribers === undefined) {
-            subscribers = eventSubscriptions[eventName] = [];
+        if (!eventSubscriptions.hasOwnProperty(eventName)) {
+            eventSubscriptions[eventName] = [];
         }
-   
-        // Add the given callback function to the end of the array with
-        // eventSubscriptions for this event.
-        subscribers.push(callback);
+
+        eventSubscriptions[eventName].push(callback);
     },
 
     unsubscribe: function(eventName, callback) {
