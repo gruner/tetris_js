@@ -19,8 +19,6 @@ var RowCompleteAnimation = function(ctx, rows, onCompleteCallback) {
     this.opacity = 1;
     this.theme = activeTheme.get();
     this.finalFillColor = this.theme.playfield.color;
-
-    console.info('rows', rows);
 };
 
 //RowCompleteAnimation.prototype = new Animation();

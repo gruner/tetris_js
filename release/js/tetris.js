@@ -112,7 +112,7 @@ var features = {
     },
     initWithTetris: {
         desc: "Starts the game with blocks ready for a Tetris",
-        enabled: true
+        enabled: false
     },
     displayGhostPiece: {
         desc: "Highlights where the current piece will land",
@@ -420,11 +420,11 @@ GameEngine.prototype.initStates = function() {
     return StateMachine.create({
         initial: 'play',
         events: [
-            { name: 'rowComplete', from: 'play',  to: 'suspended' },
-            { name: 'rowCleared', from: 'suspended',  to: 'suspended' },
+            { name: 'rowComplete', from: 'play',       to: 'suspended' },
+            { name: 'rowCleared',  from: 'suspended',  to: 'suspended' },
             //{ name: 'rowCollapse', from: 'animatingRowClear',  to: 'animatingRowCollapse' },
-            { name: 'suspend',     from: 'play',  to: 'suspended' },
-            { name: 'pause',       from: 'play',  to: 'paused' },
+            { name: 'suspend',     from: 'play',       to: 'suspended' },
+            { name: 'pause',       from: 'play',       to: 'paused' },
             { name: 'resume',      from: ['play', 'paused', 'suspended'], to: 'play' }
         ]
     });
@@ -555,8 +555,14 @@ GameEngine.prototype.settleBlocks = function(iteration) {
 
     if (completedRows.length) {
 
+        console.log('Playfield.grid before', this.playfield.grid);
+        console.log('Playfield.grid.length before', this.playfield.grid.length);
+
         // Update the model
         this.playfield.clearRows(completedRows);
+
+        console.log('Playfield.grid after', this.playfield.grid);
+        console.log('Playfield.grid.length after', this.playfield.grid.length);
 
         // triggered when rowComplete animation completes
         // After row is cleared, settle blocks again
@@ -838,27 +844,27 @@ Playfield.prototype.traverseGrid = function(callback) {
 /**
  * Removes an array of rows
  */
-Playfield.prototype.clearRows = function(rows) {
+Playfield.prototype.clearRows = function(rowIndices) {
     var i,
-        rowCount = rows.length,
-        valid = true,
-        returnRows;
+        rowCount = rowIndices.length,
+        clearedRows = [];
 
-    for (i = 0; i < rowCount; i++) {
-        if (rows[i] > this.grid.length) {
-            valid = false;
-            break;
+    // make sure rows are in descending order
+    // so that we splice from biggest to smallest and avoid scrambling the indices
+    rowIndices.sort(function(a,b) { return b - a; });
+
+    for (var i = 0; i < rowCount; i++) {
+        if (rowIndices[i] < this.grid.length) {
+            clearedRows.push(this.grid.splice(rowIndices[i], 1)[0]);
         }
     }
 
-    if (valid) {
-        returnRows = this.grid.splice(rows[0], rowCount);
-        while (this.grid.length < this.yCount) {
-            this.grid.unshift(undefined);
-        }
+    // add empty rows at the top
+    while (this.grid.length < this.yCount) {
+        this.grid.unshift(undefined);
     }
 
-    return returnRows;
+    return clearedRows;
 };
 
 /**
@@ -867,7 +873,7 @@ Playfield.prototype.clearRows = function(rows) {
  */
 Playfield.prototype.clearRowAt = function(y) {
     var rows = this.clearRows([y]);
-    if (rows) {
+    if (rows && rows.length) {
         return rows[0];
     }
 };
@@ -2090,8 +2096,6 @@ var RowCompleteAnimation = function(ctx, rows, onCompleteCallback) {
     this.opacity = 1;
     this.theme = activeTheme.get();
     this.finalFillColor = this.theme.playfield.color;
-
-    console.info('rows', rows);
 };
 
 //RowCompleteAnimation.prototype = new Animation();

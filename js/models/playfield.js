@@ -65,27 +65,27 @@ Playfield.prototype.traverseGrid = function(callback) {
 /**
  * Removes an array of rows
  */
-Playfield.prototype.clearRows = function(rows) {
+Playfield.prototype.clearRows = function(rowIndices) {
     var i,
-        rowCount = rows.length,
-        valid = true,
-        returnRows;
+        rowCount = rowIndices.length,
+        clearedRows = [];
 
-    for (i = 0; i < rowCount; i++) {
-        if (rows[i] > this.grid.length) {
-            valid = false;
-            break;
+    // make sure rows are in descending order
+    // so that we splice from biggest to smallest and avoid scrambling the indices
+    rowIndices.sort(function(a,b) { return b - a; });
+
+    for (var i = 0; i < rowCount; i++) {
+        if (rowIndices[i] < this.grid.length) {
+            clearedRows.push(this.grid.splice(rowIndices[i], 1)[0]);
         }
     }
 
-    if (valid) {
-        returnRows = this.grid.splice(rows[0], rowCount);
-        while (this.grid.length < this.yCount) {
-            this.grid.unshift(undefined);
-        }
+    // add empty rows at the top
+    while (this.grid.length < this.yCount) {
+        this.grid.unshift(undefined);
     }
 
-    return returnRows;
+    return clearedRows;
 };
 
 /**
@@ -94,7 +94,7 @@ Playfield.prototype.clearRows = function(rows) {
  */
 Playfield.prototype.clearRowAt = function(y) {
     var rows = this.clearRows([y]);
-    if (rows) {
+    if (rows && rows.length) {
         return rows[0];
     }
 };

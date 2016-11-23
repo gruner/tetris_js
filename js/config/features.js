@@ -11,7 +11,7 @@ var features = {
     },
     initWithTetris: {
         desc: "Starts the game with blocks ready for a Tetris",
-        enabled: true
+        enabled: false
     },
     displayGhostPiece: {
         desc: "Highlights where the current piece will land",

@@ -78,12 +78,12 @@ describe('Playfield', function() {
     describe('#clearRows', function() {
         it('should remove touching rows', function() {
 
-            playfield.grid[0] = [1,2,3,4,5];
-            playfield.grid[1] = [1,2,3,4,5];
-            playfield.grid[2] = [1,2,3,4,5];
-            playfield.grid[3] = [1,2,3,4,5];
-            playfield.grid[4] = [1,2,3,4,5];
-            playfield.grid[5] = [1,2,3,4,5];
+            playfield.grid[0] = [0,0,0,0,0];
+            playfield.grid[1] = [1,1,1,1,1];
+            playfield.grid[2] = [2,2,2,2,2];
+            playfield.grid[3] = [3,3,3,3,3];
+            playfield.grid[4] = [4,4,4,4,4];
+            playfield.grid[5] = [5,5,5,5,5];
 
             playfield.clearRows([5, 4, 3]);
 
@@ -91,47 +91,76 @@ describe('Playfield', function() {
             // playfield.grid[0] = undefined;
             // playfield.grid[1] = undefined;
             // playfield.grid[2] = undefined;
-            // playfield.grid[3] = [1,2,3,4,5];
-            // playfield.grid[4] = [1,2,3,4,5];
-            // playfield.grid[5] = [1,2,3,4,5];
+            // playfield.grid[3] = [0,0,0,0,0];
+            // playfield.grid[4] = [1,1,1,1,1];
+            // playfield.grid[5] = [2,2,2,2,2];
         
             assert.strictEqual(playfield.grid[0], undefined);
             assert.strictEqual(playfield.grid[1], undefined);
             assert.strictEqual(playfield.grid[2], undefined);
-            assert.strictEqual(playfield.grid[3].length, 5);
-            assert.strictEqual(playfield.grid[4].length, 5);
-            assert.strictEqual(playfield.grid[5].length, 5);
+            assert.strictEqual(playfield.grid[3][0], 0);
+            assert.strictEqual(playfield.grid[4][0], 1);
+            assert.strictEqual(playfield.grid[5][0], 2);
 
-            assert.strictEqual(ROW_COUNT, playfield.grid.length);
+            assert.strictEqual(playfield.grid.length, ROW_COUNT);
         });
     });
 
     describe('#clearRows', function() {
         it('should remove non-touching rows', function() {
 
-            playfield.grid[0] = [1,2,3,4,5];
-            playfield.grid[1] = [1,2,3,4,5];
-            playfield.grid[2] = [1,2,3,4,5];
-            playfield.grid[3] = [1,2,3,4,5];
-            playfield.grid[4] = [1,2,3,4,5];
-            playfield.grid[5] = [1,2,3,4,5];
+            playfield.grid[0] = [0,0,0,0,0];
+            playfield.grid[1] = [1,1,1,1,1];
+            playfield.grid[2] = [2,2,2,2,2];
+            playfield.grid[3] = [3,3,3,3,3];
+            playfield.grid[4] = [4,4,4,4,4];
+            playfield.grid[5] = [5,5,5,5,5];
 
-            playfield.clearRows([0, 2, 5]);
+            playfield.clearRows([5, 3, 1]);
 
             // Should Result in:
             // playfield.grid[0] = undefined;
             // playfield.grid[1] = undefined;
             // playfield.grid[2] = undefined;
-            // playfield.grid[3] = [1,2,3,4,5];
-            // playfield.grid[4] = [1,2,3,4,5];
-            // playfield.grid[5] = [1,2,3,4,5];
+            // playfield.grid[3] = [0,0,0,0,0];
+            // playfield.grid[4] = [2,2,2,2,2];
+            // playfield.grid[5] = [4,4,4,4,4];
         
             assert.strictEqual(playfield.grid[0], undefined);
             assert.strictEqual(playfield.grid[1], undefined);
             assert.strictEqual(playfield.grid[2], undefined);
-            assert.strictEqual(playfield.grid[3].length, 5);
-            assert.strictEqual(playfield.grid[4].length, 5);
-            assert.strictEqual(playfield.grid[5].length, 5);
+            assert.strictEqual(playfield.grid[3][0], 0);
+            assert.strictEqual(playfield.grid[4][0], 2);
+            assert.strictEqual(playfield.grid[5][0], 4);
+        });
+    });
+
+    describe('#clearRows', function() {
+        it('should accept arguments in any order', function() {
+
+            playfield.grid[0] = [0,0,0,0,0];
+            playfield.grid[1] = [1,1,1,1,1];
+            playfield.grid[2] = [2,2,2,2,2];
+            playfield.grid[3] = [3,3,3,3,3];
+            playfield.grid[4] = [4,4,4,4,4];
+            playfield.grid[5] = [5,5,5,5,5];
+
+            playfield.clearRows([1, 3, 5]); // Same as above, but reversed
+
+            // Should Result in:
+            // playfield.grid[0] = undefined;
+            // playfield.grid[1] = undefined;
+            // playfield.grid[2] = undefined;
+            // playfield.grid[3] = [0,0,0,0,0];
+            // playfield.grid[4] = [2,2,2,2,2];
+            // playfield.grid[5] = [4,4,4,4,4];
+        
+            assert.strictEqual(playfield.grid[0], undefined);
+            assert.strictEqual(playfield.grid[1], undefined);
+            assert.strictEqual(playfield.grid[2], undefined);
+            assert.strictEqual(playfield.grid[3][0], 0);
+            assert.strictEqual(playfield.grid[4][0], 2);
+            assert.strictEqual(playfield.grid[5][0], 4);
         });
     });
 
@@ -141,7 +170,7 @@ describe('Playfield', function() {
             playfield.grid[0] = [1,2,3,4,5];
             playfield.clearRowAt(0);
         
-            assert.strictEqual(undefined, playfield.grid[0]);
+            assert.strictEqual(playfield.grid[0], undefined);
         });
     });
 
@@ -159,8 +188,8 @@ describe('Playfield', function() {
             playfield.clearRowAt(lastRowIndex);
             
             // after clearing
-            assert.strictEqual(ROW_COUNT, playfield.grid.length);
-            assert.strictEqual(undefined, playfield.grid[lastRowIndex]);
+            assert.strictEqual(playfield.grid.length, ROW_COUNT);
+            assert.strictEqual(playfield.grid[lastRowIndex], undefined);
         });
     });
 
@@ -519,6 +548,7 @@ describe('Playfield', function() {
             playfield.placeBlock(block);
             
             assert.strictEqual(block, playfield.grid[0][0]);
+            assert.strictEqual(ROW_COUNT, playfield.grid.length);
         });
     });
 
@@ -534,6 +564,7 @@ describe('Playfield', function() {
             assert.strictEqual(block1, playfield.grid[0][0]);
             assert.strictEqual(block2, playfield.grid[0][1]);
             assert.strictEqual(block3, playfield.grid[0][2]);
+            assert.strictEqual(ROW_COUNT, playfield.grid.length);
         });
     });
 
