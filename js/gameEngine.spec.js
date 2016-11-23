@@ -17,11 +17,11 @@ describe('GameEngine', function() {
 
     });
 
-    describe('#initThemes', function() {
-        it('should initialize with default theme', function() {
-            assert.ok(gameEngine.theme);
-        });
-    });
+    // describe('#initThemes', function() {
+    //     it('should initialize with default theme', function() {
+    //         assert.ok(gameEngine.theme);
+    //     });
+    // });
 
     describe('#getTetrominoStyle', function() {
         it('should return valid style object', function() {

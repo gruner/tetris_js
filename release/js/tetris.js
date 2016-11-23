@@ -376,6 +376,7 @@ var Playfield = require('./models/playfield'),
     SoundEffects = require('./soundEffects'), 
     ThemeLoader = require('./themeLoader'),
     themeConfigs = require('./config/themes'),
+    activeTheme = require('./services/activeThemeService'),
     eventDispatcher = require('./eventDispatcher'),
     events = require('./config/events'),
     constants = require('./config/constants'),
@@ -431,8 +432,7 @@ GameEngine.prototype.initStates = function() {
 
 GameEngine.prototype.initThemes = function() {
     var themeLoader = new ThemeLoader(themeConfigs);
-    this.themeLoader = themeLoader;
-    this.theme = themeLoader.getTheme();
+    activeTheme.set(themeLoader.getTheme());
 };
 
 GameEngine.prototype.initDebug = function() {
@@ -448,7 +448,8 @@ GameEngine.prototype.initDebug = function() {
  * Returns the configured theme style for the given tetromino type
  */
 GameEngine.prototype.getTetrominoStyle = function(type) {
-    return this.theme.tetrominos[type] ? this.theme.tetrominos[type] : null;
+    var theme = activeTheme.get();
+    return theme.tetrominos[type] ? theme.tetrominos[type] : null;
 };
 
 /**
@@ -719,7 +720,7 @@ GameEngine.prototype.getGhostPiece = function() {
 };
 
 module.exports = GameEngine;
-},{"./config/constants":3,"./config/events":4,"./config/features":5,"./config/themes":7,"./debug":8,"./eventDispatcher":10,"./models/playfield":14,"./models/tetromino":15,"./soundEffects":18,"./themeLoader":20,"./view/sprite":29,"javascript-state-machine":30}],12:[function(require,module,exports){
+},{"./config/constants":3,"./config/events":4,"./config/features":5,"./config/themes":7,"./debug":8,"./eventDispatcher":10,"./models/playfield":14,"./models/tetromino":15,"./services/activeThemeService":18,"./soundEffects":19,"./themeLoader":21,"./view/sprite":30,"javascript-state-machine":31}],12:[function(require,module,exports){
 'use strict';
 
 var Tetris  = require('./tetris'),
@@ -736,7 +737,7 @@ var Tetris  = require('./tetris'),
     window.Tetris = Tetris;
 })();
 
-},{"./debug":8,"./tetris":19}],13:[function(require,module,exports){
+},{"./debug":8,"./tetris":20}],13:[function(require,module,exports){
 'use strict';
 
 /**
@@ -1110,7 +1111,7 @@ Playfield.prototype.debugRowClear = function() {
 };
 
 module.exports = Playfield;
-},{"../debug":8,"../util/validate":22,"./block":13,"./tetrominoTypes":16}],15:[function(require,module,exports){
+},{"../debug":8,"../util/validate":23,"./block":13,"./tetrominoTypes":16}],15:[function(require,module,exports){
 'use strict';
 
 var Block = require('./block'),
@@ -1352,7 +1353,7 @@ Tetromino.prototype.rotateRight = function() {
 };
 
 module.exports = Tetromino;
-},{"../config/constants":3,"../debug":8,"../util/validate":22,"./block":13,"./tetrominoTypes":16}],16:[function(require,module,exports){
+},{"../config/constants":3,"../debug":8,"../util/validate":23,"./block":13,"./tetrominoTypes":16}],16:[function(require,module,exports){
 'use strict';
 
 /**
@@ -1581,7 +1582,22 @@ var Theme = function(config) {
 Theme.DEFAULT = 'default';
 
 module.exports = Theme;
-},{"../util/extend":21}],18:[function(require,module,exports){
+},{"../util/extend":22}],18:[function(require,module,exports){
+'use strict';
+
+// Service for sharing the active theme
+
+var activeTheme;
+
+module.exports = {
+    set: function(theme) {
+        activeTheme = theme;
+    },
+    get: function() {
+        return activeTheme;
+    }
+};
+},{}],19:[function(require,module,exports){
 var events = require('./config/events'),
     sounds = require('./config/sounds'),
     eventDispatcher = require('./eventDispatcher'),
@@ -1659,7 +1675,7 @@ SoundEffects.prototype.play = function(soundKey) {
 };
 
 module.exports = SoundEffects;
-},{"./bufferLoader":1,"./config/events":4,"./config/sounds":6,"./debug":8,"./eventDispatcher":10}],19:[function(require,module,exports){
+},{"./bufferLoader":1,"./config/events":4,"./config/sounds":6,"./debug":8,"./eventDispatcher":10}],20:[function(require,module,exports){
 var GameEngine = require('./gameEngine'),
     Canvas = require('./view/canvas'),
     events = require('./config/events'),
@@ -1702,7 +1718,7 @@ Tetris.createCanvasElement = function() {
 }
 
 module.exports = Tetris;
-},{"./config/events":4,"./eventBinding":9,"./eventDispatcher":10,"./gameEngine":11,"./view/canvas":25}],20:[function(require,module,exports){
+},{"./config/events":4,"./eventBinding":9,"./eventDispatcher":10,"./gameEngine":11,"./view/canvas":26}],21:[function(require,module,exports){
 'use strict';
 
 var extend = require('./util/extend'),
@@ -1748,7 +1764,7 @@ ThemeLoader.prototype.getTheme = function(themeName) {
 };
 
 module.exports = ThemeLoader;
-},{"./models/theme":17,"./util/extend":21}],21:[function(require,module,exports){
+},{"./models/theme":17,"./util/extend":22}],22:[function(require,module,exports){
 'use strict';
 
 function deepObjectExtend(parent, child) {
@@ -1774,7 +1790,7 @@ function deepObjectExtend(parent, child) {
 module.exports = {
     deepExtend: deepObjectExtend
 };
-},{}],22:[function(require,module,exports){
+},{}],23:[function(require,module,exports){
 'use strict';
 
 var debug = require('../debug');
@@ -1800,7 +1816,7 @@ Validate.coordinates = function(coordinates) {
 };
 
 module.exports = Validate;
-},{"../debug":8}],23:[function(require,module,exports){
+},{"../debug":8}],24:[function(require,module,exports){
 'use strict';
 
 var Animation = function(ctx) {
@@ -1811,7 +1827,7 @@ var Animation = function(ctx) {
 Animation.prototype.draw = function() {};
 
 module.exports = Animation;
-},{}],24:[function(require,module,exports){
+},{}],25:[function(require,module,exports){
 /**
  * Manages a queue of animation objects so that they draw in sequence
  */
@@ -1843,7 +1859,7 @@ module.exports = {
         animations = [];
     }
 };
-},{}],25:[function(require,module,exports){
+},{}],26:[function(require,module,exports){
 'use strict';
 
 var dimensions = require('../config/canvasDimensions'),
@@ -1853,6 +1869,7 @@ var dimensions = require('../config/canvasDimensions'),
     canvasCache = require('./canvasCache'),
     animationQueue = require('./animationQueue'),
     features = require('../config/features'),
+    activeTheme = require('../services/activeThemeService'),
     debug = require('../debug');
 
 /**
@@ -1864,6 +1881,7 @@ var Canvas = function(canvasElement, gameEngine) {
 
     this.ctx = null; // canvas context
     this.gameEngine = gameEngine;
+    this.theme = null;
 
     this.init(canvasElement);
     this.bindEvents();
@@ -1892,6 +1910,7 @@ Canvas.prototype.bindEvents = function() {
  * Draws entire game on each update loop
  */
 Canvas.prototype.draw = function() {
+    this.theme = activeTheme.get();
     this.drawPlayfield();
     this.drawRemnantBlocks();
 
@@ -1904,7 +1923,7 @@ Canvas.prototype.draw = function() {
         this.drawTetromino(
             this.gameEngine.activeTetromino,
             this.gameEngine.getTetrominoStyle(this.gameEngine.activeTetromino.type).color,
-            this.gameEngine.theme.tetrominoBorder
+            this.theme.tetrominoBorder
         );
     } else {
         debug.info('drawing animation');
@@ -1922,7 +1941,7 @@ Canvas.prototype.draw = function() {
  * @TODO cache this as an image after the first draw
  */
 Canvas.prototype.drawPlayfield = function() {
-    this.ctx.fillStyle = this.gameEngine.theme.playfield.color;
+    this.ctx.fillStyle = this.theme.playfield.color;
     this.ctx.fillRect(
         dimensions.playfieldOrigin.x,
         dimensions.playfieldOrigin.y,
@@ -1942,7 +1961,7 @@ Canvas.prototype.drawRemnantBlocks = function() {
                 dimensions.transpose(block.x),
                 dimensions.transpose(block.y),
                 self.gameEngine.getTetrominoStyle(block.type).color,
-                self.gameEngine.theme.tetrominoBorder
+                self.theme.tetrominoBorder
             );
         }
     });
@@ -1985,7 +2004,7 @@ Canvas.prototype.drawTetromino = function(tetromino, fillColor, borderColor) {
  * Draws the ghost piece - the shadow showing where the active piece will come to rest
  */
 Canvas.prototype.drawGhostPiece = function() {
-    this.drawTetromino(this.gameEngine.getGhostPiece(), this.gameEngine.theme.ghostPiece.color);
+    this.drawTetromino(this.gameEngine.getGhostPiece(), this.theme.ghostPiece.color);
 };
 
 /**
@@ -1995,7 +2014,7 @@ Canvas.prototype.drawGhostPiece = function() {
 
 module.exports = Canvas;
 
-},{"../config/canvasDimensions":2,"../config/features":5,"../debug":8,"./animationQueue":24,"./canvasCache":26,"./rowCollapseAnimation":27,"./rowCompleteAnimation":28,"./sprite":29}],26:[function(require,module,exports){
+},{"../config/canvasDimensions":2,"../config/features":5,"../debug":8,"../services/activeThemeService":18,"./animationQueue":25,"./canvasCache":27,"./rowCollapseAnimation":28,"./rowCompleteAnimation":29,"./sprite":30}],27:[function(require,module,exports){
 'use strict';
 
 /**
@@ -2030,7 +2049,7 @@ module.exports = {
         return this.imageCache[name] ? this.imageCache[name] : null;
     }
 };
-},{}],27:[function(require,module,exports){
+},{}],28:[function(require,module,exports){
 'use strict';
 
 var Animation = require('./animation');
@@ -2049,11 +2068,12 @@ RowCollapseAnimation.prototype.draw = function() {
 };
 
 module.exports = RowCollapseAnimation;
-},{"./animation":23}],28:[function(require,module,exports){
+},{"./animation":24}],29:[function(require,module,exports){
 'use strict';
 
 var Animation = require('./animation'),
     dimensions = require('../config/canvasDimensions'),
+    activeTheme = require('../services/activeThemeService'),
     debug = require('../debug');
 
 var OPACITY_CHANGE_RATE = 0.1,
@@ -2068,7 +2088,8 @@ var RowCompleteAnimation = function(ctx, rows, onCompleteCallback) {
     this.onComplete = onCompleteCallback;
     this.complete = false;
     this.opacity = 1;
-    this.finalFillColor = '#000000';//this.gameEngine.theme.playfield.color;
+    this.theme = activeTheme.get();
+    this.finalFillColor = this.theme.playfield.color;
 
     console.info('rows', rows);
 };
@@ -2108,7 +2129,7 @@ RowCompleteAnimation.prototype.getOpacity = function() {
 };
 
 module.exports = RowCompleteAnimation;
-},{"../config/canvasDimensions":2,"../debug":8,"./animation":23}],29:[function(require,module,exports){
+},{"../config/canvasDimensions":2,"../debug":8,"../services/activeThemeService":18,"./animation":24}],30:[function(require,module,exports){
 'use strict';
 
 /**
@@ -2139,7 +2160,7 @@ var Sprite = function(color) {
 // };
 
 module.exports = Sprite;
-},{}],30:[function(require,module,exports){
+},{}],31:[function(require,module,exports){
 /*
 
   Javascript State Machine Library - https://github.com/jakesgordon/javascript-state-machine

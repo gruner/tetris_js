@@ -2,6 +2,7 @@
 
 var Animation = require('./animation'),
     dimensions = require('../config/canvasDimensions'),
+    activeTheme = require('../services/activeThemeService'),
     debug = require('../debug');
 
 var OPACITY_CHANGE_RATE = 0.1,
@@ -16,7 +17,8 @@ var RowCompleteAnimation = function(ctx, rows, onCompleteCallback) {
     this.onComplete = onCompleteCallback;
     this.complete = false;
     this.opacity = 1;
-    this.finalFillColor = '#000000';//this.gameEngine.theme.playfield.color;
+    this.theme = activeTheme.get();
+    this.finalFillColor = this.theme.playfield.color;
 
     console.info('rows', rows);
 };

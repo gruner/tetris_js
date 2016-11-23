@@ -6,6 +6,7 @@ var Playfield = require('./models/playfield'),
     SoundEffects = require('./soundEffects'), 
     ThemeLoader = require('./themeLoader'),
     themeConfigs = require('./config/themes'),
+    activeTheme = require('./services/activeThemeService'),
     eventDispatcher = require('./eventDispatcher'),
     events = require('./config/events'),
     constants = require('./config/constants'),
@@ -61,8 +62,7 @@ GameEngine.prototype.initStates = function() {
 
 GameEngine.prototype.initThemes = function() {
     var themeLoader = new ThemeLoader(themeConfigs);
-    this.themeLoader = themeLoader;
-    this.theme = themeLoader.getTheme();
+    activeTheme.set(themeLoader.getTheme());
 };
 
 GameEngine.prototype.initDebug = function() {
@@ -78,7 +78,8 @@ GameEngine.prototype.initDebug = function() {
  * Returns the configured theme style for the given tetromino type
  */
 GameEngine.prototype.getTetrominoStyle = function(type) {
-    return this.theme.tetrominos[type] ? this.theme.tetrominos[type] : null;
+    var theme = activeTheme.get();
+    return theme.tetrominos[type] ? theme.tetrominos[type] : null;
 };
 
 /**

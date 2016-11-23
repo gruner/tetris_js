@@ -7,6 +7,7 @@ var dimensions = require('../config/canvasDimensions'),
     canvasCache = require('./canvasCache'),
     animationQueue = require('./animationQueue'),
     features = require('../config/features'),
+    activeTheme = require('../services/activeThemeService'),
     debug = require('../debug');
 
 /**
@@ -18,6 +19,7 @@ var Canvas = function(canvasElement, gameEngine) {
 
     this.ctx = null; // canvas context
     this.gameEngine = gameEngine;
+    this.theme = null;
 
     this.init(canvasElement);
     this.bindEvents();
@@ -46,6 +48,7 @@ Canvas.prototype.bindEvents = function() {
  * Draws entire game on each update loop
  */
 Canvas.prototype.draw = function() {
+    this.theme = activeTheme.get();
     this.drawPlayfield();
     this.drawRemnantBlocks();
 
@@ -58,7 +61,7 @@ Canvas.prototype.draw = function() {
         this.drawTetromino(
             this.gameEngine.activeTetromino,
             this.gameEngine.getTetrominoStyle(this.gameEngine.activeTetromino.type).color,
-            this.gameEngine.theme.tetrominoBorder
+            this.theme.tetrominoBorder
         );
     } else {
         debug.info('drawing animation');
@@ -76,7 +79,7 @@ Canvas.prototype.draw = function() {
  * @TODO cache this as an image after the first draw
  */
 Canvas.prototype.drawPlayfield = function() {
-    this.ctx.fillStyle = this.gameEngine.theme.playfield.color;
+    this.ctx.fillStyle = this.theme.playfield.color;
     this.ctx.fillRect(
         dimensions.playfieldOrigin.x,
         dimensions.playfieldOrigin.y,
@@ -96,7 +99,7 @@ Canvas.prototype.drawRemnantBlocks = function() {
                 dimensions.transpose(block.x),
                 dimensions.transpose(block.y),
                 self.gameEngine.getTetrominoStyle(block.type).color,
-                self.gameEngine.theme.tetrominoBorder
+                self.theme.tetrominoBorder
             );
         }
     });
@@ -139,7 +142,7 @@ Canvas.prototype.drawTetromino = function(tetromino, fillColor, borderColor) {
  * Draws the ghost piece - the shadow showing where the active piece will come to rest
  */
 Canvas.prototype.drawGhostPiece = function() {
-    this.drawTetromino(this.gameEngine.getGhostPiece(), this.gameEngine.theme.ghostPiece.color);
+    this.drawTetromino(this.gameEngine.getGhostPiece(), this.theme.ghostPiece.color);
 };
 
 /**
