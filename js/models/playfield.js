@@ -25,7 +25,11 @@ Playfield.defaults = {
  * in the dimensions of the grid
  */
 Playfield.prototype.buildGrid = function() {
-    return new Array(this.yCount);
+    var grid = new Array(this.yCount);
+    for (var i = 0; i < grid.length; i++) {
+        grid[i] = this.createEmptyRow();
+    }
+    return grid;
 };
 
 /**
@@ -82,7 +86,7 @@ Playfield.prototype.clearRows = function(rowIndices) {
 
     // add empty rows at the top
     while (this.grid.length < this.yCount) {
-        this.grid.unshift(undefined);
+        this.grid.unshift(this.createEmptyRow());
     }
 
     return clearedRows;
@@ -122,8 +126,6 @@ Playfield.prototype.settleRows = function() {
     self.traverseRows(function(i, targetRow) {
         var topNeighboringRow = self.grid[i-1]; // traversing bottom to top
 
-        if (!targetRow || !topNeighboringRow) { return; }
-
         if (self.rowsAreMergable(targetRow, topNeighboringRow)) {
             self.grid[i] = self.mergeRows(targetRow, topNeighboringRow);
             self.clearRowAt(i-1);
@@ -145,31 +147,44 @@ Playfield.prototype.settleRows = function() {
  */
 Playfield.prototype.rowsAreMergable = function(targetRow, topNeighboringRow) {
     var mergable = false,
+        targetRowChecksum = 0,
+        topNeighboringRowChecksum = 0,
         i;
 
+    if (!targetRow || !topNeighboringRow) {
+        return false;
+    }
+
     for (i = 0; i < topNeighboringRow.length; i++) {
-        if (topNeighboringRow[i]) {
-            if (targetRow[i] === undefined) {
-                mergable = true;
-            } else {
-                mergable = false;
-                break;
-            }
+        if (targetRow[i] !== undefined) {
+            targetRowChecksum++;
+        }
+        if (topNeighboringRow[i] !== undefined) {
+            topNeighboringRowChecksum++;
+        }
+        if (targetRow[i] !== undefined && topNeighboringRow[i] !== undefined) {
+            mergable = false;
+            break;
+        } else if (targetRow[i] !== undefined || topNeighboringRow[i] !== undefined) {
+            mergable = true;
         }
     }
 
-    return mergable;
+    return (mergable && targetRowChecksum !== 0 && topNeighboringRowChecksum !== 0);
 };
 
 /**
- * Merges topNeighboringRow into targetRow
+ * Returns a merged array of topNeighboringRow into targetRow
  * @return array
  */
 Playfield.prototype.mergeRows = function(targetRow, topNeighboringRow) {
     var i,
-        merged = new Array(this.xCount);
-    for (i = 0; i < this.xCount; i++) {
-        merged[i] = (targetRow[i] === undefined) ? topNeighboringRow[i] : targetRow[i];
+        merged = this.createEmptyRow(),
+        mergedLength = merged.length,
+        topColumnValue;
+    for (i = 0; i < mergedLength; i++) {
+        topColumnValue = (topNeighboringRow && topNeighboringRow[i] !== undefined) ? topNeighboringRow[i] : undefined;
+        merged[i] = (targetRow[i] === undefined) ? topColumnValue : targetRow[i];
     }
 
     return merged;
