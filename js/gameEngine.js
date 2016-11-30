@@ -174,11 +174,9 @@ GameEngine.prototype.settleBlocks = function(iteration) {
 
     // Don't need to make this call on the first iteration
     if (iteration > 0) {
-        console.log('iterate');
         // Resume if the playfield has nothing to settle
         if (! this.playfield.settleRows()) {
             this.fsm.resume();
-            console.log(this.playfield.grid);
             return;
         }
     }
@@ -193,7 +191,6 @@ GameEngine.prototype.settleBlocks = function(iteration) {
         // triggered when rowComplete animation completes
         // After row is cleared, settle blocks again
         this.fsm.onrowCleared = function() {
-            debug.info('onrowCleared');
             self.settleBlocks(iteration + 1); // recursively check if settling completes any rows
         };
 

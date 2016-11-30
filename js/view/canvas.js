@@ -63,8 +63,6 @@ Canvas.prototype.draw = function() {
             this.gameEngine.getTetrominoStyle(this.gameEngine.activeTetromino.type).color,
             this.theme.tetrominoBorder
         );
-    } else {
-        debug.info('drawing animation');
     }
 };
 

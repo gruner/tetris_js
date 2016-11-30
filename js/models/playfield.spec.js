@@ -269,6 +269,50 @@ describe('Playfield', function() {
 
             var n; // undefined
 
+            playfield.grid[0]  = [n,n,n,n,n,n,n,n,n,n];
+            playfield.grid[1]  = [n,n,n,n,n,n,n,n,n,n];
+            playfield.grid[2]  = [n,n,n,n,n,n,n,n,n,n];
+            playfield.grid[3]  = [n,n,n,n,n,n,n,n,n,n];
+            playfield.grid[4]  = [n,n,n,n,n,n,n,n,n,n];
+            playfield.grid[5]  = [n,n,n,n,n,n,n,n,n,n];
+            playfield.grid[6]  = [n,n,n,n,n,n,n,n,n,n];
+            playfield.grid[7]  = [n,n,n,n,n,n,n,n,n,n];
+            playfield.grid[8]  = [n,n,n,n,n,n,n,n,n,n];
+            playfield.grid[9]  = [n,n,n,n,n,n,n,n,n,n];
+            playfield.grid[10] = [n,n,n,n,n,n,n,n,n,n];
+            playfield.grid[11] = [n,n,n,n,n,n,n,n,n,n];
+            playfield.grid[12] = [n,n,n,n,n,n,n,n,n,n];
+            playfield.grid[13] = [n,n,n,n,n,n,n,n,n,n];
+            playfield.grid[14] = [n,n,n,n,n,n,n,n,n,n];
+            playfield.grid[15] = [n,n,n,n,n,n,n,n,n,n];
+            playfield.grid[16] = [n,n,n,n,n,n,n,n,n,n];
+            playfield.grid[17] = [n,n,n,n,n,n,n,n,n,n];
+            playfield.grid[18] = [0,1,2,3,n,n,n,n,n,n];
+            playfield.grid[19] = [n,n,n,n,4,5,6,7,8,9];
+
+            var result = playfield.settleRows();
+
+            assert(result);
+            assert.strictEqual(playfield.grid[5].length, COL_COUNT);
+            assert.equal(playfield.grid[19][0], 0);
+            assert.equal(playfield.grid[19][1], 1);
+            assert.equal(playfield.grid[19][2], 2);
+            assert.equal(playfield.grid[19][3], 3);
+            assert.equal(playfield.grid[19][4], 4);
+            assert.equal(playfield.grid[19][5], 5);
+            assert.equal(playfield.grid[19][6], 6);
+            assert.equal(playfield.grid[19][7], 7);
+            assert.equal(playfield.grid[19][8], 8);
+            assert.equal(playfield.grid[19][9], 9);
+            assert.equal(ROW_COUNT, playfield.grid.length);
+        });
+    });
+
+    describe('#settleRows', function() {
+        it('should settle two compatible rows', function() {
+
+            var n; // undefined
+
             playfield.grid[4] = [0,1,2,n,n,n];
             playfield.grid[5] = [n,n,n,3,4,5];
 

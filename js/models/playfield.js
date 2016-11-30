@@ -60,6 +60,8 @@ Playfield.prototype.traverseGrid = function(callback) {
             var cell;
             if (this.grid[i] && this.grid[i][j]) {
                 cell = this.grid[i][j];
+                cell.x = j;
+                cell.y = i;
             }
             callback(cell);
         }
@@ -191,8 +193,8 @@ Playfield.prototype.mergeRows = function(targetRow, topNeighboringRow) {
 };
 
 /**
- * Checks that a row is complete, i.e. filled with blocks. If a row is undefined, it has no cells,
- * if any cells are undefined they are empty
+ * Checks that a row is complete, i.e. filled with blocks.
+ * If any cells are undefined they are empty
  * @return bool
  */
 Playfield.prototype.rowComplete = function(y) {
