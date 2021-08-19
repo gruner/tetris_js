@@ -10,6 +10,7 @@ export interface iTheme {
   ghostPiece?: iThemedElement;
   tetrominos?: { [index:string] : iThemedElement };
   tetrominoBorder?: iThemedElement;
+  parent?: string;
 }
 
 export class Theme implements iTheme {
@@ -20,19 +21,20 @@ export class Theme implements iTheme {
   ghostPiece: iThemedElement;
   tetrominos: { [index:string] : iThemedElement };
   tetrominoBorder: iThemedElement;
+  parent?: string;
 
   constructor(config?: iTheme) {
     this.name = Theme.Default;
     this.playfield = {color: "black"};
     this.ghostPiece = {color: "darkgray"};
     this.tetrominos = {
-        i: {color: "red"},
-        o: {color: "blue"},
-        t: {color: "green"},
-        j: {color: "purple"},
-        l: {color: "yellow"},
-        s: {color: "orange"},
-        z: {color: "magenta"}
+      i: {color: "red"},
+      o: {color: "blue"},
+      t: {color: "green"},
+      j: {color: "purple"},
+      l: {color: "yellow"},
+      s: {color: "orange"},
+      z: {color: "magenta"}
     };
     this.tetrominoBorder = {color: 'black'};
 
