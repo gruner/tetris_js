@@ -1,18 +1,28 @@
-export interface ThemedElement {
+import { DeepExtend } from "../util/extend";
+
+export interface iThemedElement {
   color: string;
 }
 
-export class Theme {
-  static DEFAULT = 'default';
+export interface iTheme {
+  name?: string;
+  playfield?: iThemedElement;
+  ghostPiece?: iThemedElement;
+  tetrominos?: { [index:string] : iThemedElement };
+  tetrominoBorder?: iThemedElement;
+}
+
+export class Theme implements iTheme {
+  static readonly Default = 'default';
 
   name: string;
-  playfield: ThemedElement;
-  ghostPiece: ThemedElement;
-  tetrominos: { [index:string] : ThemedElement };
-  tetrominoBorder: ThemedElement;
+  playfield: iThemedElement;
+  ghostPiece: iThemedElement;
+  tetrominos: { [index:string] : iThemedElement };
+  tetrominoBorder: iThemedElement;
 
-  constructor(config: any) {
-    this.name = Theme.DEFAULT;
+  constructor(config?: iTheme) {
+    this.name = Theme.Default;
     this.playfield = {color: "black"};
     this.ghostPiece = {color: "darkgray"};
     this.tetrominos = {
@@ -26,8 +36,8 @@ export class Theme {
     };
     this.tetrominoBorder = {color: 'black'};
 
-    // if (config) {
-    //     extend.deepExtend(this, config);
-    // }
+    if (config) {
+      DeepExtend(this, config);
+    }
   }
 }

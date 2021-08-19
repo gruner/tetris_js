@@ -5,7 +5,7 @@ import { TetrominoTypes } from "./tetromino-types";
 export class Playfield {
   xCount: number;
   yCount: number;
-  grid: Array<Array<any>>;
+  grid: any[][];
 
   constructor(xCount: number, yCount: number) {
     this.xCount = xCount;
@@ -17,7 +17,7 @@ export class Playfield {
    * Returns a multidimensional array of undefined values
    * in the dimensions of the grid
    */
-  buildGrid(): Array<Array<any>> {
+  buildGrid(): any[][] {
     let grid = new Array(this.yCount);
     for (let i = 0; i < grid.length; i++) {
       grid[i] = this.createEmptyRow();
@@ -28,7 +28,7 @@ export class Playfield {
   /**
    * Returns an array of undefined values for each column in a row
    */
-  createEmptyRow(): Array<any> {
+  createEmptyRow(): any[] {
     return new Array(this.xCount);
   }
 
@@ -38,7 +38,7 @@ export class Playfield {
    */
   traverseRows(callback: Function) {
     for (let i = this.yCount - 1; i >= 0; i--) {
-      let row = this.grid[i];
+      const row = this.grid[i];
       callback(i, row);
     }
   }

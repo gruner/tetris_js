@@ -732,6 +732,8 @@ describe('Playfield', () => {
       expect(playfield.grid[0][2]).toEqual(block3);
       expect(playfield.grid.length).toEqual(ROW_COUNT);
     });
+
+    it('should validate all blocks before placing them');
   });
 
 });
