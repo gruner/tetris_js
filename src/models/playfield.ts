@@ -1,5 +1,6 @@
 import { ValidCoordinates } from "../util/validate";
 import { Block } from "./block";
+import { iCoordinates } from "./coordinates.interface";
 import { TetrominoTypes } from "./tetromino-types";
 
 export class Playfield {
@@ -7,7 +8,7 @@ export class Playfield {
   yCount: number;
   grid: any[][];
 
-  constructor(xCount: number, yCount: number) {
+  constructor(xCount: number = 10, yCount: number = 22) {
     this.xCount = xCount;
     this.yCount = yCount;
     this.grid = this.buildGrid();
@@ -218,7 +219,7 @@ export class Playfield {
   /**
    * Checks that a cell is empty
    */
-  cellEmpty(cell: Block): boolean {
+  cellEmpty(cell: iCoordinates): boolean {
     let empty = false;
 
     if (this.cellInBounds(cell)) {
@@ -233,14 +234,25 @@ export class Playfield {
   /**
    * Checks that a cell is in the bounds of the playfield
    */
-  cellInBounds(cell: Block): boolean {
+  cellInBounds(cell: iCoordinates): boolean {
     return (cell.y >= 0 && cell.y < this.yCount && cell.x >= 0 && cell.x < this.xCount);
   }
 
   /**
    * Checks that an array of blocks are valid for placement at their given coordinates
    */
-  validateBlockPlacement(blocks: Array<Block>): boolean {
+  // validateBlockPlacement(blocks: Array<Block>): boolean {
+  //   let valid = Array.isArray(blocks);
+  //   for (let i = 0; i < blocks.length; i++) {
+  //     if (!this.validateBlock(blocks[i])) {
+  //       valid = false;
+  //       break;
+  //     }
+  //   }
+
+  //   return valid;
+  // }
+  validateBlockPlacement(blocks: Array<iCoordinates>): boolean {
     let valid = Array.isArray(blocks);
     for (let i = 0; i < blocks.length; i++) {
       if (!this.validateBlock(blocks[i])) {
@@ -256,7 +268,7 @@ export class Playfield {
    * Checks that a block's coordinates are within the bounds of the playfield,
    * and that the block's cell is available
    */
-  validateBlock(block: Block): boolean {
+  validateBlock(block: iCoordinates): boolean {
     return (
         ValidCoordinates(block) && 
         this.cellInBounds(block) && 

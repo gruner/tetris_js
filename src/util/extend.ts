@@ -1,4 +1,7 @@
-export const DeepExtend = function(parent: any, child: any) {
+/**
+ * Merges the properties of obj2 into obj1
+ */
+export const DeepExtend = function(obj1: any, obj2: any) {
 
   // TODO: recurse for more than two arguments
   // if (arguments.length > 2) {
@@ -7,13 +10,13 @@ export const DeepExtend = function(parent: any, child: any) {
   //     };
   // }
 
-  for (let prop in child) {
-    if (parent.hasOwnProperty(prop) && parent[prop] instanceof Object) {
-      parent[prop] = DeepExtend(parent[prop], child[prop]);
+  for (let prop in obj2) {
+    if (obj1.hasOwnProperty(prop) && obj1[prop] instanceof Object) {
+      obj1[prop] = DeepExtend(obj1[prop], obj2[prop]);
     } else {
-      parent[prop] = child[prop];
+      obj1[prop] = obj2[prop];
     }
   }
 
-  return parent;
+  return obj1;
 };

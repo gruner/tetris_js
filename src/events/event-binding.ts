@@ -27,16 +27,16 @@ export class EventBinding {
     document.addEventListener('keydown', (e) => {
       const code = e.keyCode || e.which;
       if (code === keyCodes.left) {
-        this.dispatcher.trigger(Event.moveActivePiece, {direction: Direction.Left}, this);
+        this.dispatcher.trigger(Event.moveActivePiece,  Direction.Left, this);
       } else if (code === keyCodes.right) {
-        this.dispatcher.trigger(Event.moveActivePiece, {direction: Direction.Right}, this);
+        this.dispatcher.trigger(Event.moveActivePiece, Direction.Right, this);
       } else if (code === keyCodes.down) {
-        this.dispatcher.trigger(Event.moveActivePiece, {direction: Direction.Down}, this);
+        this.dispatcher.trigger(Event.moveActivePiece, Direction.Down, this);
       } else if (code === keyCodes.up) {
         if (Features.enabled('testMovementMode')) {
-          this.dispatcher.trigger(Event.moveActivePiece, {direction: Direction.Up}, this);
+          this.dispatcher.trigger(Event.moveActivePiece, Direction.Up, this);
         } else {
-          this.dispatcher.trigger(Event.rotateActivePiece, {direction: Direction.Left}, this);
+          this.dispatcher.trigger(Event.rotateActivePiece, Direction.Left, this);
         }
       } else if (code === keyCodes.spacebar) {
         this.dispatcher.trigger(Event.pause);
