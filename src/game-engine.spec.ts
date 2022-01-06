@@ -1,6 +1,7 @@
 import { EventDispatcher } from "./events/event-dispatcher";
 import { GameEngine } from "./game-engine";
 import { Tetromino } from "./models/tetromino";
+import { GameState } from "./state/game-state";
 import { ActiveTheme } from "./theme/active-theme";
 import { Theme } from "./theme/theme";
 
@@ -10,7 +11,8 @@ describe('GameEngine', function() {
   beforeEach(function() {
     const activeTheme = new ActiveTheme(new Theme());
     const eventDispatcher = new EventDispatcher();
-    gameEngine = new GameEngine(activeTheme, eventDispatcher);
+    const gameState = new GameState(eventDispatcher);
+    gameEngine = new GameEngine(activeTheme, eventDispatcher, gameState);
   });
 
   // describe('#initThemes', function() {

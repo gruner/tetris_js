@@ -6,6 +6,7 @@ import { EventBinding } from "./events/event-binding";
 import { EventDispatcher } from "./events/event-dispatcher";
 import { GameEngine } from "./game-engine";
 import { Theme } from "./theme/theme";
+import { GameState } from "./state/game-state";
 
 /**
  * Bootstraps all game components together
@@ -24,9 +25,11 @@ export class Tetris {
     const defaultTheme = new Theme();
     const activeTheme = new ActiveTheme(defaultTheme);
     const eventDispatcher = new EventDispatcher();
+    const stateEventDispatcher = new EventDispatcher();
     const animationQueue = new AnimationQueue();
+    const gameState = new GameState(stateEventDispatcher);
 
-    this.gameEngine = new GameEngine(activeTheme, eventDispatcher);
+    this.gameEngine = new GameEngine(activeTheme, eventDispatcher, gameState);
     this.canvas = new Canvas(activeTheme, animationQueue, canvasElement, this.gameEngine);
     this.eventBinding = new EventBinding(eventDispatcher);
 

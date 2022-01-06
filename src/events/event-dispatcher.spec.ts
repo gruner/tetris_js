@@ -27,29 +27,17 @@ describe('EventDispatcher', function() {
     });
   });
 
-  describe('#trigger', function() {
-    it('should trigger an event', function() {
+  describe('#publish', function() {
+    it('should publish an event', function() {
       const cb = (appliedData: any) => { appliedData.text = "TEXT_MODIFIED_IN_CB"};
       const data = {
         text: ''
       };
       eventDispatcher.subscribe('TEST_TRIGGER', cb);
-      eventDispatcher.trigger('TEST_TRIGGER', data);
+      eventDispatcher.publish('TEST_TRIGGER', data);
 
       expect(data.text).toEqual('TEXT_MODIFIED_IN_CB');
       expect(eventDispatcher.hasSubscriber('TEST_TRIGGER', cb)).toBeTrue();
-    });
-
-    xit('should pass an array to a subscriber', function() {
-      const cb = (appliedData: any) => { appliedData.text = "TEXT_MODIFIED_IN_CB"};
-      const data = {
-        text: ''
-      };
-      eventDispatcher.subscribe('TEST_TRIGGER2', cb);
-      eventDispatcher.trigger('TEST_TRIGGER2', data);
-
-      expect(data.text).toEqual('TEXT_MODIFIED_IN_CB');
-      expect(eventDispatcher.hasSubscriber('TEST_TRIGGER2', cb)).toBeTrue();
     });
 
     it('should pass multiple args to a subscriber', function() {
@@ -64,7 +52,7 @@ describe('EventDispatcher', function() {
       };
 
       eventDispatcher.subscribe('TEST_TRIGGER3', cb);
-      eventDispatcher.trigger('TEST_TRIGGER3', [data1, data2, data3]);
+      eventDispatcher.publish('TEST_TRIGGER3', [data1, data2, data3]);
       expect(eventDispatcher.hasSubscriber('TEST_TRIGGER3', cb)).toBeTrue();
     });
   });
@@ -76,7 +64,7 @@ describe('EventDispatcher', function() {
         text: ''
       };
       eventDispatcher.once('TEST_ONCE', cb);
-      eventDispatcher.trigger('TEST_ONCE', data);
+      eventDispatcher.publish('TEST_ONCE', data);
 
       expect(data.text).toEqual('TEXT_MODIFIED_IN_CB');
       expect(eventDispatcher.hasSubscriber('TEST_ONCE', cb)).toBeFalse();

@@ -34,11 +34,11 @@ export class Canvas {
   }
 
   bindEvents() {
-    this.gameEngine.fsm.onrowComplete = (e: any, from: any, to: any, completedRows: any[]) => {
+    this.gameEngine.gameState.events.subscribe(GameEngine.STATE.ROW_COMPLETE, (completedRows: any[]) => {
       this.animationQueue.push(new RowCompleteAnimation(this.context, completedRows, () => {
-        this.gameEngine.fsm.rowCleared();
+        this.gameEngine.gameState.rowCleared();
       }));
-    };
+    });
   }
 
   /**

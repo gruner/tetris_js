@@ -9,7 +9,7 @@ import { Direction } from "./models/direction.enum";
 import { Debug } from "./util/debug";
 import { iCoordinates } from "./models/coordinates.interface";
 import { ActiveTheme } from "./theme/active-theme";
-import { Block } from "./models/block";
+import { GameState, STATE } from "./state/game-state";
 
 /**
  * Puts all the pieces together
@@ -17,10 +17,11 @@ import { Block } from "./models/block";
 export class GameEngine {
   static readonly QUEUE_MINIMUM = 3;
   static readonly  ACCELERATED_GRAVITY = 0.5;
+  static readonly STATE = STATE;
 
   activeTheme: ActiveTheme;
   eventDispatcher: EventDispatcher;
-  fsm: any;
+  gameState: GameState;
 
   activeTetromino: Tetromino = Tetromino.create('o');
   pieceQueue: string[] = [];
@@ -33,14 +34,15 @@ export class GameEngine {
 
   constructor(
     activeTheme: ActiveTheme,
-    eventDispatcher: EventDispatcher
+    eventDispatcher: EventDispatcher,
+    gameState: GameState
   ) {
     this.activeTheme = activeTheme;
     this.eventDispatcher = eventDispatcher;
+    this.gameState = gameState;
   
     this.playfield = new Playfield();
     // this.soundEffects = new SoundEffects();
-    // this.fsm = this.initStates();
     this.initThemes();
     this.init();
   }
@@ -56,21 +58,6 @@ export class GameEngine {
     const themeLoader = new ThemeLoader(ThemeConfig);
     // activeTheme.set(themeLoader.getTheme());
   }
-
-  // TODO: make this a separate service
-  // initStates() {
-  //   return StateMachine.create({
-  //     initial: 'play',
-  //     events: [
-  //       { name: 'rowComplete', from: 'play',       to: 'suspended' },
-  //       { name: 'rowCleared',  from: 'suspended',  to: 'suspended' },
-  //       //{ name: 'rowCollapse', from: 'animatingRowClear',  to: 'animatingRowCollapse' },
-  //       { name: 'suspend',     from: 'play',       to: 'suspended' },
-  //       { name: 'pause',       from: 'play',       to: 'paused' },
-  //       { name: 'resume',      from: ['play', 'paused', 'suspended'], to: 'play' }
-  //     ]
-  //   });
-  // }
 
   initDebug() {
     if (Features.enabled('initWithRemnants')) {
@@ -103,7 +90,7 @@ export class GameEngine {
     });
   
     this.eventDispatcher.subscribe(Event.pause, () => {
-      this.togglePause();
+      this.gameState.togglePause();
     });
   }
 
@@ -113,30 +100,29 @@ export class GameEngine {
    */
   update() {
 
-    if (!this.fsm.is('play')) {
+    if (this.gameState.currentState !== STATE.PLAY) {
       return;
     }
-    
+
     if (this.shouldMoveDownOnCurrentFrame()) {
-      
+
       // Move down if able, else trigger final position events
-  
-      // TODO: refactor methods that take block vs just needing coordinates
-      const blocks = this.activeTetromino.getBlockCoordinatesForDrop()?.map((coor: iCoordinates) => new Block(coor.x, coor.y));
+
+      const blocks = this.activeTetromino.getBlockCoordinatesForDrop();
       if (blocks && this.playfield.validateBlockPlacement(blocks)) {
-        this.activeTetromino?.drop();
+        this.activeTetromino.drop();
       } else { // Can't move down any farther, lock piece in final position
   
         // Check for end of game - tetromino hasn't moved, and can't drop
-        if (this.activeTetromino?.atOrigin()) {
+        if (this.activeTetromino.atOrigin()) {
           this.topOut();
           return;
         }
   
-        this.eventDispatcher.trigger(Event.activePiecePositioned);
+        this.eventDispatcher.publish(Event.activePiecePositioned);
   
         // Convert tetromino into component blocks
-        this.playfield.placeBlocks(this.activeTetromino!.releaseBlocks());
+        this.playfield.placeBlocks(this.activeTetromino.releaseBlocks());
         
         // Set the next tetromino
         this.advanceNextPiece();
@@ -170,7 +156,7 @@ export class GameEngine {
     if (iteration > 0) {
       // Resume if the playfield has nothing to settle
       if (! this.playfield.settleRows()) {
-        this.fsm.resume();
+        this.gameState.resume();
         return;
       }
     }
@@ -184,15 +170,16 @@ export class GameEngine {
   
       // triggered when rowComplete animation completes
       // After row is cleared, settle blocks again
-      this.fsm.onrowCleared = () => {
+      this.gameState.events.subscribe(GameEngine.STATE.ROW_CLEARED, () => {
         this.settleBlocks(iteration + 1); // recursively check if settling completes any rows
-      };
+      });
   
       // Trigger rowComplete - suspends update and starts rowComplete animation
-      this.fsm.rowComplete(completedRows);
+      this.gameState.rowComplete(completedRows);
     } else {
       // After blocks are settled, resume updates
-      this.fsm.resume();
+      // TODO unsubscribe this.gameState.events.unsubscribe(GameEngine.STATE.ROW_CLEARED);
+      this.gameState.resume();
     }
   }
 
@@ -239,22 +226,11 @@ export class GameEngine {
   }
 
   /**
-   * Pauses or resumes the game
-   */
-  togglePause() {
-    if (this.fsm.is('paused')) {
-      this.fsm.resume();
-    } else {
-      this.fsm.pause();
-    }
-  }
-
-  /**
    * Ends the game.
    */
   topOut() {
-    this.fsm.suspend();
-    this.eventDispatcher.trigger(Event.topOut);
+    this.gameState.suspend();
+    this.eventDispatcher.publish(Event.topOut);
   }
 
   /**
@@ -282,7 +258,7 @@ export class GameEngine {
     if (blockOffsetCoordinates && this.playfield.validateBlockPlacement(blockOffsetCoordinates)) {
       this.activeTetromino.moveByOffset(offsetCoordinates);
     } else {
-      this.eventDispatcher.trigger(Event.invalidMove, {});
+      this.eventDispatcher.publish(Event.invalidMove);
     }
   }
 

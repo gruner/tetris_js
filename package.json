@@ -1,7 +1,7 @@
 {
   "name": "tetris_js",
   "version": "1.0.0",
-  "description": "A Tetris clone written in JavaScript",
+  "description": "A Tetris clone written in TypeScript",
   "main": "index.js",
   "repository": {
     "type": "git",
@@ -9,10 +9,6 @@
   },
   "author": "Andrew Gruner",
   "license": "MIT",
-  "dependencies": {
-    "underscore": "^1.7.0",
-    "javascript-state-machine": "~2.4.0"
-  },
   "devDependencies": {
     "@types/jasmine": "^3.8.2",
     "jasmine": "^3.8.0",

@@ -11,7 +11,7 @@ export class EventDispatcher {
       this.eventSubscriptions[eventName] = [];
     }
 
-    this.eventSubscriptions[eventName].push(callback);
+    return this.eventSubscriptions[eventName].push(callback);
   }
 
   unsubscribe(eventName: string, callback: Function) {
@@ -33,26 +33,14 @@ export class EventDispatcher {
       self.unsubscribe(eventName, callback);
     });
   }
- 
-  trigger(eventName: string, data?: any, context?: any) {
- 
-    const subscribers = this.eventSubscriptions[eventName];
- 
-    if (typeof subscribers === 'undefined') {
-      return;
-    }
- 
-    // Ensure data is an array or is wrapped in an array,
-    // for Function.prototype.apply use
-    data = [data];
- 
-    // Set a default value for `this` in the callback
-    // const window = window || global;
-    // context = context || window;
 
-    for (let i = 0; i < subscribers.length; i++) {
-      subscribers[i].apply(context, data);
+  publish(eventName: string, data = {}) {
+
+    if(!this.eventSubscriptions.hasOwnProperty(eventName)) {
+      return [];
     }
+  
+    return this.eventSubscriptions[eventName].map(callback => callback(data));
   }
 
   hasSubscriber(eventName: string, callback: Function): boolean {

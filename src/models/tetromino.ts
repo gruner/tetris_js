@@ -173,15 +173,15 @@ export class Tetromino implements iCoordinates {
    * Returns array of coordinates for each block in the current orientation,
    * calculated from offset x and y
    */
-  getBlockCoordinatesForOffset(coordinates: iCoordinates): iCoordinates[] | undefined {
-
-    if (!ValidCoordinates(coordinates)) {
-      return;
-    }
+  getBlockCoordinatesForOffset(coordinates: iCoordinates): iCoordinates[] {
 
     const offsetX = this.x + coordinates.x;
     const offsetY = this.y + coordinates.y;
     const offsetCoordinates: iCoordinates[] = [];
+
+    if (!ValidCoordinates(coordinates)) {
+      return offsetCoordinates;
+    }
 
     this.traverseBlocks((i: number, block: Block) => {
       offsetCoordinates.push({
@@ -193,7 +193,7 @@ export class Tetromino implements iCoordinates {
     return offsetCoordinates;
   }
 
-  getBlockCoordinatesForDrop() {
+  getBlockCoordinatesForDrop(): iCoordinates[] {
     return this.getBlockCoordinatesForOffset({x:0, y:1});
   }
 
@@ -223,7 +223,7 @@ export class Tetromino implements iCoordinates {
   /**
    * Returns array of absolute coordinates for the given rotation
    */
-  getBlockCoordinatesForRotation(direction: Direction) {
+  getBlockCoordinatesForRotation(direction: Direction): iCoordinates[] {
     const coordinates = [];
     let rotatedBlocks = this.blocks.length > 1 ? this.blocks[1] : this.blocks[0];
 
