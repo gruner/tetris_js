@@ -168,13 +168,13 @@ export class GameEngine {
     const completedRows = this.playfield.getCompletedRows();
   
     if (completedRows.length) {
-  
+
       // Update the model
       this.playfield.clearRows(completedRows);
-  
+
       // triggered when rowComplete animation completes
       // After row is cleared, settle blocks again
-      this.gameState.events.subscribe(GameEngine.STATE.ROW_CLEARED, () => {
+      this.gameState.events.once(GameEngine.STATE.ROW_CLEARED, () => {
         this.settleBlocks(iteration + 1); // recursively check if settling completes any rows
       });
   
@@ -182,7 +182,6 @@ export class GameEngine {
       this.gameState.rowComplete(completedRows);
     } else {
       // After blocks are settled, resume updates
-      // TODO unsubscribe this.gameState.events.unsubscribe(GameEngine.STATE.ROW_CLEARED);
       this.gameState.resume();
     }
   }

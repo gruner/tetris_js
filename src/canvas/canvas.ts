@@ -35,7 +35,6 @@ export class Canvas {
 
   bindEvents() {
     this.gameEngine.gameState.events.subscribe(GameEngine.STATE.ROW_CLEARED, () => {
-      console.log("ROW CLEARED");
       this.gameEngine.gameState.resume();
     });
 
