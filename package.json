@@ -19,7 +19,8 @@
     "webpack-cli": "^4.10.0"
   },
   "scripts": {
-    "build": "rm -rf dist && webpack",
-    "test": "npm run build && jasmine --config=jasmine.json"
+    "clean": "rm -rf dist",
+    "build": "npm run clean && webpack",
+    "test": "npm run clean && tsc && jasmine --config=jasmine.json"
   }
 }

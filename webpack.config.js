@@ -1,5 +1,6 @@
 //webpack.config.js
 const path = require('path');
+const dist = path.resolve(__dirname, 'dist');
 
 module.exports = {
   mode: "development",
@@ -8,7 +9,7 @@ module.exports = {
     main: "./src/index.ts",
   },
   output: {
-    path: path.resolve(__dirname, './dist'),
+    path: dist,
     filename: "tetris.min.js"
   },
   resolve: {

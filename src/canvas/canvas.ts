@@ -42,7 +42,6 @@ export class Canvas {
     // TODO: This isn't the best place to define these state behaviors,
     // but it's the only class that can bind gameEngine events to animationQueue
     this.gameEngine.gameState.events.subscribe(GameEngine.STATE.ROW_COMPLETE, (completedRows: any[]) => {
-      console.log('ROW COMPLETE');
       this.animationQueue.push(new RowCompleteAnimation(this.context, completedRows, () => {
         this.gameEngine.gameState.rowCleared();
       }));

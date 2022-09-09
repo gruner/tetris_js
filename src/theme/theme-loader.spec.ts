@@ -37,7 +37,7 @@ describe('ThemeLoader', function() {
 
   describe('#getTheme with no arguments', function() {
     it('should return default theme', function() {
-      const theme = themeLoader.getTheme('');
+      const theme = themeLoader.getTheme();
       expect(theme.playfield.color).toEqual('#001');
       expect(theme.ghostPiece.color).toEqual("#112");
       expect(theme.tetrominos.i.color).toEqual('#223');

@@ -56,7 +56,7 @@ export class GameEngine {
 
   initThemes() {
     const themeLoader = new ThemeLoader(ThemeConfig);
-    // activeTheme.set(themeLoader.getTheme());
+    this.activeTheme.theme = themeLoader.getTheme();
   }
 
   initDebug() {
@@ -74,11 +74,15 @@ export class GameEngine {
   bindEvents() {
   
     this.eventDispatcher.subscribe(Event.moveActivePiece, (direction: Direction) => {
-      this.moveActivePiece(direction);
+      if (this.gameState.currentState !== STATE.PAUSE) {
+        this.moveActivePiece(direction);
+      }
     });
   
     this.eventDispatcher.subscribe(Event.rotateActivePiece, (direction: Direction) => {
-      this.rotateActivePiece(direction);
+      if (this.gameState.currentState !== STATE.PAUSE) {
+        this.rotateActivePiece(direction);
+      }
     });
   
     this.eventDispatcher.subscribe(Event.accelerateActivePiece, () => {

@@ -3,14 +3,6 @@ import { Event } from "./event.enum";
 import { EventDispatcher } from "./event-dispatcher";
 import { Features } from "../config/features";
 
-const keyCodes = {
-  left:  37,
-  up:    38,
-  right: 39,
-  down:  40,
-  spacebar: 32
-};
-
 export class EventBinding {
 
   private dispatcher: EventDispatcher;
@@ -25,21 +17,28 @@ export class EventBinding {
 
   private bindKeydown() {
     document.addEventListener('keydown', (e) => {
-      const code = e.keyCode || e.which;
-      if (code === keyCodes.left) {
-        this.dispatcher.publish(Event.moveActivePiece,  Direction.Left);
-      } else if (code === keyCodes.right) {
-        this.dispatcher.publish(Event.moveActivePiece, Direction.Right);
-      } else if (code === keyCodes.down) {
-        this.dispatcher.publish(Event.moveActivePiece, Direction.Down);
-      } else if (code === keyCodes.up) {
-        if (Features.enabled('testMovementMode')) {
-          this.dispatcher.publish(Event.moveActivePiece, Direction.Up);
-        } else {
-          this.dispatcher.publish(Event.rotateActivePiece, Direction.Left);
-        }
-      } else if (code === keyCodes.spacebar) {
-        this.dispatcher.publish(Event.pause);
+      switch (e.code) {
+        case 'ArrowLeft':
+          this.dispatcher.publish(Event.moveActivePiece,  Direction.Left);
+          break;
+        case 'ArrowRight':
+          this.dispatcher.publish(Event.moveActivePiece, Direction.Right);
+          break;
+        case 'ArrowDown':
+          this.dispatcher.publish(Event.moveActivePiece, Direction.Down);
+          break;
+        case 'ArrowUp':
+          if (Features.enabled('testMovementMode')) {
+            this.dispatcher.publish(Event.moveActivePiece, Direction.Up);
+          } else {
+            this.dispatcher.publish(Event.rotateActivePiece, Direction.Left);
+          }
+          break;
+        case 'Space':
+          this.dispatcher.publish(Event.pause);
+          break;
+        default:
+          break;
       }
     });
   }

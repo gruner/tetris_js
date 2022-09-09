@@ -8,7 +8,7 @@ export class ActiveTheme {
   private _theme: Theme;
 
   set theme(theme: Theme) {
-    this.theme = theme;
+    this._theme = theme;
   }
 
   get theme(): Theme {

@@ -36,8 +36,7 @@ export class ThemeLoader {
   /**
    * Returns a fully configured theme instance
    */
-  getTheme(themeName: string) {
-    themeName = themeName || Theme.Default;
+  getTheme(themeName: string = Theme.Default) {
     return new Theme(this.getThemeConfig(themeName));
   }
 }

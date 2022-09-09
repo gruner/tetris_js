@@ -58,7 +58,7 @@ export class GameState {
   }
 
   rowComplete(completedRows: number[]) {
-    this.change(STATE.SUSPEND, completedRows); // broadcast the completed rows array
     this.change(STATE.SUSPEND); // suspends state for animation to complete
+    this.change(STATE.ROW_COMPLETE, completedRows); // broadcast the completed rows array
   }
 }

@@ -1,5 +1,5 @@
 export class EventDispatcher {
-  private eventSubscriptions: { [index:string] : Function[] } = {};
+  private subscribers: { [index:string] : Function[] } = {};
  
   subscribe(eventName: string, callback: Function) {
 
@@ -7,15 +7,15 @@ export class EventDispatcher {
       return;
     }
 
-    if (!this.eventSubscriptions.hasOwnProperty(eventName)) {
-      this.eventSubscriptions[eventName] = [];
+    if (!this.subscribers.hasOwnProperty(eventName)) {
+      this.subscribers[eventName] = [];
     }
 
-    return this.eventSubscriptions[eventName].push(callback);
+    return this.subscribers[eventName].push(callback);
   }
 
   unsubscribe(eventName: string, callback: Function) {
-    const subscribers = this.eventSubscriptions[eventName];
+    const subscribers = this.subscribers[eventName];
  
     if (subscribers === undefined) { return; }
 
@@ -36,15 +36,15 @@ export class EventDispatcher {
 
   publish(eventName: string, data = {}) {
 
-    if(!this.eventSubscriptions.hasOwnProperty(eventName)) {
+    if(!this.subscribers.hasOwnProperty(eventName)) {
       return [];
     }
   
-    return this.eventSubscriptions[eventName].map(callback => callback(data));
+    return this.subscribers[eventName].map(callback => callback(data));
   }
 
   hasSubscriber(eventName: string, callback: Function): boolean {
-    return this.eventSubscriptions[eventName]
-      && this.eventSubscriptions[eventName].indexOf(callback) !== - 1;
+    return this.subscribers[eventName]
+      && this.subscribers[eventName].indexOf(callback) !== - 1;
   }
 }
