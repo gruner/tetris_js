@@ -4,6 +4,7 @@ type GameStateData = {
   level: number
 }
 
+// Use a string enum so that value can be used for event name
 export enum STATE {
     PLAY = 'PLAY',
     PAUSE = 'PAUSE',
@@ -25,6 +26,9 @@ export class GameState {
     }
   }
 
+  /**
+   * Changes to new provided state and publishes the change event
+   */
   change(newState: STATE, data = {}) {
     this.currentState = newState;
     this.events.publish(newState, data);
@@ -51,11 +55,10 @@ export class GameState {
 
   rowCleared() {
     this.change(STATE.ROW_CLEARED);
-    this.change(STATE.SUSPEND);
   }
 
   rowComplete(completedRows: number[]) {
-    this.change(STATE.SUSPEND, completedRows);
-    this.change(STATE.SUSPEND);
+    this.change(STATE.SUSPEND, completedRows); // broadcast the completed rows array
+    this.change(STATE.SUSPEND); // suspends state for animation to complete
   }
 }

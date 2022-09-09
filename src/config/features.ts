@@ -4,10 +4,6 @@ interface iFeature {
   public?: boolean;
 }
 
-// export interface iFeature {
-//   [index: string] : Foo
-// }
-
 const featureConfig: { [index: string] : iFeature} = {
   testMovementMode: {
     desc: "Allows free movement of a single tetromino without it falling",

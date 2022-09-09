@@ -13,7 +13,7 @@ export class RowCompleteAnimation extends Animation {
   rows: any[];
   onComplete: Function;
 
-  constructor(ctx: any, rows: any[], onCompleteCallback: Function) {
+  constructor(ctx: CanvasRenderingContext2D, rows: any[], onCompleteCallback: Function) {
     super(ctx);
 
     this.rows = rows;

@@ -1,8 +1,8 @@
 export abstract class Animation {
-  ctx: any;
+  ctx: CanvasRenderingContext2D;
   complete: boolean;
 
-  constructor(ctx: any) {
+  constructor(ctx: CanvasRenderingContext2D) {
     this.ctx = ctx;
     this.complete = false;
   }

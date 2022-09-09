@@ -28,13 +28,21 @@ export class Canvas {
     this.activeTheme = activeTheme;
     this.animationQueue = animationQueue;
     this.gameEngine = gameEngine;
-    this.context = canvasElement.getContext('2d')!; //!TODO
+    this.context = canvasElement.getContext('2d')!;
 
     this.bindEvents();
   }
 
   bindEvents() {
+    this.gameEngine.gameState.events.subscribe(GameEngine.STATE.ROW_CLEARED, () => {
+      console.log("ROW CLEARED");
+      this.gameEngine.gameState.resume();
+    });
+
+    // TODO: This isn't the best place to define these state behaviors,
+    // but it's the only class that can bind gameEngine events to animationQueue
     this.gameEngine.gameState.events.subscribe(GameEngine.STATE.ROW_COMPLETE, (completedRows: any[]) => {
+      console.log('ROW COMPLETE');
       this.animationQueue.push(new RowCompleteAnimation(this.context, completedRows, () => {
         this.gameEngine.gameState.rowCleared();
       }));
@@ -142,6 +150,7 @@ export class Canvas {
 
   /**
    * When a row is complete, save everything above it in order to animate it moving down
+   * Not implemented yet
    */
   // spliceTop() {}
 }

@@ -10,7 +10,6 @@ import { GameState } from "./state/game-state";
 
 /**
  * Bootstraps all game components together
- * TODO: use a DI service container instead of manually doing all instantiation here
  */
 export class Tetris {
 
@@ -27,7 +26,7 @@ export class Tetris {
     const eventDispatcher = new EventDispatcher();
     const stateEventDispatcher = new EventDispatcher();
     const animationQueue = new AnimationQueue();
-    const gameState = new GameState(stateEventDispatcher);
+    const gameState = new GameState(stateEventDispatcher); // TODO: Does there need to be a separate one?
 
     this.gameEngine = new GameEngine(activeTheme, eventDispatcher, gameState);
     this.canvas = new Canvas(activeTheme, animationQueue, canvasElement, this.gameEngine);
@@ -41,21 +40,21 @@ export class Tetris {
     });
   }
 
-  /**
-   * Creates canvas tag on the DOM if one wasn't passed in.
-   * TODO: consider preferring this approach as we can dynamically
-   * size the element in line with existing configs.
-   */
-  createCanvasElement(): HTMLCanvasElement {
-    const canvas = document.createElement('canvas') as HTMLCanvasElement;
+  // /**
+  //  * Creates canvas tag on the DOM if one wasn't passed in.
+  //  * TODO: consider preferring this approach as we can dynamically
+  //  * size the element in line with existing configs.
+  //  */
+  // createCanvasElement(): HTMLCanvasElement {
+  //   const canvas = document.createElement('canvas') as HTMLCanvasElement;
 
-    // TODO add to DOM
+  //   // TODO add to DOM
   
-    return canvas;
-  }
+  //   return canvas;
+  // }
 
   run() {
-    this.frameId = requestAnimationFrame(this.run);
+    this.frameId = requestAnimationFrame(() => this.run());
     this.gameEngine.update();
     this.canvas.draw();
   }

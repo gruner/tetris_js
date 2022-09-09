@@ -1,5 +1,10 @@
-const world = 'world';
+import { Tetris } from "./tetris";
 
-export function hello(wurld: string = world): string {
-  return `Hello ${wurld}! `;
+declare global {
+  interface Window {
+    Tetris: any;
+  }
 }
+
+// Make Tetris a global object
+window.Tetris = Tetris;

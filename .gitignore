@@ -20,3 +20,4 @@ CVS
 node_modules/*
 sounds/src/*
 dist
+package-lock.json
