@@ -1,11 +1,12 @@
 import { ThemeLoader } from "./theme-loader";
+import { iTheme } from "./theme";
 
 describe('ThemeLoader', function() {
 
   let themeLoader: ThemeLoader;
 
   beforeEach(function() {
-    var config = {
+    const config: { [index:string] : iTheme } = {
       default: {
         playfield: {color: "#001"},
         ghostPiece: {color: "#112"},
@@ -13,15 +14,16 @@ describe('ThemeLoader', function() {
           i: {color: "#223"},
           j: {color: "#334"}
         }
-      },
-      extended: {
-        parent: 'default',
-        ghostPiece: {color: "#445"},
-        tetrominos: {
-          i: {color: "#556"}
-        }
       }
     };
+
+    config['extended'] = {
+      parent: config.default,
+      ghostPiece: {color: "#445"},
+      tetrominos: {
+        i: {color: "#556"}
+      }
+    }
 
     themeLoader = new ThemeLoader(config);
   });

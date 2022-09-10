@@ -18,7 +18,32 @@ export const ThemeConfig: { [index:string] : iTheme } = {
     },
     tetrominoBorder: {color: "#000000"}
   },
-//   level1: {
-//     parent: ThemeConfig.default
-//   }
+};
+
+ThemeConfig['level1'] = {
+  name: 'Global 19.3',
+  tetrominos: {
+    i: {color: "#C0B988"}, // tan
+    o: {color: "#587D74"}, // green
+    t: {color: "#224745"}, // cool grey
+    j: {color: "#793C33"}, // brown
+    l: {color: "#9C7A5D"}, // dark tan
+    s: {color: "#11417F"}, // blue
+    z: {color: "#11417F"}  // blue
+  },
+  parent: ThemeConfig.default
+};
+
+ThemeConfig['level2'] = {
+  name: 'Global 18.5',
+  tetrominos: {
+    i: {color: "#02585B"}, // dark green
+    o: {color: "#C3C403"}, // yellow
+    t: {color: "#816FA1"}, // lavender
+    j: {color: "#046095"}, // teal
+    l: {color: "#619961"}, // light green
+    s: {color: "#B3026C"}, // pink
+    z: {color: "#B3026C"}  // pink
+  },
+  parent: ThemeConfig.default
 };

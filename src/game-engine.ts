@@ -16,10 +16,13 @@ import { GameState, STATE } from "./state/game-state";
  */
 export class GameEngine {
   static readonly QUEUE_MINIMUM = 3;
-  static readonly  ACCELERATED_GRAVITY = 0.5;
+  static readonly ACCELERATED_GRAVITY = 0.5;
+  static readonly GRAVITY_INCREMENT = 0.02;
+  static readonly ROW_COUNT_TO_ADVANCE = 10;
   static readonly STATE = STATE;
 
   activeTheme: ActiveTheme;
+  themeLoader: ThemeLoader;
   eventDispatcher: EventDispatcher;
   gameState: GameState;
 
@@ -27,6 +30,7 @@ export class GameEngine {
   pieceQueue: string[] = [];
   pieceHistory: string[] = [];
   level = 0;
+  completedRows = 0;
   gravity = 0.05;
   accelerateGravity = false;
   playfield: Playfield;
@@ -43,7 +47,9 @@ export class GameEngine {
   
     this.playfield = new Playfield();
     // this.soundEffects = new SoundEffects();
-    this.initThemes();
+    this.themeLoader = new ThemeLoader(ThemeConfig);
+    this.activeTheme.theme = this.themeLoader.getTheme();
+
     this.init();
   }
 
@@ -52,11 +58,6 @@ export class GameEngine {
     this.bindEvents();
     // this.soundEffects.enabled = Features.enabled('soundEffects');
     this.initDebug();
-  }
-
-  initThemes() {
-    const themeLoader = new ThemeLoader(ThemeConfig);
-    this.activeTheme.theme = themeLoader.getTheme();
   }
 
   initDebug() {
@@ -96,6 +97,14 @@ export class GameEngine {
     this.eventDispatcher.subscribe(Event.pause, () => {
       this.gameState.togglePause();
     });
+
+    this.gameState.events.subscribe(STATE.ROW_COMPLETE, (rows: number[]) => {
+      this.completedRows += rows.length;
+      if (this.completedRows >= GameEngine.ROW_COUNT_TO_ADVANCE) {
+        this.advanceLevel();
+        this.completedRows -= GameEngine.ROW_COUNT_TO_ADVANCE;
+      }
+    })
   }
 
   /**
@@ -322,6 +331,12 @@ export class GameEngine {
     ghostPiece.y = dest.y;
   
     return ghostPiece;
+  }
+
+  advanceLevel() {
+    this.level++;
+    this.gravity += GameEngine.GRAVITY_INCREMENT;
+    this.activeTheme.theme = this.themeLoader.getTheme('level' + this.level.toString());
   }
 
   /**

@@ -10,7 +10,7 @@ export interface iTheme {
   ghostPiece?: iThemedElement;
   tetrominos?: { [index:string] : iThemedElement };
   tetrominoBorder?: iThemedElement;
-  parent?: string;
+  parent?: iTheme;
 }
 
 export class Theme implements iTheme {
@@ -21,7 +21,7 @@ export class Theme implements iTheme {
   ghostPiece: iThemedElement;
   tetrominos: { [index:string] : iThemedElement };
   tetrominoBorder: iThemedElement;
-  parent?: string;
+  parent?: iTheme;
 
   constructor(config?: iTheme) {
     this.name = Theme.Default;

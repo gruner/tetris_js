@@ -24,10 +24,7 @@ export class ThemeLoader {
    */
   extendThemeConfig(themeConfig: iTheme): iTheme {
     if (themeConfig && themeConfig.parent) {
-      const parentConfig = this.getThemeConfig(themeConfig.parent);
-      if (parentConfig) {
-        themeConfig = DeepExtend(DeepExtend({}, parentConfig), themeConfig);
-      }
+      themeConfig = DeepExtend(DeepExtend({}, themeConfig.parent), themeConfig);
     }
   
     return themeConfig;
