@@ -8,18 +8,20 @@
  * (Don't add the cached canvas to the DOM)
  */
 export class CanvasCache {
-  private cache: {[index:string]: HTMLCanvasElement} = {};
+  private cache: {[index:string]: CanvasRenderingContext2D} = {};
 
-  set(key: string, image: HTMLImageElement) {
+  createAndSetNewContext(key: string, width: number, height: number) {
     const canvasCache = document.createElement('canvas') as HTMLCanvasElement;
     const context = canvasCache.getContext('2d')!;
+    canvasCache.width = width;
+    canvasCache.height = height;
 
-    canvasCache.setAttribute('width', image.width.toString());
-    canvasCache.setAttribute('height', image.height.toString());
+    return this.set(key, context);
+  }
 
-    context.drawImage(image, 0, 0);
-
-    this.cache[key] = canvasCache;
+  set(key: string, context: CanvasRenderingContext2D): CanvasRenderingContext2D {
+    this.cache[key] = context;
+    return context;
   }
 
   /**
@@ -28,6 +30,6 @@ export class CanvasCache {
    * otherCtx.drawImage(canvasCache.get(name), 0, 0)
    */
   get(key: string) {
-    return this.cache[key] ? this.cache[key] : null;
+    return this.cache.hasOwnProperty(key) ? this.cache[key] : null;
   }
 }

@@ -6,6 +6,7 @@ import { GameEngine } from "../game-engine";
 import { Block } from "../models/block";
 import { Tetromino } from "../models/tetromino";
 import { ActiveTheme } from "../theme/active-theme";
+import { CanvasCache } from "./canvas-cache";
 
 /**
  * Renders the view according to GameEngine state.
@@ -18,6 +19,7 @@ export class Canvas {
   gameEngine: GameEngine;
   context: CanvasRenderingContext2D;
   animationQueue: AnimationQueue;
+  cache: CanvasCache;
 
   constructor(
     activeTheme: ActiveTheme,
@@ -29,6 +31,7 @@ export class Canvas {
     this.animationQueue = animationQueue;
     this.gameEngine = gameEngine;
     this.context = canvasElement.getContext('2d')!;
+    this.cache = new CanvasCache();
 
     this.bindEvents();
   }
@@ -66,6 +69,8 @@ export class Canvas {
         this.activeTheme.theme.tetrominoBorder.color
       );
     }
+
+    this.drawPauseOverlay();
   }
 
   // Uncomment to debug animations
@@ -76,16 +81,32 @@ export class Canvas {
 
   /**
    * Draws the playfield - the background rectangle
-   * @TODO cache this as an image after the first draw
    */
   drawPlayfield(fillStyle: string) {
-    this.context.fillStyle = fillStyle;
-    this.context.fillRect(
-      CanvasDimensions.playfieldOrigin.x,
-      CanvasDimensions.playfieldOrigin.y,
-      CanvasDimensions.transpose(this.gameEngine.playfield.xCount),
-      CanvasDimensions.transpose(this.gameEngine.playfield.yCount)
-    );
+    const key = 'playfield';
+    const width = CanvasDimensions.transpose(this.gameEngine.playfield.xCount);
+    const height = CanvasDimensions.transpose(this.gameEngine.playfield.yCount);
+    let cachedCtx = this.cache.get(key);
+    if (!cachedCtx) {
+      cachedCtx = this.cache.createAndSetNewContext(key, width, height);
+      cachedCtx.fillStyle = fillStyle;
+      cachedCtx.fillRect(
+        CanvasDimensions.playfieldOrigin.x,
+        CanvasDimensions.playfieldOrigin.y,
+        width,
+        height
+      );
+    }
+
+    this.context.drawImage(cachedCtx.canvas, 0, 0);
+    
+    // this.context.fillStyle = fillStyle;
+    // this.context.fillRect(
+    //   CanvasDimensions.playfieldOrigin.x,
+    //   CanvasDimensions.playfieldOrigin.y,
+    //   CanvasDimensions.transpose(this.gameEngine.playfield.xCount),
+    //   CanvasDimensions.transpose(this.gameEngine.playfield.yCount)
+    // );
   }
 
   /**
@@ -144,6 +165,15 @@ export class Canvas {
       this.gameEngine.getGhostPiece(),
       this.activeTheme.theme.ghostPiece.color
     );
+  }
+
+  /**
+   * Draws "Paused" over the Playfield when the game is in paused state
+   */
+  drawPauseOverlay() {
+    if (this.gameEngine.gameState.currentState === GameEngine.STATE.PAUSE) {
+      // TODO
+    }
   }
 
   /**
