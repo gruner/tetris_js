@@ -16,6 +16,7 @@ import { GameState, STATE } from "./state/game-state";
  */
 export class GameEngine {
   static readonly QUEUE_MINIMUM = 3;
+  static readonly STARTING_GRAVITY = 0.05;
   static readonly ACCELERATED_GRAVITY = 0.5;
   static readonly GRAVITY_INCREMENT = 0.02;
   static readonly ROW_COUNT_TO_ADVANCE = 10;
@@ -31,7 +32,7 @@ export class GameEngine {
   pieceHistory: string[] = [];
   level = 0;
   completedRows = 0;
-  gravity = 0.05;
+  gravity = GameEngine.STARTING_GRAVITY;
   accelerateGravity = false;
   playfield: Playfield;
   frameCounter = 0;
@@ -100,10 +101,7 @@ export class GameEngine {
 
     this.gameState.events.subscribe(STATE.ROW_COMPLETE, (rows: number[]) => {
       this.completedRows += rows.length;
-      if (this.completedRows >= GameEngine.ROW_COUNT_TO_ADVANCE) {
-        this.advanceLevel();
-        this.completedRows -= GameEngine.ROW_COUNT_TO_ADVANCE;
-      }
+      this.determineLevel();
     })
   }
 
@@ -333,9 +331,9 @@ export class GameEngine {
     return ghostPiece;
   }
 
-  advanceLevel() {
-    this.level++;
-    this.gravity += GameEngine.GRAVITY_INCREMENT;
+  determineLevel() {
+    this.level = Math.floor(this.completedRows/GameEngine.ROW_COUNT_TO_ADVANCE);
+    this.gravity = GameEngine.STARTING_GRAVITY + (this.level * GameEngine.GRAVITY_INCREMENT);
     this.activeTheme.theme = this.themeLoader.getTheme('level' + this.level.toString());
   }
 
