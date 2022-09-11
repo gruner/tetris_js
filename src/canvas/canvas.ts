@@ -21,6 +21,10 @@ export class Canvas {
   animationQueue: AnimationQueue;
   cache: CanvasCache;
 
+  static readonly cacheKeyPlayfield = 'playfield';
+  static readonly cacheKeyPauseOverlay = 'pauseOverlay';
+  static readonly font = '"futura-pt", "Futura", "Futura Medium", "FuturaMedium", "Helvetica Neue", Arial, sans-serif';
+
   constructor(
     activeTheme: ActiveTheme,
     animationQueue: AnimationQueue,
@@ -54,7 +58,7 @@ export class Canvas {
    * Draws entire game on each update loop
    */
   draw() {
-    this.drawPlayfield(this.activeTheme.theme.playfield!.color);
+    this.drawPlayfield(this.activeTheme.theme.playfield.color);
     this.drawRemnantBlocks();
   
     // If animations are in-progress, draw the next frame,
@@ -70,7 +74,7 @@ export class Canvas {
       );
     }
 
-    this.drawPauseOverlay();
+    this.drawPauseOverlay(this.activeTheme.theme.playfield.color);
   }
 
   // Uncomment to debug animations
@@ -83,12 +87,11 @@ export class Canvas {
    * Draws the playfield - the background rectangle
    */
   drawPlayfield(fillStyle: string) {
-    const key = 'playfield';
-    const width = CanvasDimensions.transpose(this.gameEngine.playfield.xCount);
-    const height = CanvasDimensions.transpose(this.gameEngine.playfield.yCount);
-    let cachedCtx = this.cache.get(key);
+    let cachedCtx = this.cache.get(Canvas.cacheKeyPauseOverlay);
     if (!cachedCtx) {
-      cachedCtx = this.cache.createAndSetNewContext(key, width, height);
+      const width = CanvasDimensions.transpose(this.gameEngine.playfield.xCount);
+      const height = CanvasDimensions.transpose(this.gameEngine.playfield.yCount);
+      cachedCtx = this.cache.createAndSetNewContext(Canvas.cacheKeyPauseOverlay, width, height);
       cachedCtx.fillStyle = fillStyle;
       cachedCtx.fillRect(
         CanvasDimensions.playfieldOrigin.x,
@@ -99,14 +102,6 @@ export class Canvas {
     }
 
     this.context.drawImage(cachedCtx.canvas, 0, 0);
-    
-    // this.context.fillStyle = fillStyle;
-    // this.context.fillRect(
-    //   CanvasDimensions.playfieldOrigin.x,
-    //   CanvasDimensions.playfieldOrigin.y,
-    //   CanvasDimensions.transpose(this.gameEngine.playfield.xCount),
-    //   CanvasDimensions.transpose(this.gameEngine.playfield.yCount)
-    // );
   }
 
   /**
@@ -170,9 +165,29 @@ export class Canvas {
   /**
    * Draws "Paused" over the Playfield when the game is in paused state
    */
-  drawPauseOverlay() {
+  drawPauseOverlay(fillStyle: string) {
     if (this.gameEngine.gameState.currentState === GameEngine.STATE.PAUSE) {
-      // TODO
+      let cachedCtx = this.cache.get(Canvas.cacheKeyPlayfield);
+      if (!cachedCtx) {
+        const width = CanvasDimensions.transpose(this.gameEngine.playfield.xCount);
+        const height = CanvasDimensions.transpose(this.gameEngine.playfield.yCount);
+        cachedCtx = this.cache.createAndSetNewContext(Canvas.cacheKeyPlayfield, width, height);
+        cachedCtx.fillStyle = fillStyle;
+        cachedCtx.globalAlpha = 0.7;
+        cachedCtx.fillRect(
+          CanvasDimensions.playfieldOrigin.x,
+          CanvasDimensions.playfieldOrigin.y,
+          width,
+          height
+        );
+
+        cachedCtx.font = '50px ' + Canvas.font;
+        cachedCtx.textAlign = 'center';
+        cachedCtx.fillStyle = "#FFFFFF";
+        cachedCtx.fillText('PAUSED', Math.floor(width/2), Math.floor(height/2));
+      }
+  
+      this.context.drawImage(cachedCtx.canvas, 0, 0);
     }
   }
 
