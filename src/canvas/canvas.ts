@@ -74,9 +74,18 @@ export class Canvas {
       );
     }
 
-    this.drawPauseOverlay(this.activeTheme.theme.playfield.color);
-    this.drawGameOverOverlay(this.activeTheme.theme.playfield.color);
     this.drawInfoBox();
+
+    switch (this.gameEngine.gameState.currentState) {
+      case GameEngine.STATE.PAUSE:
+        this.drawPauseOverlay(this.activeTheme.theme.playfield.color);
+        break;
+      case GameEngine.STATE.GAME_OVER:
+        this.drawGameOverOverlay(this.activeTheme.theme.playfield.color);
+        break;
+      default:
+        break;
+    }
   }
 
   // Uncomment to debug animations
@@ -171,18 +180,14 @@ export class Canvas {
    * Draws "Paused" over the Playfield when the game is in paused state
    */
   drawPauseOverlay(fillStyle: string) {
-    if (this.gameEngine.gameState.currentState === GameEngine.STATE.PAUSE) {
-      this.drawOverlayWithText('PAUSED', fillStyle, '50px');
-    }
+    this.drawOverlayWithText('PAUSED', fillStyle, '50px');
   }
 
   /**
    * Draws "GAME OVER" over the Playfield when the game is ended
    */
   drawGameOverOverlay(fillStyle: string) {
-    if (this.gameEngine.gameState.currentState === GameEngine.STATE.GAME_OVER) {
-      this.drawOverlayWithText('GAME OVER', fillStyle, '35px');
-    }
+    this.drawOverlayWithText('GAME OVER', fillStyle, '35px');
   }
 
   /**

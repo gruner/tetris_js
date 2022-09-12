@@ -2,6 +2,7 @@ import { iTheme } from "../theme/theme";
 
 /**
  * Config for different themes
+ * TODO: Don't use same color for s and z
  */
 export const ThemeConfig: { [index:string] : iTheme } = {
   default: {
@@ -20,6 +21,10 @@ export const ThemeConfig: { [index:string] : iTheme } = {
   },
 };
 
+ThemeConfig['level0'] = {
+  parent: ThemeConfig.default
+};
+
 ThemeConfig['level1'] = {
   name: 'Global 19.3',
   tetrominos: {
@@ -29,7 +34,7 @@ ThemeConfig['level1'] = {
     j: {color: "#793C33"}, // brown
     l: {color: "#9C7A5D"}, // dark tan
     s: {color: "#11417F"}, // blue
-    z: {color: "#11417F"}  // blue
+    z: {color: "#32576B"}  // blue-green
   },
   parent: ThemeConfig.default
 };
@@ -42,8 +47,8 @@ ThemeConfig['level2'] = {
     t: {color: "#816FA1"}, // lavender
     j: {color: "#046095"}, // teal
     l: {color: "#619961"}, // light green
-    s: {color: "#B3026C"}, // pink
-    z: {color: "#B3026C"}  // pink
+    s: {color: "#B3026C"}, // dark pink
+    z: {color: "#C57FAA"}  // light pink
   },
   parent: ThemeConfig.default
 };

@@ -10,7 +10,8 @@ export enum STATE {
     PAUSE = 'PAUSE',
     SUSPEND = 'SUSPEND',
     ROW_COMPLETE = 'ROW_COMPLETE',
-    ROW_CLEARED = 'ROW_CLEARED'
+    ROW_CLEARED = 'ROW_CLEARED',
+    GAME_OVER = 'GAME_OVER'
 }
 
 export class GameState {

@@ -1,16 +1,18 @@
 /**
- * Caches the parts of the canvas that don't need to be updated on each animation frame
+ * Caches canvas pices that don't change and shouldn't be redrawn on each animation frame.
  * 
- * Creates a new canvas element
- * Get its context
- * Write pixels to that context
- * Use the canvas in a drawImage() call on another canvas context
- * (Don't add the cached canvas to the DOM)
+ * It Creates a new in-memory canvas element and returns its context. This canvas is never added to the DOM.
+ *  
+ * To render from the cache, use the canvas in a drawImage() call on another canvas context.
+ * `otherCtx.drawImage(canvasCache.get('name'), 0, 0);`
  */
 export class CanvasCache {
   private cache: {[index:string]: CanvasRenderingContext2D} = {};
 
-  createAndSetNewContext(key: string, width: number, height: number) {
+  /**
+   * Creates a new in-memory canvas element and returns its context after caching it
+   */
+  createAndSetNewContext(key: string, width: number, height: number): CanvasRenderingContext2D {
     const canvasCache = document.createElement('canvas') as HTMLCanvasElement;
     const context = canvasCache.getContext('2d')!;
     canvasCache.width = width;
@@ -25,9 +27,7 @@ export class CanvasCache {
   }
 
   /**
-   * Retrieves a cached image.
-   * To draw a cached image:
-   * otherCtx.drawImage(canvasCache.get(name), 0, 0)
+   * Retrieves a cached canvas context.
    */
   get(key: string) {
     return this.cache.hasOwnProperty(key) ? this.cache[key] : null;
