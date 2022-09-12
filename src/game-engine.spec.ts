@@ -83,6 +83,16 @@ describe('GameEngine', function() {
     });
   });
 
+  describe('#getNextPiece', () => {
+    it('should return first queued tetromino', () => {
+      gameEngine.pieceQueue = ['t', 'o', 'l', 'z'];
+
+      const nextPiece = gameEngine.getNextPiece();
+
+      expect(nextPiece.type).toEqual('t');
+    });
+  });
+
   describe('#moveActivePiece', function() {
     it('should change the coordinates ');
   });
