@@ -127,31 +127,34 @@ export class Canvas {
   /**
    * Draws a single block. All game elements are made of blocks.
    */
-  drawBlock(x: number, y: number, fillColor: string, borderColor?: string) {
+  drawBlock(x: number, y: number, fillColor: string, borderColor?: string, scale?: number) {
+    const size = scale ? CanvasDimensions.gridSize * scale : CanvasDimensions.gridSize;
     this.context.beginPath();
     this.context.fillStyle = fillColor;
-    this.context.fillRect(x, y, CanvasDimensions.gridSize, CanvasDimensions.gridSize);
+    this.context.fillRect(x, y, size, size);
   
     if (borderColor) {
       this.context.lineWidth = CanvasDimensions.blockBorderWidth;
       this.context.strokeStyle = borderColor;
-      this.context.strokeRect(x, y, CanvasDimensions.gridSize, CanvasDimensions.gridSize);
+      this.context.strokeRect(x, y, size, size);
     }
   }
 
   /**
    * Draws a tetromino by drawing each of its blocks
    */
-  drawTetromino(tetromino: Tetromino, fillColor: string, borderColor?: string) {
+  drawTetromino(tetromino: Tetromino, fillColor: string, borderColor?: string, scale?: number) {
     const originX = CanvasDimensions.transpose(tetromino.x);
     const originY = CanvasDimensions.transpose(tetromino.y);
+    const scaleMultiplier = scale ? scale : 1;
     
     tetromino.traverseBlocks((i: number, block: Block) => {
       this.drawBlock(
-        originX + CanvasDimensions.transpose(block.x),
-        originY + CanvasDimensions.transpose(block.y),
+        originX + CanvasDimensions.transpose(block.x) * scaleMultiplier,
+        originY + CanvasDimensions.transpose(block.y) * scaleMultiplier,
         fillColor,
-        borderColor
+        borderColor,
+        scale
       );
     });
   }
@@ -195,27 +198,41 @@ export class Canvas {
     }
   }
 
+  /**
+   * Draws score info and status
+   */
   drawInfoBox() {
     this.context.font = '20px ' + Canvas.font;
     this.context.textAlign = 'left';
     this.context.fillStyle = "#FFFFFF";
 
     const playfieldWidth = CanvasDimensions.transpose(this.gameEngine.playfield.xCount);
-    const highScore = 'todo';
-    const spacing = 40;
+    const highScore = ''; // TODO
+    const spacing = 35;
     const xDim = playfieldWidth + 30;
     const yDim = 30;
 
-    this.context.fillText(`Score: ${this.gameEngine.getGravity()}`, xDim, yDim);
-    this.context.fillText(`Level: ${this.gameEngine.level}`, xDim, yDim + spacing);
+    this.context.fillText(`Score: ${this.gameEngine.score}`, xDim, yDim);
+    this.context.fillText(`Level: ${this.gameEngine.level + 1}`, xDim, yDim + spacing);
     this.context.fillText(`Lines: ${this.gameEngine.completedRowCount}`, xDim, yDim + (spacing * 2));
     this.context.fillText(`High Score: ${highScore}`, xDim, yDim + (spacing * 3));
-    this.context.fillText('Next Piece', xDim, yDim + (spacing * 4));
+    this.context.fillText('Next:', xDim, yDim + (spacing * 4));
+
+    this.drawNextTetrominoPreview(xDim, yDim + (spacing * 5));
   }
 
   /**
-   * When a row is complete, save everything above it in order to animate it moving down
-   * Not implemented yet
+   * Draws the preview for the next Tetromino
    */
-  // spliceTop() {}
+  drawNextTetrominoPreview(x: number, y: number) {
+    const nextPiece = this.gameEngine.getNextPiece();
+    nextPiece.x = CanvasDimensions.transposeFrom(x);
+    nextPiece.y = CanvasDimensions.transposeFrom(y);
+    this.drawTetromino(
+      nextPiece,
+      this.activeTheme.getTetrominoStyle(nextPiece.type).color,
+      this.activeTheme.theme.tetrominoBorder.color,
+      0.7
+    );
+  }
 }

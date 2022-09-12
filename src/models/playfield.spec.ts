@@ -588,28 +588,28 @@ describe('Playfield', () => {
     });
   });
 
-  describe('#rowComplete', function() {
+  describe('#rowIsComplete', function() {
     it('should return true if all columns are filled', function() {
         playfield.grid[10] = [0,1,2,3,4,5,6,7,8,9];
-        expect(playfield.rowComplete(10)).toBeTrue();
+        expect(playfield.rowIsComplete(10)).toBeTrue();
     });
 
     it('should return false if all columns are not filled', function() {
-      expect(playfield.rowComplete(10)).toBeFalse();
+      expect(playfield.rowIsComplete(10)).toBeFalse();
     });
 
     it('should return false if row is empty', function() {
       playfield.grid[10] = [];
-      expect(playfield.rowComplete(10)).toBeFalse();
+      expect(playfield.rowIsComplete(10)).toBeFalse();
     });
 
     it('should return false if row is incomplete', function() {
       playfield.grid[10] = [1,2,3,4,5,6,7,8,9];
-      expect(playfield.rowComplete(10)).toBeFalse();
+      expect(playfield.rowIsComplete(10)).toBeFalse();
     });
 
     it('should return false if row is out of bounds', function() {
-      expect(playfield.rowComplete(ROW_COUNT + 10)).toBeFalse();
+      expect(playfield.rowIsComplete(ROW_COUNT + 10)).toBeFalse();
     });
   });
 

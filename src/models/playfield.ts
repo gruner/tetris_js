@@ -184,7 +184,7 @@ export class Playfield {
    * Checks that a row is complete, i.e. filled with blocks.
    * If any cells are undefined they are empty
    */
-  rowComplete(yIndex: number): boolean {
+  rowIsComplete(yIndex: number): boolean {
     let complete = false;
 
     if (this.grid[yIndex]) {
@@ -202,13 +202,12 @@ export class Playfield {
 
   /**
    * Returns array of y indexes for all completed rows
-   * TODO: pass in optional rows to check (i.e. only check the rows that a newly placed tetromino is touching)
    */
   getCompletedRows(): Array<number> {
     const completedRows: Array<number> = [];
 
     this.traverseRows((i: number) => {
-      if (this.rowComplete(i)) {
+      if (this.rowIsComplete(i)) {
         completedRows.push(i);
       }
     });

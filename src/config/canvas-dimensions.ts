@@ -8,5 +8,12 @@ export const CanvasDimensions = {
    */
   transpose: function(value: number) {
     return this.gridSize * value;
+  },
+
+  /**
+   * Divides rendered size by GameEngine units
+   */
+  transposeFrom: function(value: number) {
+    return Math.floor(value / this.gridSize);
   }
 };

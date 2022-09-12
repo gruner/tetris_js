@@ -32,6 +32,7 @@ export class GameEngine {
   pieceHistory: string[] = [];
   level = 0;
   completedRowCount = 0;
+  score = 0;
   gravity = GameEngine.STARTING_GRAVITY;
   accelerateGravity = false;
   playfield: Playfield;
@@ -101,6 +102,7 @@ export class GameEngine {
 
     this.gameState.events.subscribe(STATE.ROW_COMPLETE, (rows: number[]) => {
       this.completedRowCount += rows.length;
+      this.incrementScore(rows.length);
       this.determineLevel();
     })
   }
@@ -219,10 +221,10 @@ export class GameEngine {
   }
 
   /**
-   * Returns the type of the next tetromino in the queue
+   * Returns an instance of the type of the next tetromino in the queue
    */
-  getNextPiece(): string {
-    return this.pieceQueue[1];
+  getNextPiece(): Tetromino {
+    return Tetromino.create(this.pieceQueue[0]);
   }
 
   /**
@@ -335,6 +337,32 @@ export class GameEngine {
     this.level = Math.floor(this.completedRowCount/GameEngine.ROW_COUNT_TO_ADVANCE);
     this.gravity = GameEngine.STARTING_GRAVITY + (this.level * GameEngine.GRAVITY_INCREMENT);
     this.activeTheme.theme = this.themeLoader.getTheme('level' + this.level.toString());
+  }
+
+  incrementScore(completedRowCount: number) {
+    let scoreIncrease = 0;
+    switch (completedRowCount) {
+      case 1:
+        scoreIncrease = 100;
+        break;
+      
+      case 2:
+        scoreIncrease = 300;
+        break;
+      
+      case 3:
+        scoreIncrease = 500;
+        break;
+      
+      case 4:
+          scoreIncrease = 800;
+          break;
+
+      default:
+        break;
+    }
+
+    this.score += scoreIncrease;
   }
 
   /**
