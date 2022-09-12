@@ -242,6 +242,9 @@ export class GameEngine {
    */
   topOut() {
     this.gameState.suspend();
+
+    // TODO: consolidate these events
+    this.gameState.change(STATE.GAME_OVER);
     this.eventDispatcher.publish(Event.topOut);
   }
 

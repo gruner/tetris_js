@@ -41,15 +41,12 @@ export class Canvas {
   }
 
   bindEvents() {
-    this.gameEngine.gameState.events.subscribe(GameEngine.STATE.ROW_CLEARED, () => {
-      this.gameEngine.gameState.resume();
-    });
-
-    // TODO: This isn't the best place to define these state behaviors,
+    // TODO: This may not be the best place to define these state behaviors,
     // but it's the only class that can bind gameEngine events to animationQueue
     this.gameEngine.gameState.events.subscribe(GameEngine.STATE.ROW_COMPLETE, (completedRows: any[]) => {
       this.animationQueue.push(new RowCompleteAnimation(this.context, completedRows, () => {
         this.gameEngine.gameState.rowCleared();
+        this.gameEngine.gameState.resume();
       }));
     });
   }
@@ -78,6 +75,7 @@ export class Canvas {
     }
 
     this.drawPauseOverlay(this.activeTheme.theme.playfield.color);
+    this.drawGameOverOverlay(this.activeTheme.theme.playfield.color);
     this.drawInfoBox();
   }
 
@@ -174,28 +172,44 @@ export class Canvas {
    */
   drawPauseOverlay(fillStyle: string) {
     if (this.gameEngine.gameState.currentState === GameEngine.STATE.PAUSE) {
-      let cachedCtx = this.cache.get(Canvas.cacheKeyPlayfield);
-      if (!cachedCtx) {
-        const width = CanvasDimensions.transpose(this.gameEngine.playfield.xCount);
-        const height = CanvasDimensions.transpose(this.gameEngine.playfield.yCount);
-        cachedCtx = this.cache.createAndSetNewContext(Canvas.cacheKeyPlayfield, width, height);
-        cachedCtx.fillStyle = fillStyle;
-        cachedCtx.globalAlpha = 0.7;
-        cachedCtx.fillRect(
-          CanvasDimensions.playfieldOrigin.x,
-          CanvasDimensions.playfieldOrigin.y,
-          width,
-          height
-        );
-
-        cachedCtx.font = '50px ' + Canvas.font;
-        cachedCtx.textAlign = 'center';
-        cachedCtx.fillStyle = "#FFFFFF";
-        cachedCtx.fillText('PAUSED', Math.floor(width/2), Math.floor(height/2));
-      }
-  
-      this.context.drawImage(cachedCtx.canvas, 0, 0);
+      this.drawOverlayWithText('PAUSED', fillStyle, '50px');
     }
+  }
+
+  /**
+   * Draws "GAME OVER" over the Playfield when the game is ended
+   */
+  drawGameOverOverlay(fillStyle: string) {
+    if (this.gameEngine.gameState.currentState === GameEngine.STATE.GAME_OVER) {
+      this.drawOverlayWithText('GAME OVER', fillStyle, '35px');
+    }
+  }
+
+  /**
+   * Draws a large text label over the Playfield
+   */
+  drawOverlayWithText(text: string, fillStyle: string, fontSize: string) {
+    let cachedCtx = this.cache.get('overlay' + text);
+    if (!cachedCtx) {
+      const width = CanvasDimensions.transpose(this.gameEngine.playfield.xCount);
+      const height = CanvasDimensions.transpose(this.gameEngine.playfield.yCount);
+      cachedCtx = this.cache.createAndSetNewContext(Canvas.cacheKeyPlayfield, width, height);
+      cachedCtx.fillStyle = fillStyle;
+      cachedCtx.globalAlpha = 0.7;
+      cachedCtx.fillRect(
+        CanvasDimensions.playfieldOrigin.x,
+        CanvasDimensions.playfieldOrigin.y,
+        width,
+        height
+      );
+
+      cachedCtx.font = `${fontSize} ${Canvas.font}`;
+      cachedCtx.textAlign = 'center';
+      cachedCtx.fillStyle = "#FFFFFF";
+      cachedCtx.fillText(text, Math.floor(width/2), Math.floor(height/2));
+    }
+
+    this.context.drawImage(cachedCtx.canvas, 0, 0);
   }
 
   /**
