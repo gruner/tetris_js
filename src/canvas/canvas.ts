@@ -58,6 +58,9 @@ export class Canvas {
    * Draws entire game on each update loop
    */
   draw() {
+    // Clear everything
+    this.context.clearRect(0, 0, this.context.canvas.width, this.context.canvas.height);
+
     this.drawPlayfield(this.activeTheme.theme.playfield.color);
     this.drawRemnantBlocks();
   
@@ -75,6 +78,7 @@ export class Canvas {
     }
 
     this.drawPauseOverlay(this.activeTheme.theme.playfield.color);
+    this.drawInfoBox();
   }
 
   // Uncomment to debug animations
@@ -189,6 +193,24 @@ export class Canvas {
   
       this.context.drawImage(cachedCtx.canvas, 0, 0);
     }
+  }
+
+  drawInfoBox() {
+    this.context.font = '20px ' + Canvas.font;
+    this.context.textAlign = 'left';
+    this.context.fillStyle = "#FFFFFF";
+
+    const playfieldWidth = CanvasDimensions.transpose(this.gameEngine.playfield.xCount);
+    const highScore = 'todo';
+    const spacing = 40;
+    const xDim = playfieldWidth + 30;
+    const yDim = 30;
+
+    this.context.fillText(`Score: ${this.gameEngine.getGravity()}`, xDim, yDim);
+    this.context.fillText(`Level: ${this.gameEngine.level}`, xDim, yDim + spacing);
+    this.context.fillText(`Lines: ${this.gameEngine.completedRowCount}`, xDim, yDim + (spacing * 2));
+    this.context.fillText(`High Score: ${highScore}`, xDim, yDim + (spacing * 3));
+    this.context.fillText('Next Piece', xDim, yDim + (spacing * 4));
   }
 
   /**

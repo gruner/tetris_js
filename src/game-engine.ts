@@ -31,7 +31,7 @@ export class GameEngine {
   pieceQueue: string[] = [];
   pieceHistory: string[] = [];
   level = 0;
-  completedRows = 0;
+  completedRowCount = 0;
   gravity = GameEngine.STARTING_GRAVITY;
   accelerateGravity = false;
   playfield: Playfield;
@@ -100,7 +100,7 @@ export class GameEngine {
     });
 
     this.gameState.events.subscribe(STATE.ROW_COMPLETE, (rows: number[]) => {
-      this.completedRows += rows.length;
+      this.completedRowCount += rows.length;
       this.determineLevel();
     })
   }
@@ -332,7 +332,7 @@ export class GameEngine {
   }
 
   determineLevel() {
-    this.level = Math.floor(this.completedRows/GameEngine.ROW_COUNT_TO_ADVANCE);
+    this.level = Math.floor(this.completedRowCount/GameEngine.ROW_COUNT_TO_ADVANCE);
     this.gravity = GameEngine.STARTING_GRAVITY + (this.level * GameEngine.GRAVITY_INCREMENT);
     this.activeTheme.theme = this.themeLoader.getTheme('level' + this.level.toString());
   }
