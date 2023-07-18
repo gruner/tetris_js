@@ -1,5 +1,5 @@
 /**
- * Caches canvas pices that don't change and shouldn't be redrawn on each animation frame.
+ * Caches canvas pieces that don't change and shouldn't be redrawn on each animation frame.
  * 
  * It Creates a new in-memory canvas element and returns its context. This canvas is never added to the DOM.
  *  

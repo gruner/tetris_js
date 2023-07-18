@@ -234,7 +234,7 @@ export class Canvas {
     this.context.fillText(`Score: ${this.gameEngine.score}`, xDim, yDim);
     this.context.fillText(`Level: ${this.gameEngine.level + 1}`, xDim, yDim + spacing);
     this.context.fillText(`Lines: ${this.gameEngine.completedRowCount}`, xDim, yDim + (spacing * 2));
-    this.context.fillText(`High Score: ${highScore}`, xDim, yDim + (spacing * 3));
+    // this.context.fillText(`High Score: ${highScore}`, xDim, yDim + (spacing * 3));
     this.context.fillText('Next:', xDim, yDim + (spacing * 4));
 
     this.drawNextTetrominoPreview(xDim, yDim + (spacing * 5));

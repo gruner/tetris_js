@@ -1,6 +1,6 @@
 {
   "name": "tetris_js",
-  "version": "1.0.0",
+  "version": "2.0.0",
   "description": "A Tetris clone written in TypeScript",
   "main": "index.js",
   "repository": {
