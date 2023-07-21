@@ -14,6 +14,7 @@ const polarBlue = "#7eabb6";
 const shrimpPink = "#e4a473";
 
 const defaultTheme = <iTheme> {
+  name: 'Default',
   playfield: {color: "#000000"},
   ghostPiece: {color: "#333333"},
   tetrominos: {
@@ -78,7 +79,7 @@ export const ThemeConfig: Array<iTheme> = [
   },
   // 4
   {
-    name: 'NES Blue',
+    name: 'NES 00',
     tetrominos: {
       i: {color: "#CBEEFF"}, // very light blue
       o: {color: "#CBEEFF"}, // very light blue
@@ -92,11 +93,31 @@ export const ThemeConfig: Array<iTheme> = [
   },
   // 5
   {
-    parent: defaultTheme
+    name: 'NES 02',
+    tetrominos: {
+      i: {color: "#FFBDFE"}, // light pink
+      o: {color: "#FFBDFE"}, // light pink
+      t: {color: "#FFBDFE"}, // light pink
+      j: {color: "#9E0B93"}, // raspberry
+      l: {color: "#F14BF5"}, // pink
+      s: {color: "#9E0B93"}, // raspberry
+      z: {color: "#F14BF5"}  // pink
+    },
+    parent: defaultTheme,
   },
   // 6
   {
-    parent: defaultTheme
+    name: 'NES 07',
+    tetrominos: {
+      i: {color: "#E0D1FF"}, // very light purple
+      o: {color: "#E0D1FF"}, // very light purple
+      t: {color: "#E0D1FF"}, // very light purple
+      j: {color: "#7125FF"}, // purple
+      l: {color: "#890163"}, // raspberry
+      s: {color: "#7125FF"}, // purple
+      z: {color: "#890163"}  // raspberry
+    },
+    parent: defaultTheme,
   },
   // 7
   {

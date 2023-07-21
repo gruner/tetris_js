@@ -15,12 +15,6 @@ describe('GameEngine', function() {
     gameEngine = new GameEngine(activeTheme, eventDispatcher, gameState);
   });
 
-  // describe('#initThemes', function() {
-  //     it('should initialize with default theme', function() {
-  //         assert.ok(gameEngine.theme);
-  //     });
-  // });
-
   describe('#update', function() {
     it('should update all game assets');
   });
@@ -90,6 +84,24 @@ describe('GameEngine', function() {
       const nextPiece = gameEngine.getNextPiece();
 
       expect(nextPiece.type).toEqual('t');
+    });
+  });
+
+  describe('#determineLevel', () => {
+    it('should set corresponding theme when level is greater than theme count', () => {
+      gameEngine.completedRowCount = 110;
+      gameEngine.determineLevel();
+
+      expect(gameEngine.level).toEqual(11);
+      expect(gameEngine.activeTheme.theme.name).toEqual('Robot Roundup');
+    });
+
+    it('should set corresponding theme when level is greater than theme count', () => {
+      gameEngine.completedRowCount = 120;
+      gameEngine.determineLevel();
+
+      expect(gameEngine.level).toEqual(12);
+      expect(gameEngine.activeTheme.theme.name).toEqual('Global 19.3');
     });
   });
 

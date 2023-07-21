@@ -9,6 +9,10 @@ const featureConfig: { [index: string] : iFeature} = {
     desc: "Allows free movement of a single tetromino without it falling",
     enabled: false
   },
+  testThemeMode: {
+    desc: "Enables changing themes via number keys",
+    enabled: false
+  },
   initWithRemnants: {
     desc: "Starts the game with remnant blocks already on the playfield",
     enabled: false
@@ -21,6 +25,10 @@ const featureConfig: { [index: string] : iFeature} = {
     desc: "Highlights where the current piece will land",
     enabled: true,
     public: true
+  },
+  displayPauseOverlay: {
+    desc: "Obscures the playfield when paused",
+    enabled: true
   },
   soundEffects: {
     desc: "Play sound effects",

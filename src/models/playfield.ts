@@ -240,17 +240,6 @@ export class Playfield {
   /**
    * Checks that an array of blocks are valid for placement at their given coordinates
    */
-  // validateBlockPlacement(blocks: Array<Block>): boolean {
-  //   let valid = Array.isArray(blocks);
-  //   for (let i = 0; i < blocks.length; i++) {
-  //     if (!this.validateBlock(blocks[i])) {
-  //       valid = false;
-  //       break;
-  //     }
-  //   }
-
-  //   return valid;
-  // }
   validateBlockPlacement(blocks: Array<iCoordinates>): boolean {
     let valid = Array.isArray(blocks);
     for (let i = 0; i < blocks.length; i++) {
@@ -299,7 +288,7 @@ export class Playfield {
   }
 
   /**
-   * Adds random blocks to the playfield for debugging
+   * Adds random blocks to the bottom third of the playfield for debugging
    */
   distributeRandomBlocks(blockCount: number) {
     const blockTypes = TetrominoTypes.getTypeKeys();
@@ -307,8 +296,8 @@ export class Playfield {
     // While there remain blocks to distribute...
     while (0 !== blockCount) {
       const block = new Block(
-        Math.floor(Math.random() * this.xCount),
-        Math.floor(Math.random() * this.yCount)
+        this.randomNumberInRange(1, this.xCount),
+        this.randomNumberInRange(this.yCount - Math.floor(this.yCount / 3), this.yCount)
       );
       block.type = blockTypes[Math.floor(Math.random() * blockTypes.length)];
 
@@ -317,6 +306,10 @@ export class Playfield {
         blockCount--;
       }
     }
+  }
+
+  private randomNumberInRange(min: number, max: number): number {
+    return Math.floor(Math.random() * (max - min) + min);
   }
 
   /**

@@ -345,11 +345,11 @@ export class GameEngine {
     this.level = Math.floor(this.completedRowCount/GameEngine.ROW_COUNT_TO_ADVANCE);
     this.gravity = GameEngine.STARTING_GRAVITY + (this.level * GameEngine.GRAVITY_INCREMENT);
 
-    // TODO If level is greater than the configured themes, cycle
+    // If level is greater than the number of configured themes, use the remainder
     let themeIndex = this.level;
-    // if (this.level > this.themeLoader.config.length) {
-    //   themeIndex = 0;
-    // }
+    if (this.level > this.themeLoader.config.length) {
+      themeIndex = this.level % this.themeLoader.config.length;
+    }
     this.activeTheme.theme = this.themeLoader.getTheme(themeIndex);
   }
 

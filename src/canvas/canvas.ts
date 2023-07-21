@@ -78,7 +78,9 @@ export class Canvas {
 
     switch (this.gameEngine.gameState.currentState) {
       case GameEngine.STATE.PAUSE:
-        this.drawPauseOverlay(this.activeTheme.theme.playfield.color);
+        if (Features.enabled('displayPauseOverlay')) {
+          this.drawPauseOverlay(this.activeTheme.theme.playfield.color);
+        }
         break;
       case GameEngine.STATE.GAME_OVER:
         this.drawGameOverOverlay(this.activeTheme.theme.playfield.color);
