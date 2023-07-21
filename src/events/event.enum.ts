@@ -1,14 +1,15 @@
 export enum Event {
-  moveActivePiece        = 'tetris.moveActivePiece',
-  rotateActivePiece      = 'tetris.rotateActivePiece',
   accelerateActivePiece  = 'tetris.accelerateActivePiece',
-  deccelerateActivePiece = 'tetris.accelerateActivePiece',
   activePiecePositioned  = 'tetris.activePiecePositioned',
-  rowComplete            = 'tetris.rowComplete',
-  rowCleared             = 'tetris.rowCleared',
-  playfieldSettled       = 'tetris.playfieldSettled',
+  animationEnd           = 'tetris.animationEnd',
+  changeTheme            = 'tetris.changeTheme',
+  deccelerateActivePiece = 'tetris.accelerateActivePiece',
   invalidMove            = 'tetris.invalidMove',
-  topOut                 = 'tetris.topOut',
+  moveActivePiece        = 'tetris.moveActivePiece',
   pause                  = 'tetris.pause',
-  animationEnd           = 'tetris.animationEnd'
+  playfieldSettled       = 'tetris.playfieldSettled',
+  rotateActivePiece      = 'tetris.rotateActivePiece',
+  rowCleared             = 'tetris.rowCleared',
+  rowComplete            = 'tetris.rowComplete',
+  topOut                 = 'tetris.topOut',
 };

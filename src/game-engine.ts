@@ -104,7 +104,12 @@ export class GameEngine {
       this.completedRowCount += rows.length;
       this.incrementScore(rows.length);
       this.determineLevel();
-    })
+    });
+
+    // Manually switch themes using number keys when `testThemeMode` feature is enabled
+    this.eventDispatcher.subscribe(Event.changeTheme, (themeIndex: number) => {
+      this.activeTheme.theme = this.themeLoader.getTheme(themeIndex);
+    });
   }
 
   /**
@@ -339,39 +344,28 @@ export class GameEngine {
   determineLevel() {
     this.level = Math.floor(this.completedRowCount/GameEngine.ROW_COUNT_TO_ADVANCE);
     this.gravity = GameEngine.STARTING_GRAVITY + (this.level * GameEngine.GRAVITY_INCREMENT);
-    this.activeTheme.theme = this.themeLoader.getTheme('level' + this.level.toString());
+
+    // TODO If level is greater than the configured themes, cycle
+    let themeIndex = this.level;
+    // if (this.level > this.themeLoader.config.length) {
+    //   themeIndex = 0;
+    // }
+    this.activeTheme.theme = this.themeLoader.getTheme(themeIndex);
   }
 
   incrementScore(completedRowCount: number) {
-    let scoreIncrease = 0;
-    switch (completedRowCount) {
-      case 1:
-        scoreIncrease = 100;
-        break;
-      
-      case 2:
-        scoreIncrease = 300;
-        break;
-      
-      case 3:
-        scoreIncrease = 500;
-        break;
-      
-      case 4:
-          scoreIncrease = 800;
-          break;
+    // Map completed rows to points
+    const scoreMap = new Map([
+      [1, 100],
+      [2, 300],
+      [3, 500],
+      [4, 800]
+    ]);
 
-      default:
-        break;
+    const scoreIncrease = scoreMap.get(completedRowCount);
+
+    if (scoreIncrease) {
+      this.score += scoreIncrease * (this.level + 1);
     }
-
-    this.score += scoreIncrease;
   }
-
-  /**
-   * Sets a delay after a tetromino has been placed
-   * before the next piece is spawned
-   */
-  // spawnDelay() {
-  // }
 }

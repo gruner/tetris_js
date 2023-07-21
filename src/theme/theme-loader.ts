@@ -2,21 +2,21 @@ import { iTheme, Theme } from "./theme";
 import { DeepExtend } from "../util/extend";
 
 export class ThemeLoader {
-  config: { [index:string] : iTheme };
+  config: iTheme[];
 
-  constructor(config: { [index:string] : iTheme }) {
+  constructor(config: iTheme[]) {
     this.config = config;
   }
 
   /**
    * Returns config object for the named theme if it exists
    */
-  getThemeConfig(themeName: string) {
-    if (this.config.hasOwnProperty(themeName)) {
-      return this.extendThemeConfig(this.config[themeName]);
-    } else {
-      return {};
+  getThemeConfig(themeIndex: number): iTheme {
+    if (themeIndex > this.config.length) {
+      themeIndex = 0;
     }
+
+    return this.extendThemeConfig(this.config[themeIndex]);
   }
 
   /**
@@ -33,7 +33,7 @@ export class ThemeLoader {
   /**
    * Returns a fully configured theme instance
    */
-  getTheme(themeName: string = Theme.Default) {
-    return new Theme(this.getThemeConfig(themeName));
+  getTheme(themeIndex: number = 0) {
+    return new Theme(this.getThemeConfig(themeIndex));
   }
 }
