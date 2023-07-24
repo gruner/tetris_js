@@ -1,12 +1,9 @@
 import { Block } from './block';
-import { TetrominoTypes as Tetrominos } from './tetromino-types';
+import { TetrominoType, TetrominoTypes as Tetrominos } from './tetromino-types';
 import { ValidCoordinates } from '../util/validate';
 import { Debug } from '../util/debug';
 import { iCoordinates } from './coordinates.interface';
 import { Direction } from './direction.enum';
-
-
-// constants = require('../config/constants'),
 
 /**
  * Models a Tetromino tile, composed of Block models
@@ -15,11 +12,11 @@ import { Direction } from './direction.enum';
 export class Tetromino implements iCoordinates {
   x: number;
   y: number;
-  type: string;
+  type: TetrominoType;
   blocks: Block[][];
   origin: iCoordinates;
 
-  constructor(type: string, blocks: Block[][]) {
+  constructor(type: TetrominoType, blocks: Block[][]) {
     this.x = 3;
     this.y = 0;
     this.type = type;
@@ -30,16 +27,16 @@ export class Tetromino implements iCoordinates {
   /**
    * Factory for creating a tetromino based on the given type
    */
-  static create(typeKey: string): Tetromino {
-    const type = Tetrominos.getType(typeKey);
+  static create(type: TetrominoType): Tetromino {
+    const blocksCoords = Tetrominos.getBlocksForType(type);
 
-    if (type) {
+    if (blocksCoords) {
       const blockRotations: Block[][] = [];
 
-      for (let i = 0; i < type.blocks.length; i++) {
+      for (let i = 0; i < blocksCoords.length; i++) {
         const blocks: Block[] = [];
-        for (let j = 0; j < type.blocks[i].length; j++) {
-          const coordinates = type.blocks[i][j];
+        for (let j = 0; j < blocksCoords[i].length; j++) {
+          const coordinates = blocksCoords[i][j];
           if (ValidCoordinates(coordinates)) {
             blocks.push(new Block(coordinates.x, coordinates.y));
           } else {
@@ -50,16 +47,16 @@ export class Tetromino implements iCoordinates {
         blockRotations.push(blocks);
       }
 
-      return new Tetromino(typeKey, blockRotations);
+      return new Tetromino(type, blockRotations);
     } else {
-      throw new Error('Cannot create tetromino of type ' + typeKey);
+      throw new Error('Cannot create tetromino of type ' + type.toString());
     }
   }
 
   /**
    * Generates the random order of the next seven pieces
    */
-  static randomizeNextBag() {
+  static randomizeNextBag(): TetrominoType[] {
     // FisherYates shuffle - http://bost.ocks.org/mike/shuffle/
     function shuffle(array: Array<any>) {
       let currentIndex = array.length;

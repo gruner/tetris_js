@@ -1,11 +1,21 @@
 import { iCoordinates } from "./coordinates.interface"
 
+export enum TetrominoType {
+  i = 'i',
+  j = 'j',
+  l = 'l',
+  o = 'o',
+  s = 's',
+  t = 't',
+  z = 'z'
+}
+
 /**
- * Define the different types (shapes) of tetrominos
+ * Define the different tetrominos shapes by their block coordinates.
  */
-const types:{ [index:string] : {blocks: iCoordinates[][]} } = {
-  i: {
-    blocks: [
+const blockMap: Map<TetrominoType, iCoordinates[][]> = new Map([
+  [
+    TetrominoType.i, [
       [
         {x: 0, y: 1},
         {x: 1, y: 1},
@@ -31,47 +41,9 @@ const types:{ [index:string] : {blocks: iCoordinates[][]} } = {
         {x: 1, y: 3}
       ]
     ]
-  },
-  o: {
-    blocks: [
-      [
-        {x: 1, y: 0},
-        {x: 2, y: 0},
-        {x: 1, y: 1},
-        {x: 2, y: 1}
-      ]
-    ],
-  },
-  t: {
-    blocks: [
-      [
-        {x: 1, y: 0},
-        {x: 0, y: 1},
-        {x: 1, y: 1},
-        {x: 2, y: 1}            
-      ],
-      [
-        {x: 1, y: 0},
-        {x: 1, y: 1},
-        {x: 1, y: 2},
-        {x: 2, y: 1}
-      ],
-      [
-        {x: 0, y: 1},
-        {x: 1, y: 1},
-        {x: 2, y: 1},
-        {x: 1, y: 2}
-      ],
-      [
-        {x: 1, y: 0},
-        {x: 1, y: 1},
-        {x: 1, y: 2},
-        {x: 0, y: 1}
-      ]
-    ]
-  },
-  j: {
-    blocks: [
+  ],
+  [
+    TetrominoType.j, [
       [
         {x: 0, y: 0},
         {x: 0, y: 1},
@@ -97,9 +69,9 @@ const types:{ [index:string] : {blocks: iCoordinates[][]} } = {
         {x: 0, y: 2}
       ]
     ]
-  },
-  l: {
-    blocks: [
+  ],
+  [
+    TetrominoType.l, [
       [
         {x: 0, y: 1},
         {x: 1, y: 1},
@@ -125,9 +97,19 @@ const types:{ [index:string] : {blocks: iCoordinates[][]} } = {
         {x: 1, y: 2}
       ]            
     ]
-  },
-  s: {
-    blocks: [
+  ],
+  [
+    TetrominoType.o, [
+      [
+        {x: 1, y: 0},
+        {x: 2, y: 0},
+        {x: 1, y: 1},
+        {x: 2, y: 1}
+      ]
+    ]
+  ],
+  [
+    TetrominoType.s, [
       [
         {x: 1, y: 0},
         {x: 2, y: 0},
@@ -153,9 +135,37 @@ const types:{ [index:string] : {blocks: iCoordinates[][]} } = {
         {x: 1, y: 2}
       ]
     ]
-  },
-  z: {
-    blocks: [
+  ],
+  [
+    TetrominoType.t, [
+      [
+        {x: 1, y: 0},
+        {x: 0, y: 1},
+        {x: 1, y: 1},
+        {x: 2, y: 1}            
+      ],
+      [
+        {x: 1, y: 0},
+        {x: 1, y: 1},
+        {x: 1, y: 2},
+        {x: 2, y: 1}
+      ],
+      [
+        {x: 0, y: 1},
+        {x: 1, y: 1},
+        {x: 2, y: 1},
+        {x: 1, y: 2}
+      ],
+      [
+        {x: 1, y: 0},
+        {x: 1, y: 1},
+        {x: 1, y: 2},
+        {x: 0, y: 1}
+      ]
+    ]
+  ],
+  [
+    TetrominoType.z, [
       [
         {x: 0, y: 0},
         {x: 1, y: 0},
@@ -181,19 +191,23 @@ const types:{ [index:string] : {blocks: iCoordinates[][]} } = {
         {x: 0, y: 2}
       ]
     ]
-  }
-};
+  ]
+]);
 
 export const TetrominoTypes = {
-  types: types,
-
-  getType: function(typeKey: string) {
-    if (types.hasOwnProperty(typeKey)) {
-      return types[typeKey];
-    }
+  getBlocksForType: function(type: TetrominoType): iCoordinates[][] | undefined {
+    return blockMap.get(type);
   },
 
-  getTypeKeys: function() {
-    return Object.keys(types);
+  getTypeKeys: function(): TetrominoType[] {
+    return [
+      TetrominoType.i,
+      TetrominoType.j,
+      TetrominoType.l,
+      TetrominoType.o,
+      TetrominoType.s,
+      TetrominoType.t,
+      TetrominoType.z
+    ];
   }
 };

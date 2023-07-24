@@ -1,3 +1,4 @@
+import { TetrominoType } from "@tetris/models/tetromino-types";
 import { iThemedElement, Theme } from "./theme";
 
 /**
@@ -22,9 +23,9 @@ export class ActiveTheme {
   /**
    * Returns the configured theme style for the given tetromino type
    */
-  getTetrominoStyle(type: string): iThemedElement {
-    return this._theme.tetrominos[type]
-      ? this._theme.tetrominos[type]
+  getTetrominoStyle(type: TetrominoType): iThemedElement {
+    return this._theme.tetrominos[type.toString()]
+      ? this._theme.tetrominos[type.toString()]
       : {color: 'magenta'};
   }
 };

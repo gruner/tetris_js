@@ -1,12 +1,12 @@
 import { Direction } from "./direction.enum";
 import { Tetromino } from "./tetromino";
+import { TetrominoType } from "./tetromino-types";
 
 describe('Tetromino', function() {
-  const TYPE = 'o';
   let tetromino: Tetromino;
 
   beforeEach(function() {
-    tetromino = Tetromino.create(TYPE);
+    tetromino = Tetromino.create(TetrominoType.o);
   });   
 
   describe('#moveByOffset', function() {
@@ -57,7 +57,7 @@ describe('Tetromino', function() {
 
   describe('#getBlockCoordinatesForOffset', function() {
     it('should return array of block coordinates', function() {
-      tetromino = Tetromino.create('i');
+      tetromino = Tetromino.create(TetrominoType.i);
       tetromino.x = 10;
       tetromino.y = 11;
       const coordinates = tetromino.getBlockCoordinatesForOffset({x:0, y:1})!;
@@ -93,7 +93,7 @@ describe('Tetromino', function() {
       const blocks = tetromino.releaseBlocks();
 
       expect(blocks.length).toEqual(4);
-      expect(blocks[0].type).toEqual(TYPE);
+      expect(blocks[0].type).toEqual(TetrominoType.o);
     });
   });
 

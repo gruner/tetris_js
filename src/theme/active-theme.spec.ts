@@ -1,3 +1,5 @@
+
+import { TetrominoType } from "../models/tetromino-types";
 import { ActiveTheme } from "./active-theme";
 import { Theme } from "./theme";
 
@@ -10,13 +12,8 @@ describe('ActiveTheme', function() {
 
   describe('#getTetrominoStyle', function() {
     it('should return valid object', function() {
-      const style = activeTheme.getTetrominoStyle('o');
+      const style = activeTheme.getTetrominoStyle(TetrominoType.o);
       expect(style.color).toBeTruthy();
     });
-
-    it('should return valid object from bad input', function() {
-        const style = activeTheme.getTetrominoStyle('NO_EXIST');
-        expect(style.color).toBeTruthy();
-      });
   });
 });

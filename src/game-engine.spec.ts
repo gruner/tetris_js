@@ -1,6 +1,7 @@
 import { EventDispatcher } from "./events/event-dispatcher";
 import { GameEngine } from "./game-engine";
 import { Tetromino } from "./models/tetromino";
+import { TetrominoType } from "./models/tetromino-types";
 import { GameState } from "./state/game-state";
 import { ActiveTheme } from "./theme/active-theme";
 import { Theme } from "./theme/theme";
@@ -36,14 +37,14 @@ describe('GameEngine', function() {
 
       const data = [
         {
-          type: 'i',
+          type: TetrominoType.i,
           x: 5,
           y: 2,
           expectedX: 5,
           expectedY: 20
         },
         {
-          type: 'o',
+          type: TetrominoType.o,
           x: 6,
           y: 2,
           expectedX: 6,
@@ -79,11 +80,11 @@ describe('GameEngine', function() {
 
   describe('#getNextPiece', () => {
     it('should return first queued tetromino', () => {
-      gameEngine.pieceQueue = ['t', 'o', 'l', 'z'];
+      gameEngine.pieceQueue = [TetrominoType.t, TetrominoType.o, TetrominoType.l, TetrominoType.z];
 
       const nextPiece = gameEngine.getNextPiece();
 
-      expect(nextPiece.type).toEqual('t');
+      expect(nextPiece.type).toEqual(TetrominoType.t);
     });
   });
 

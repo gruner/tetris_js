@@ -10,6 +10,7 @@ import { Debug } from "./util/debug";
 import { iCoordinates } from "./models/coordinates.interface";
 import { ActiveTheme } from "./theme/active-theme";
 import { GameState, STATE } from "./state/game-state";
+import { TetrominoType } from "./models/tetromino-types";
 
 /**
  * Puts all the pieces together
@@ -27,9 +28,9 @@ export class GameEngine {
   eventDispatcher: EventDispatcher;
   gameState: GameState;
 
-  activeTetromino: Tetromino = Tetromino.create('o');
-  pieceQueue: string[] = [];
-  pieceHistory: string[] = [];
+  activeTetromino: Tetromino = Tetromino.create(TetrominoType.o);
+  pieceQueue: TetrominoType[] = [];
+  pieceHistory: TetrominoType[] = [];
   level = 0;
   completedRowCount = 0;
   score = 0;
@@ -66,7 +67,7 @@ export class GameEngine {
     if (Features.enabled('initWithRemnants')) {
       this.playfield.distributeRandomBlocks(10);
     } else if (Features.enabled('initWithTetris')) {
-      this.activeTetromino = Tetromino.create('i');
+      this.activeTetromino = Tetromino.create(TetrominoType.i);
       this.playfield.debugRowClear();
     }
   }
@@ -219,9 +220,9 @@ export class GameEngine {
     }
     this.refreshPieceQueue();
 
-    const nextPiece = this.pieceQueue.shift();
-    if (nextPiece) {
-      this.activeTetromino = Tetromino.create(nextPiece);
+    const nextPieceType = this.pieceQueue.shift();
+    if (nextPieceType) {
+      this.activeTetromino = Tetromino.create(nextPieceType);
     }
   }
 
