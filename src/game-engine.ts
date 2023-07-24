@@ -1,16 +1,16 @@
+import { ActiveTheme } from "./theme/active-theme";
+import { Debug } from "./util/debug";
+import { Direction } from "./models/direction.enum";
+import { Event } from "./events/event.enum";
+import { EventDispatcher } from "./events/event-dispatcher";
+import { Features } from "./config/features";
+import { GameState, STATE } from "./state/game-state";
+import { iCoordinates } from "./models/coordinates.interface";
 import { Playfield } from "./models/playfield";
 import { Tetromino } from "./models/tetromino";
-import { ThemeLoader } from "./theme/theme-loader";
-import { ThemeConfig } from "./config/theme-config";
-import { Features } from "./config/features";
-import { EventDispatcher } from "./events/event-dispatcher";
-import { Event } from "./events/event.enum";
-import { Direction } from "./models/direction.enum";
-import { Debug } from "./util/debug";
-import { iCoordinates } from "./models/coordinates.interface";
-import { ActiveTheme } from "./theme/active-theme";
-import { GameState, STATE } from "./state/game-state";
 import { TetrominoType } from "./models/tetromino-types";
+import { ThemeConfig } from "./config/theme-config";
+import { ThemeLoader } from "./theme/theme-loader";
 
 /**
  * Puts all the pieces together

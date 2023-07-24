@@ -1,12 +1,13 @@
+import { ActiveTheme } from "../theme/active-theme";
 import { AnimationQueue } from "../animation/animation-queue";
-import { RowCompleteAnimation } from "../animation/row-complete.animation";
+import { Block } from "../models/block";
+import { CanvasCache } from "./canvas-cache";
 import { CanvasDimensions } from "../config/canvas-dimensions";
 import { Features } from "../config/features";
 import { GameEngine } from "../game-engine";
-import { Block } from "../models/block";
+import { RowCompleteAnimation } from "../animation/row-complete.animation";
 import { Tetromino } from "../models/tetromino";
-import { ActiveTheme } from "../theme/active-theme";
-import { CanvasCache } from "./canvas-cache";
+import { TextLabels } from "../config/text-labels";
 
 /**
  * Renders the view according to GameEngine state.
@@ -182,14 +183,14 @@ export class Canvas {
    * Draws "Paused" over the Playfield when the game is in paused state
    */
   drawPauseOverlay(fillStyle: string) {
-    this.drawOverlayWithText('PAUSED', fillStyle, '50px');
+    this.drawOverlayWithText(TextLabels.paused, fillStyle, '50px');
   }
 
   /**
    * Draws "GAME OVER" over the Playfield when the game is ended
    */
   drawGameOverOverlay(fillStyle: string) {
-    this.drawOverlayWithText('GAME OVER', fillStyle, '35px');
+    this.drawOverlayWithText(TextLabels.gameOver, fillStyle, '35px');
   }
 
   /**
@@ -233,11 +234,11 @@ export class Canvas {
     const xDim = playfieldWidth + 30;
     const yDim = 30;
 
-    this.context.fillText(`Score: ${this.gameEngine.score}`, xDim, yDim);
-    this.context.fillText(`Level: ${this.gameEngine.level + 1}`, xDim, yDim + spacing);
-    this.context.fillText(`Lines: ${this.gameEngine.completedRowCount}`, xDim, yDim + (spacing * 2));
+    this.context.fillText(`${TextLabels.score}: ${this.gameEngine.score}`, xDim, yDim);
+    this.context.fillText(`${TextLabels.level}: ${this.gameEngine.level + 1}`, xDim, yDim + spacing);
+    this.context.fillText(`${TextLabels.lines}: ${this.gameEngine.completedRowCount}`, xDim, yDim + (spacing * 2));
     // this.context.fillText(`High Score: ${highScore}`, xDim, yDim + (spacing * 3));
-    this.context.fillText('Next:', xDim, yDim + (spacing * 4));
+    this.context.fillText(`${TextLabels.next}:`, xDim, yDim + (spacing * 4));
 
     this.drawNextTetrominoPreview(xDim, yDim + (spacing * 5));
   }
