@@ -121,14 +121,86 @@ export const ThemeConfig: Array<iTheme> = [
   },
   // 7
   {
+    name: 'India',
+    tetrominos: {
+      i: {color: "#D9325E"}, // pink
+      o: {color: "#D9325E"}, // pink
+      t: {color: "#D9325E"}, // pink
+      j: {color: "#732441"}, // dark red
+      l: {color: "#29D9D9"}, // teal
+      s: {color: "#29D9D9"}, // yellow
+      z: {color: "#29D9D9"}, // orange
+    },
     parent: defaultTheme
   },
   // 8
   {
+    name: 'Italy',
+    tetrominos: {
+      i: {color: "#A62479"}, // purple
+      o: {color: "#A62479"}, // purple
+      t: {color: "#A62479"}, // purple
+      j: {color: "#F2F2F2"}, // grey
+      l: {color: "#BAD98B"}, // green
+      s: {color: "#F2762E"}, // oragne
+      z: {color: "#D90404"}  // red-orange
+    },
     parent: defaultTheme
   },
   //9
   {
+    name: 'Africa',
+    tetrominos: {
+      i: {color: "#898C74"}, // green
+      o: {color: "#898C74"}, // green
+      t: {color: "#898C74"}, // green
+      j: {color: "#F2D16D"}, // yellow
+      l: {color: "#D9AA55"}, // mustard
+      s: {color: "#A66038"}, // sienna
+      z: {color: "#733822"}  // brown
+    },
+    parent: defaultTheme
+  },
+  // 10
+  {
+    name: 'Japan',
+    tetrominos: {
+      i: {color: "#F2A0BE"}, // pink
+      o: {color: "#F2A0BE"}, // pink
+      t: {color: "#F2A0BE"}, // pink
+      j: {color: "#5E8C88"}, // teal
+      l: {color: "#590202"}, // red-brown
+      s: {color: "#F26D6D"}, // coral
+      z: {color: "#F2ACAC"}  // peach
+    },
+    parent: defaultTheme
+  },
+    // 11
+    {
+      name: 'Cartoon',
+      tetrominos: {
+        i: {color: "#D90479"}, // raspberry
+        o: {color: "#D90479"}, // raspberry
+        t: {color: "#D90479"}, // raspberry
+        j: {color: "#F205E2"}, // fuchsia
+        l: {color: "#660673"}, // purple
+        s: {color: "#660673"}, // yellow-green
+        z: {color: "#660673"}  // yellow-orange
+      },
+      parent: defaultTheme
+    },
+  // 12
+  {
+    name: 'Tattoo',
+    tetrominos: {
+      i: {color: "#F2CA99"}, // beige
+      o: {color: "#F2CA99"}, // beige
+      t: {color: "#F2CA99"}, // beige
+      j: {color: "#F2CA99"}, // dark teal
+      l: {color: "#428C85"}, // light teal
+      s: {color: "#F29E38"}, // yellow-orange
+      z: {color: "#593622"}  // brown
+    },
     parent: defaultTheme
   },
 ];

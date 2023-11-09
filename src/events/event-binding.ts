@@ -55,7 +55,8 @@ export class EventBinding {
         case 'Digit7':
         case 'Digit8':
         case 'Digit9':
-          this.publishThemeChange(e.code);
+        case 'Minus':
+          this.debugThemeChange(e.code);
           break;
         default:
           break;
@@ -63,9 +64,11 @@ export class EventBinding {
     });
   }
 
-  private publishThemeChange(keyCode: string) {
+  private debugThemeChange(keyCode: string) {
     if (Features.enabled('testThemeMode')) {
-      const themeIndex = parseInt(keyCode.slice(-1));
+      const themeIndex = (keyCode === 'Minus')
+        ? 99
+        : parseInt(keyCode.slice(-1));
       this.dispatcher.publish(Event.changeTheme, themeIndex);
     }
   }

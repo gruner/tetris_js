@@ -109,7 +109,11 @@ export class GameEngine {
 
     // Manually switch themes using number keys when `testThemeMode` feature is enabled
     this.eventDispatcher.subscribe(Event.changeTheme, (themeIndex: number) => {
-      this.activeTheme.theme = this.themeLoader.getTheme(themeIndex);
+      if (themeIndex === 99) {
+        this.activeTheme.theme = this.themeLoader.getNextTheme();
+      } else {
+        this.activeTheme.theme = this.themeLoader.getTheme(themeIndex);
+      }
     });
   }
 

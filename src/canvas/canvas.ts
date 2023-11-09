@@ -22,8 +22,6 @@ export class Canvas {
   animationQueue: AnimationQueue;
   cache: CanvasCache;
 
-  static readonly cacheKeyPlayfield = 'playfield';
-  static readonly cacheKeyPauseOverlay = 'pauseOverlay';
   static readonly font = '"futura-pt", "Futura", "Futura Medium", "FuturaMedium", "Helvetica Neue", Arial, sans-serif';
 
   constructor(
@@ -101,11 +99,12 @@ export class Canvas {
    * Draws the playfield - the background rectangle
    */
   drawPlayfield(fillStyle: string) {
-    let cachedCtx = this.cache.get(Canvas.cacheKeyPauseOverlay);
+    const cacheKey = 'playfield';
+    let cachedCtx = this.cache.get(cacheKey);
     if (!cachedCtx) {
       const width = CanvasDimensions.transpose(this.gameEngine.playfield.xCount);
       const height = CanvasDimensions.transpose(this.gameEngine.playfield.yCount);
-      cachedCtx = this.cache.createAndSetNewContext(Canvas.cacheKeyPauseOverlay, width, height);
+      cachedCtx = this.cache.createAndSetNewContext(cacheKey, width, height);
       cachedCtx.fillStyle = fillStyle;
       cachedCtx.fillRect(
         CanvasDimensions.playfieldOrigin.x,
@@ -197,11 +196,12 @@ export class Canvas {
    * Draws a large text label over the Playfield
    */
   drawOverlayWithText(text: string, fillStyle: string, fontSize: string) {
-    let cachedCtx = this.cache.get('overlay' + text);
+    const cacheKey = 'overlay' + text;
+    let cachedCtx = this.cache.get(cacheKey);
     if (!cachedCtx) {
       const width = CanvasDimensions.transpose(this.gameEngine.playfield.xCount);
       const height = CanvasDimensions.transpose(this.gameEngine.playfield.yCount);
-      cachedCtx = this.cache.createAndSetNewContext(Canvas.cacheKeyPlayfield, width, height);
+      cachedCtx = this.cache.createAndSetNewContext(cacheKey, width, height);
       cachedCtx.fillStyle = fillStyle;
       cachedCtx.globalAlpha = 0.7;
       cachedCtx.fillRect(

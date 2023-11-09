@@ -4,12 +4,14 @@ import { DeepExtend } from "../util/extend";
 export class ThemeLoader {
   config: iTheme[];
 
+  private themeIndex = 0;
+
   constructor(config: iTheme[]) {
     this.config = config;
   }
 
   /**
-   * Returns config object for the named theme if it exists
+   * Returns config object for the indexed theme if it exists
    */
   getThemeConfig(themeIndex: number): iTheme {
     if (themeIndex > this.config.length) {
@@ -33,7 +35,16 @@ export class ThemeLoader {
   /**
    * Returns a fully configured theme instance
    */
-  getTheme(themeIndex: number = 0) {
+  getTheme(themeIndex: number = 0): Theme {
+    this.themeIndex = themeIndex;
     return new Theme(this.getThemeConfig(themeIndex));
+  }
+
+  getNextTheme(): Theme {
+    this.themeIndex++;
+    if (this.themeIndex > this.config.length) {
+      this.themeIndex = 0;
+    }
+    return this.getTheme(this.themeIndex);
   }
 }
